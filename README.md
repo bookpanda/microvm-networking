@@ -34,6 +34,11 @@ ip addr show tun0
 sudo ip addr add 10.0.0.1/24 dev tun0 # assign addr to interface "tun0"
 sudo ip link set dev tun0 up
 ping -c 1 10.0.0.1
+
+# can also ping from mac
+sudo route -n add -net 10.0.0.0/24 192.168.1.186 # VM ip
+ping -c 1 10.0.0.1
+
 ```
 ``` bash
 ping 10.0.0.1
@@ -45,9 +50,11 @@ Kernel routing → sees 10.0.0.1 on tun0
 TUN driver queues packet → user-space (your program)
    |
    v
-read(fd, buffer) → packet now in your program
+# copies the packet from kernel memory to user-space buffer.
+read(fd, buffer) packet now in your program
    |
    v
+# driver copies the packet back into kernel memory
 [Optional] process / write(fd, buffer)
    |
    v
