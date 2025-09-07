@@ -25,3 +25,31 @@ git config --global user.email "you@example.com"
 sudo apt update
 sudo apt install build-essential clangd
 ```
+## Running
+```bash
+sudo ./a.out
+
+# will be down, need to turn on
+ip addr show tun0
+sudo ip addr add 10.0.0.1/24 dev tun0 # assign addr to interface "tun0"
+sudo ip link set dev tun0 up
+ping -c 1 10.0.0.1
+```
+``` bash
+ping 10.0.0.1
+   |
+   v
+Kernel routing → sees 10.0.0.1 on tun0
+   |
+   v
+TUN driver queues packet → user-space (your program)
+   |
+   v
+read(fd, buffer) → packet now in your program
+   |
+   v
+[Optional] process / write(fd, buffer)
+   |
+   v
+Kernel receives reply → ping gets response
+```

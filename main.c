@@ -9,7 +9,7 @@
 
 int tun_alloc(char *dev) {
     struct ifreq ifr;
-    int fd = open("/dev/net/tun", O_RDWR);
+    int fd = open("/dev/net/tun", O_RDWR); // O_RDWR = r/w packets
     if (fd < 0) {
         perror("Opening /dev/net/tun");
         exit(1);
@@ -18,10 +18,13 @@ int tun_alloc(char *dev) {
     memset(&ifr, 0, sizeof(ifr));
     ifr.ifr_flags = IFF_TUN | IFF_NO_PI;  // Create TUN (no Ethernet header)
 
+    // If the caller provided a name (tun0), copy it
     if (*dev)
         strncpy(ifr.ifr_name, dev, IFNAMSIZ);
 
+    // Ask the kernel driver to create a TUN device with these flags.
     if (ioctl(fd, TUNSETIFF, (void *)&ifr) < 0) {
+        // if the program doesn’t have root privileges
         perror("ioctl(TUNSETIFF)");
         close(fd);
         exit(1);
