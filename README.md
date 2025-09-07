@@ -11,4 +11,13 @@ ifconfig
 
 # in mac
 ssh -l <username> <ip from ifconfig>
+
+# in VM, create a new ssh key for github, add in github settings
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/github
+ssh -T git@github.com
+
+git config --global user.name "Your Name"
+git config --global user.email "you@example.com"
 ```
