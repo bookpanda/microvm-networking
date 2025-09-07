@@ -23,5 +23,5 @@ git config --global user.email "you@example.com"
 
 # gcc
 sudo apt update
-sudo apt install build-essential
+sudo apt install build-essential clangd
 ```
