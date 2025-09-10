@@ -1,6 +1,7 @@
 resource "aws_security_group" "sg_firecracker" {
   name        = "sg_firecracker"
   description = "Security group for firecracker EC2 instance"
+  vpc_id      = data.aws_vpc.default.id
 
   ingress {
     from_port   = 22
