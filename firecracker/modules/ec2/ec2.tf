@@ -1,10 +1,9 @@
-
-resource "aws_instance" "wordpress" {
+resource "aws_instance" "firecracker_ec2" {
   ami           = var.ami
   instance_type = var.instance_type
 
-
-  key_name = aws_key_pair.generated_key_pair.key_name
+  security_groups = [aws_security_group.sg_firecracker.id]
+  key_name        = aws_key_pair.generated_key_pair.key_name
   #   user_data = templatefile("${path.module}/install_wordpress.sh", {
   #     DB_NAME        = "${var.database_name}"
   #     DB_USER        = "${var.database_user}"
