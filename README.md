@@ -24,6 +24,9 @@ git config --global user.email "you@example.com"
 # gcc
 sudo apt update
 sudo apt install build-essential clangd
+sudo apt install -y cmake
+sudo apt install -y libseccomp-dev build-essential
+sudo apt install -y cmake clang pkg-config libssl-dev
 
 # rust
 sudo apt install cargo
