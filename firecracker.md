@@ -19,6 +19,7 @@ curl -fsSL -o /tmp/hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/
 
 curl -fsSL -o /tmp/hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
 
+# install go first
 git clone https://github.com/firecracker-microvm/firectl
 cd firectl
 make

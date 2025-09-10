@@ -28,6 +28,14 @@ sudo apt install -y cmake
 sudo apt install -y libseccomp-dev build-essential
 sudo apt install -y cmake clang pkg-config libssl-dev
 
+# go
+wget https://go.dev/dl/go1.23.7.linux-arm64.tar.gz
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xzf go1.23.7.linux-arm64.tar.gz
+echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
+source ~/.bashrc
+go version
+
 # rust
 sudo apt install cargo
 sudo apt install -y curl build-essential
