@@ -24,6 +24,13 @@ git config --global user.email "you@example.com"
 # gcc
 sudo apt update
 sudo apt install build-essential clangd
+
+# rust
+sudo apt install cargo
+sudo apt install -y curl build-essential
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+echo 'source $HOME/.cargo/env' >> ~/.bashrc
+source ~/.bashrc
 ```
 ## Running
 ```bash
