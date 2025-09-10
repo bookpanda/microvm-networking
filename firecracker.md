@@ -11,6 +11,7 @@ curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v
 tar -xzf firecracker-v1.13.1-aarch64.tgz
 mv ./release-v1.13.1-aarch64/firecracker-v1.13.1-aarch64 firecracker
 chmod +x firecracker
+sudo cp firecracker /usr/bin/
 rm -rf firecracker-v1.13.1-aarch64.tgz
 rm -rf release-v1.13.1-aarch64
 
