@@ -10,15 +10,18 @@ git config --global user.email "you@example.com"
 
 # core
 sudo apt update
-sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl
+sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl acl
+
+# let you run Firecracker as your user without needing full sudo
+sudo setfacl -m u:${USER}:rw /dev/kvm
 
 # c
-sudo apt install -y  cmake clangd clang
+sudo apt install -y cmake clangd clang
 
 # go
-wget https://go.dev/dl/go1.23.7.linux-arm64.tar.gz
+wget https://go.dev/dl/go1.23.7.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xzf go1.23.7.linux-arm64.tar.gz
+sudo tar -C /usr/local -xzf go1.23.7.linux-amd64.tar.gz
 echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.bashrc
 source ~/.bashrc
 go version
@@ -39,13 +42,13 @@ cargo build --release --no-default-features
 ```
 ### Option 2: Download pre-compiled binary
 ```bash
-curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v1.13.1/firecracker-v1.13.1-aarch64.tgz
-tar -xzf firecracker-v1.13.1-aarch64.tgz
-mv ./release-v1.13.1-aarch64/firecracker-v1.13.1-aarch64 firecracker
+curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v1.13.1/firecracker-v1.13.1-x86_64.tgz
+tar -xzf firecracker-v1.13.1-x86_64.tgz
+mv ./release-v1.13.1-x86_64/firecracker-v1.13.1-x86_64 firecracker
 chmod +x firecracker
 sudo cp firecracker /usr/bin/
-rm -rf firecracker-v1.13.1-aarch64.tgz
-rm -rf release-v1.13.1-aarch64
+rm -rf firecracker-v1.13.1-x86_64.tgz
+rm -rf release-v1.13.1-x86_64
 ```
 ### Download rootfs, kernel, firectl
 ```bash
