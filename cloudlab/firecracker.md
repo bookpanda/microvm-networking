@@ -21,11 +21,14 @@ ip route add default via 192.168.100.1
 ip link
 ```
 ```bash
+sudo setfacl -m u:${USER}:rw /dev/kvm
+sudo usermod -aG kvm $USER
+
 firectl \
 --kernel=/tmp/hello-vmlinux.bin \
 --root-drive=/tmp/hello-rootfs.ext4 \
---kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off nomodules rw"
---tap-device network.json
+--kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off rw" \
+--tap-device tap0/AA:FC:00:00:00:01
 # ttys0: tty0 for kernel messages + logs to this
 # noapic: disable Advanced Programmable Interrupt Controller
 # reboot=k: Kernel-specific option for how reboot works (typical for microVMs)
