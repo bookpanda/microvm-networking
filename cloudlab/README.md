@@ -30,16 +30,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 echo 'source $HOME/.cargo/env' >> ~/.bashrc
 source ~/.bashrc
 ```
-# Setup Firecracker
 
-## Compile yourself
+# Setup Firecracker
+### Option 1: Compile yourself
 ```bash
 cargo clean
 cargo build --release --no-default-features
 ./target/release/firecracker --no-kvm -n --config-file path/to/config.json
 ```
-
-## Downloads
+### Option 2: Download pre-compiled binary
 ```bash
 curl -LOJ https://github.com/firecracker-microvm/firecracker/releases/download/v1.13.1/firecracker-v1.13.1-aarch64.tgz
 tar -xzf firecracker-v1.13.1-aarch64.tgz
@@ -48,8 +47,9 @@ chmod +x firecracker
 sudo cp firecracker /usr/bin/
 rm -rf firecracker-v1.13.1-aarch64.tgz
 rm -rf release-v1.13.1-aarch64
-
-
+```
+### Download rootfs, kernel, firectl
+```bash
 curl -fsSL -o /tmp/hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
 
 curl -fsSL -o /tmp/hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
