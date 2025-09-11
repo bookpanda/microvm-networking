@@ -10,7 +10,7 @@ git config --global user.email "you@example.com"
 
 # core
 sudo apt update
-sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl acl
+sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl acl sockperf
 
 # let you run Firecracker as your user without needing full sudo
 sudo setfacl -m u:${USER}:rw /dev/kvm
