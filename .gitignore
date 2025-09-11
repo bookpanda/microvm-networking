@@ -1,5 +1,6 @@
 main
 a.out
+local.md
 
 .terraform
 .terraform.lock.hcl
