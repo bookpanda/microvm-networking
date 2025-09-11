@@ -1,8 +1,31 @@
+## Networking
+```bash
+# host
+# create TAP device called "tap0" in mode tap (layer-2)
+sudo ip tuntap add dev tap0 mode tap
+# activate tap0 interface
+sudo ip link set tap0 up
+# add IP address to tap0 interface
+sudo ip addr add 192.168.100.1/24 dev tap0
+# check
+ip link show tap0
+
+# VM
+# activate eth0 interface
+ip link set eth0 up
+# add IP address to eth0 interface
+ip addr add 192.168.100.2/24 dev eth0
+# add default gateway for vm
+ip route add default via 192.168.100.1
+# check
+ip link
+```
 ```bash
 firectl \
 --kernel=/tmp/hello-vmlinux.bin \
 --root-drive=/tmp/hello-rootfs.ext4 \
 --kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off nomodules rw"
+--tap-device network.json
 # ttys0: tty0 for kernel messages + logs to this
 # noapic: disable Advanced Programmable Interrupt Controller
 # reboot=k: Kernel-specific option for how reboot works (typical for microVMs)
