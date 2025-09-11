@@ -38,6 +38,11 @@ firectl \
 # rw: mount the root FS read-write
 
 # user: root, pass: root
+ls -l /usr/local/bin/
+export PATH=$PATH:/usr/local/bin
+sockperf --version
+ldd /usr/local/bin/sockperf
+
 
 # stop
 reboot
