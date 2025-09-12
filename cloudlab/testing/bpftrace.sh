@@ -1,6 +1,13 @@
 #!/bin/bash
 
-FC_PID=119718
+FC_PID=$(pgrep -n firecracker)  # -n = newest instance; adjust if multiple VMs
+
+if [ -z "$FC_PID" ]; then
+    echo "Firecracker PID not found!"
+    exit 1
+fi
+
+echo "Tracing Firecracker PID: $FC_PID"
 
 sudo bpftrace -e "
 BEGIN { printf(\"Tracing network syscalls for Firecracker PID $FC_PID... Ctrl+C to exit\n\"); }
