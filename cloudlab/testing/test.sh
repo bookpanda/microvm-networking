@@ -3,13 +3,14 @@ SERVER_IP=192.168.100.1
 DURATION=30
 PARALLEL=4
 
+# Kill any old iperf3 instances
 sudo pkill iperf3
 sleep 0.5
 
 # -----------------------------
 # Start server suspended
 # -----------------------------
-iperf3 -s &
+iperf3 -s > iperf_server.log 2>&1 &
 SERVER_PID=$!
 sleep 0.1                  # give OS time to start
 kill -STOP $SERVER_PID      # suspend the server
@@ -24,7 +25,7 @@ kill -CONT $SERVER_PID
 # -----------------------------
 # Start client suspended
 # -----------------------------
-iperf3 -c $SERVER_IP -t $DURATION -P $PARALLEL &
+iperf3 -c $SERVER_IP -t $DURATION -P $PARALLEL > iperf_client.log 2>&1 &
 CLIENT_PID=$!
 sleep 0.1
 kill -STOP $CLIENT_PID      # suspend client
@@ -42,3 +43,5 @@ wait $CLIENT_PID
 # stop bpftrace safely
 sudo kill -INT $BPF_CLIENT_PID
 sudo kill -INT $BPF_SERVER_PID
+wait $BPF_CLIENT_PID 2>/dev/null
+wait $BPF_SERVER_PID 2>/dev/null
