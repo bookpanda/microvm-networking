@@ -51,16 +51,33 @@ sudo cp firecracker /usr/bin/
 rm -rf firecracker-v1.13.1-x86_64.tgz
 rm -rf release-v1.13.1-x86_64
 ```
-### Download rootfs, kernel, firectl
+### Firectl
 ```bash
-curl -fsSL -o /tmp/hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
-
-curl -fsSL -o /tmp/hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
-
 # install go first
 git clone https://github.com/firecracker-microvm/firectl
 cd firectl
 make
 sudo cp firectl /usr/bin/
 firectl -h
+```
+### Download rootfs, kernel
+```bash
+# hello kernel, rootfs (can barely do anything)
+curl -fsSL -o /tmp/hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
+
+curl -fsSL -o /tmp/hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
+
+# alpine kernel, rootfs (for testing)
+wget https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-minirootfs-3.22.1-x86_64.tar.gz
+dd if=/dev/zero of=rootfs.ext4 bs=1M count=128
+mkfs.ext4 rootfs.ext4
+
+mkdir mnt
+sudo mount -o loop rootfs.ext4 mnt
+sudo tar -xzf alpine-minirootfs-3.22.1-x86_64.tar.gz -C mnt
+sudo umount mnt
+
+wget https://dl-cdn.alpinelinux.org/alpine/edge/main/x86/linux-virt-6.12.46-r0.apk
+mkdir linux-virt
+tar -xzf linux-virt-6.12.46-r0.apk -C linux-virt
 ```
