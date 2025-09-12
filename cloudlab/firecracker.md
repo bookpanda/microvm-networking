@@ -58,7 +58,7 @@ deb http://archive.debian.org/debian-security stretch/updates main contrib non-f
 echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
 
 apt update
-apt install gcc build-essential cmake git autoconf libtool
+apt install gcc build-essential cmake git autoconf libtool iperf3
 # now go to testing/tests.md in ## Setup in VM section
 
 # stop
