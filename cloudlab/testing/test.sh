@@ -1,5 +1,5 @@
 #!/bin/bash
-SERVER_IP=10.10.1.1
+SERVER_IP=192.168.100.1
 DURATION=5
 PARALLEL=4
 
@@ -12,20 +12,7 @@ sleep 0.1                  # give OS time to start
 kill -STOP $SERVER_PID      # suspend the server
 
 # attach bpftrace to server
-sudo bpftrace -e '
-tracepoint:syscalls:sys_enter_* /pid == '$SERVER_PID'/ {
-    @interval[comm, probe]++;
-    @total[comm, probe]++;
-}
-interval:s:2 {
-    printf("\n--- Server syscall counts (last 2s) ---\n");
-    print(@interval);
-    clear(@interval);
-}
-END { 
-    printf("\n=== Server cumulative syscall counts ===\n"); 
-}
-' > trace_server.log &
+sudo ./trace_server.sh $SERVER_PID &
 BPF_SERVER_PID=$!
 
 # resume server
