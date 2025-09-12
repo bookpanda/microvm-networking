@@ -37,8 +37,8 @@ sudo usermod -aG kvm $USER
 
 MAC="$(cat /sys/class/net/tap0/address)"
 firectl \
---kernel=/tmp/hello-vmlinux.bin \
---root-drive=/tmp/hello-rootfs.ext4 \
+--kernel=/tmp/vmlinux-5.10.223-no-acpi \
+--root-drive=/tmp/debian-rootfs.ext4 \
 --kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off rw" \
 --tap-device tap0/$MAC
 # ttys0: tty0 for kernel messages + logs to this
@@ -73,4 +73,15 @@ ldd /usr/local/bin/sockperf
 
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 /usr/local/bin/sockperf
+
+# hello linux setup (can barely do anything)
+sudo setfacl -m u:${USER}:rw /dev/kvm
+sudo usermod -aG kvm $USER
+
+MAC="$(cat /sys/class/net/tap0/address)"
+firectl \
+--kernel=/tmp/hello-vmlinux.bin \
+--root-drive=/tmp/hello-rootfs.ext4 \
+--kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off rw" \
+--tap-device tap0/$MAC
 ```
