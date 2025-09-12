@@ -1,6 +1,5 @@
-## Networking
+## Host Networking
 ```bash
-# host
 # create TAP device called "tap0" in mode tap (layer-2)
 sudo ip tuntap add dev tap0 mode tap
 # activate tap0 interface
@@ -18,19 +17,9 @@ MAC="$(cat /sys/class/net/tap0/address)"
 
 # check
 ip link show tap0
-
-# VM
-# activate eth0 interface
-ip link set eth0 up
-# add IP address to eth0 interface
-ip addr add 192.168.100.2/24 dev eth0
-# add default gateway for vm
-ip route add default via 192.168.100.1
-# add DNS server to resolv.conf
-echo "nameserver 8.8.8.8" > /etc/resolv.conf
-# check
-ip link
 ```
+
+## VM setup
 ```bash
 sudo setfacl -m u:${USER}:rw /dev/kvm
 sudo usermod -aG kvm $USER
@@ -51,10 +40,32 @@ firectl \
 
 # user: root, pass: root
 
+# activate eth0 interface
+ip link set eth0 up
+# add IP address to eth0 interface
+ip addr add 192.168.100.2/24 dev eth0
+# add default gateway for vm
+ip route add default via 192.168.100.1
+# add DNS server to resolv.conf
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+# check
+ip link
+
+# add debian stretch repo
+echo "deb http://archive.debian.org/debian stretch main contrib non-free
+deb http://archive.debian.org/debian stretch-updates main contrib non-free
+deb http://archive.debian.org/debian-security stretch/updates main contrib non-free" > /etc/apt/sources.list
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+
+apt update
+apt install gcc build-essential cmake git autoconf libtool
+# now go to testing/tests.md in ## Setup in VM section
 
 # stop
 reboot
-
+```
+## Commands
+```bash
 # microVM = process, count them
 ps aux | grep firecracker
 ps aux | grep firecracker | grep -v grep | wc -l

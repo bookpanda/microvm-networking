@@ -10,18 +10,20 @@ iperf3 -c 192.168.100.1 -t 30 -P 4
 # Latency
 ## Setup in VM
 ```bash
-wget https://github.com/Mellanox/sockperf/archive/refs/tags/3.10.tar.gz
-
-
+git clone https://github.com/Mellanox/sockperf.git
+cd sockperf
+./autogen.sh
+./configure
+make
+./sockperf server -i 192.168.100.2
 ```
 ## Testing
 ```bash
-# host
-sockperf server -i 192.168.100.2
+# host: send 64-byte messages for 30s
 sockperf ping-pong -i 192.168.100.2 -m 64 -t 30
 
-# vm: 30s, 64-byte messages
-sockperf ping-pong -i 192.168.100.1 -m 64 -t 30
+# vm: act as server
+sockperf server -i 192.168.100.2
 ```
 
 ## Latency old Setup
