@@ -1,7 +1,3 @@
-# Specs
-- hello-vmlinux.bin (21MB)
-- hello-rootfs.ext4 (2.1GB)
-
 # Throughput
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - -

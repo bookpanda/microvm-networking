@@ -1,7 +1,3 @@
-# Specs
-- vmlinux-5.10.223-no-acpi (36MB)
-- debian-rootfs.ext4 (1000MB)
-
 # Throughput
 ## VM as server responding to bulk data from a host or another VM
 ```bash
