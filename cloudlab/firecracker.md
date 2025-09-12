@@ -90,6 +90,10 @@ sudo ip addr flush dev tap1
 sudo ip link set tap0 up
 sudo ip link set tap1 up
 
+# Allows all packets between any interfaces on br0, i.e., tap0 ↔ tap1
+sudo iptables -I FORWARD 1 -i br0 -o br0 -j ACCEPT
+sudo iptables -L -v -n
+
 MAC1=$(cat /sys/class/net/tap1/address)
 firectl \
 --kernel=/tmp/vmlinux-5.10.223-no-acpi \
