@@ -74,6 +74,40 @@ ps aux | grep firecracker | grep -v grep | wc -l
 ps aux | grep firecracker | grep -v grep | awk '{print $2}' | xargs kill -9
 
 ```
+## Second VM
+```bash
+sudo ip tuntap add dev tap1 mode tap
+sudo ip link set tap1 up
+
+sudo brctl addbr br0
+sudo brctl addif br0 tap0
+sudo brctl addif br0 tap1
+sudo ip link set br0 up
+sudo ip addr add 192.168.100.1/24 dev br0
+
+sudo ip addr flush dev tap0
+sudo ip addr flush dev tap1
+sudo ip link set tap0 up
+sudo ip link set tap1 up
+
+MAC1=$(cat /sys/class/net/tap1/address)
+firectl \
+--kernel=/tmp/vmlinux-5.10.223-no-acpi \
+--root-drive=/tmp/debian-rootfs.ext4 \
+--kernel-opts="console=ttyS0 noapic reboot=k panic=1 pci=off rw" \
+--tap-device tap1/$MAC1
+
+ip link set eth0 up
+# add IP address to eth0 interface
+ip addr add 192.168.100.3/24 dev eth0
+# add default gateway for vm
+ip route add default via 192.168.100.1
+# add DNS server to resolv.conf
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+# check
+ip link
+ip addr
+```
 
 unused
 ```bash
