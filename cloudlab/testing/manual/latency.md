@@ -31,9 +31,9 @@ make -j$(nproc)
 sudo make install
 
 # increase FS size
-truncate -s +2G /tmp/hello-rootfs.ext4
-sudo e2fsck -f /tmp/hello-rootfs.ext4
-sudo resize2fs /tmp/hello-rootfs.ext4
+truncate -s +2G /tmp/debian-rootfs.ext4
+sudo e2fsck -f /tmp/debian-rootfs.ext4
+sudo resize2fs /tmp/debian-rootfs.ext4
 
 # mount sockperf to FS
 mkdir -p /tmp/sockperf-libs
