@@ -84,7 +84,6 @@ echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-vali
 
 apt update
 apt install gcc build-essential cmake git autoconf libtool iperf3
-apt install iputils-arping netcat-traditional
 # now go to testing/tests.md in ## Setup in VM section
 
 # stop
