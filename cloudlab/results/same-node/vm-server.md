@@ -2,6 +2,7 @@
 ## VM as server responding to bulk data from a host or another VM
 ```bash
 # host
+./bpftrace.sh
 iperf3 -c 192.168.100.2 -t 30 -P 4
 # vm
 iperf3 -s
@@ -31,6 +32,7 @@ iperf3 -s
 ## VM as server responding to host-sent small requests.
 ```bash
 # host
+./bpftrace.sh
 sockperf ping-pong -i 192.168.100.2 -m 64 -t 30
 # vm
 ./sockperf server -i 192.168.100.2
