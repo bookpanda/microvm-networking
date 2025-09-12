@@ -2,7 +2,6 @@
 ## VM as server responding to bulk data from a host
 ```bash
 # host
-./bpftrace.sh
 iperf3 -c 192.168.100.2 -t 30 -P 4
 # vm
 iperf3 -s
@@ -21,7 +20,7 @@ iperf3 -s
 [SUM]   0.00-30.00  sec  61.0 GBytes  17.5 Gbits/sec    0             sender
 [SUM]   0.00-30.00  sec  61.0 GBytes  17.5 Gbits/sec                  receiver
 ```
-### Syscalls
+### Syscalls on microVM process
 ```
 @total[fc_vcpu 0, write]: 15131
 @total[firecracker, read]: 198492
@@ -32,7 +31,6 @@ iperf3 -s
 ## VM as server responding to host-sent small requests
 ```bash
 # host
-./bpftrace.sh
 sockperf ping-pong -i 192.168.100.2 -m 64 -t 30
 # vm
 ./sockperf server -i 192.168.100.2
@@ -55,7 +53,7 @@ sockperf: ---> percentile 50.000 =   65.509
 sockperf: ---> percentile 25.000 =   61.966
 sockperf: ---> <MIN> observation =   40.071
 ```
-### Syscalls
+### Syscalls on microVM process
 ```
 @total[firecracker, read]: 224897
 @total[firecracker, write]: 436562

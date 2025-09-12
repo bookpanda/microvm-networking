@@ -1,97 +1,94 @@
 Attaching 359 probes...
-Tracing network syscalls for PID 201087...
+Tracing network syscalls for PID 211567...
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 285180
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 285581
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 295793
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 296012
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 330030
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 615601
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 308240
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 603546
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 291845
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 292035
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 308488
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 308913
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_write]: 1
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 303833
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 304324
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 307196
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 307266
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 292598
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 293067
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 304109
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 304115
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 294687
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 294744
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 298845
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 299207
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 301760
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 301843
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 333380
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 334112
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 306503
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 306602
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 335541
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 335817
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_write]: 1
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 318531
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 318553
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 300230
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 300272
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 304214
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 304933
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 292448
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 292957
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 283980
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 284114
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 269813
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 269870
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 316611
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 316642
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 316075
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 316113
 
 --- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 287750
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 604366
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 288868
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 288868
 
 --- syscall counts (last 2s) ---
-@interval[iperf3, tracepoint:syscalls:sys_enter_clock_gettime]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
+@interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 287341
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 287478
+
+--- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_socket]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_mprotect]: 1
 @interval[iperf3, tracepoint:syscalls:sys_enter_bind]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_rt_sigaction]: 1
+@interval[iperf3, tracepoint:syscalls:sys_enter_clock_gettime]: 1
 @interval[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_openat]: 2
-@interval[iperf3, tracepoint:syscalls:sys_enter_newfstat]: 2
+@interval[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
 @interval[iperf3, tracepoint:syscalls:sys_enter_setsockopt]: 2
+@interval[iperf3, tracepoint:syscalls:sys_enter_madvise]: 3
 @interval[iperf3, tracepoint:syscalls:sys_enter_exit]: 3
-@interval[iperf3, tracepoint:syscalls:sys_enter_madvise]: 4
-@interval[iperf3, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 4
-@interval[iperf3, tracepoint:syscalls:sys_enter_munmap]: 5
-@interval[iperf3, tracepoint:syscalls:sys_enter_mmap]: 5
+@interval[iperf3, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 3
+@interval[iperf3, tracepoint:syscalls:sys_enter_munmap]: 4
 @interval[iperf3, tracepoint:syscalls:sys_enter_write]: 6
-@interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 12
-@interval[iperf3, tracepoint:syscalls:sys_enter_close]: 16
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 229264
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 229514
-
---- syscall counts (last 2s) ---
-
+@interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
+@interval[iperf3, tracepoint:syscalls:sys_enter_close]: 14
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 15291
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 15316
 
 --- syscall counts (last 2s) ---
 
@@ -121,23 +118,18 @@ Tracing network syscalls for PID 201087...
 
 
 
-@total[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
+@total[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_bind]: 1
-@total[iperf3, tracepoint:syscalls:sys_enter_rt_sigaction]: 1
-@total[iperf3, tracepoint:syscalls:sys_enter_mprotect]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_clock_gettime]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_socket]: 1
-@total[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
-@total[iperf3, tracepoint:syscalls:sys_enter_newfstat]: 2
+@total[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_setsockopt]: 2
-@total[iperf3, tracepoint:syscalls:sys_enter_openat]: 2
+@total[iperf3, tracepoint:syscalls:sys_enter_madvise]: 3
+@total[iperf3, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 3
 @total[iperf3, tracepoint:syscalls:sys_enter_exit]: 3
-@total[iperf3, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 4
-@total[iperf3, tracepoint:syscalls:sys_enter_madvise]: 4
-@total[iperf3, tracepoint:syscalls:sys_enter_munmap]: 5
-@total[iperf3, tracepoint:syscalls:sys_enter_mmap]: 5
+@total[iperf3, tracepoint:syscalls:sys_enter_munmap]: 4
 @total[iperf3, tracepoint:syscalls:sys_enter_write]: 8
-@total[iperf3, tracepoint:syscalls:sys_enter_close]: 16
-@total[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 116
-@total[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 4206745
-@total[iperf3, tracepoint:syscalls:sys_enter_read]: 4215585
+@total[iperf3, tracepoint:syscalls:sys_enter_close]: 14
+@total[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 120
+@total[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 4320638
+@total[iperf3, tracepoint:syscalls:sys_enter_read]: 4328355
