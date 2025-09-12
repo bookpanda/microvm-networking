@@ -5,6 +5,7 @@ Since macbooks don't have KVM support, need to use a baremetal server to run Fir
 - use [cloudlab.us](https://cloudlab.us) m510
 
 ### m510 (BM) Specs
+- [Cloudlab specs](https://docs.cloudlab.us/hardware.html)
 - CPU: Eight-core Intel Xeon D-1548 at 2.0 GHz
 - RAM: 64GB ECC Memory (4x 16 GB DDR4-2133 SO-DIMMs)
 - Disk: 256 GB NVMe flash storage
