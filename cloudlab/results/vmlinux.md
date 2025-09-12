@@ -17,6 +17,12 @@
 [SUM]   0.00-30.00  sec  57.2 GBytes  16.4 Gbits/sec    0             sender
 [SUM]   0.00-30.00  sec  57.2 GBytes  16.4 Gbits/sec                  receiver
 ```
+## Syscalls
+```
+@[fc_vcpu 0, write]: 15732
+@[firecracker, read]: 27762
+@[firecracker, write]: 34796
+```
 
 # Latency
 ```
@@ -32,4 +38,10 @@ sockperf: ---> percentile 75.000 =   74.059
 sockperf: ---> percentile 50.000 =   67.161
 sockperf: ---> percentile 25.000 =   61.182
 sockperf: ---> <MIN> observation =   39.109
+```
+## Syscalls
+```
+@[fc_vcpu 0, write]: 1277
+@[firecracker, read]: 227399
+@[firecracker, write]: 441177
 ```

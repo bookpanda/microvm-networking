@@ -14,7 +14,7 @@ make
 sockperf ping-pong -i 192.168.100.2 -m 64 -t 30
 
 # vm: act as server
-sockperf server -i 192.168.100.2
+./sockperf server -i 192.168.100.2
 ```
 
 ## Latency old Setup
