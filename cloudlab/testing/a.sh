@@ -1,30 +1,67 @@
 #!/bin/bash
-SERVER_IP=192.168.100.1
+SERVER_IP=10.10.1.1
 DURATION=5
 PARALLEL=4
 
-# Start bpftrace first
+# -----------------------------
+# Start server suspended
+# -----------------------------
+iperf3 -s &
+SERVER_PID=$!
+sleep 0.1                  # give OS time to start
+kill -STOP $SERVER_PID      # suspend the server
+
+# attach bpftrace to server
 sudo bpftrace -e '
-tracepoint:syscalls:sys_enter_* /comm == "iperf3" && argv[1] == "-c"/ {
+tracepoint:syscalls:sys_enter_* /pid == '$SERVER_PID'/ {
     @interval[comm, probe]++;
     @total[comm, probe]++;
 }
 interval:s:2 {
-    printf("\n--- Syscall counts (last 2s) ---\n");
+    printf("\n--- Server syscall counts (last 2s) ---\n");
     print(@interval);
     clear(@interval);
 }
-END {
-    printf("\n=== Cumulative syscall counts ===\n");
+END { 
+    printf("\n=== Server cumulative syscall counts ===\n"); 
 }
-' > trace.log &
-BPF_PID=$!
+' > trace_server.log &
+BPF_SERVER_PID=$!
 
-# Give bpftrace time to attach
-sleep 1
+# resume server
+kill -CONT $SERVER_PID
 
-# Now run iperf3
-iperf3 -c $SERVER_IP -t $DURATION -P $PARALLEL
+# -----------------------------
+# Start client suspended
+# -----------------------------
+iperf3 -c $SERVER_IP -t $DURATION -P $PARALLEL &
+CLIENT_PID=$!
+sleep 0.1
+kill -STOP $CLIENT_PID      # suspend client
 
-# Stop bpftrace after iperf3 ends
-kill -INT $BPF_PID
+# attach bpftrace to client
+sudo bpftrace -e '
+tracepoint:syscalls:sys_enter_* /pid == '$CLIENT_PID'/ {
+    @interval[comm, probe]++;
+    @total[comm, probe]++;
+}
+interval:s:2 {
+    printf("\n--- Client syscall counts (last 2s) ---\n");
+    print(@interval);
+    clear(@interval);
+}
+END { 
+    printf("\n=== Client cumulative syscall counts ===\n"); 
+}
+' > trace_client.log &
+BPF_CLIENT_PID=$!
+
+# Resume client
+kill -CONT $CLIENT_PID
+
+# wait for client to finish
+wait $CLIENT_PID
+
+# stop bpftrace safely
+sudo kill -INT $BPF_CLIENT_PID
+sudo kill -INT $BPF_SERVER_PID
