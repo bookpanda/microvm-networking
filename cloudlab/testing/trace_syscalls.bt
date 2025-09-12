@@ -1,0 +1,17 @@
+#!/usr/bin/env bpftrace
+
+tracepoint:syscalls:sys_enter_* /pid == PID/ {
+    @interval[comm, probe]++;
+    @total[comm, probe]++;
+}
+
+interval:s:2 {
+    printf("\n--- Server syscall counts (last 2s) ---\n");
+    print(@interval);
+    clear(@interval);
+}
+
+END {
+    printf("\n=== Server cumulative syscall counts ===\n");
+    print(@total);
+}
