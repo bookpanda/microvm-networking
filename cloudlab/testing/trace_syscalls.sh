@@ -8,18 +8,28 @@ else
     exit 1
 fi
 
+if [ -n "$2" ]; then
+    LOG_FILE="$2"
+    echo "Logging to: $LOG_FILE"
+else
+    echo "LOG_FILE not found!"
+    exit 1
+fi
+
 sudo bpftrace -e '
+BEGIN { printf("Tracing network syscalls for PID '$PID'...\n"); }
+
 tracepoint:syscalls:sys_enter_* /pid == '$PID'/ {
     @interval[comm, probe]++;
     @total[comm, probe]++;
 }
 
 interval:s:2 {
-    printf("\n--- Server syscall counts (last 2s) ---\n");
+    printf("\n--- syscall counts (last 2s) ---\n");
     print(@interval);
     clear(@interval);
 }
 END { 
-    printf("\n=== Server cumulative syscall counts ===\n"); 
+    printf("\n=== cumulative syscall counts ===\n"); 
 }
-' | tee trace_server.log
+' | tee $LOG_FILE

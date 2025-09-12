@@ -1,68 +1,69 @@
-Attaching 358 probes...
+Attaching 359 probes...
+Tracing network syscalls for PID 198687...
 
---- Server syscall counts (last 2s) ---
-@interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
+--- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_write]: 12
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 322669
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 322955
+@interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 12
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 293219
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 293901
 
---- Server syscall counts (last 2s) ---
-@interval[iperf3, tracepoint:syscalls:sys_enter_socket]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_bind]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
-@interval[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
+--- syscall counts (last 2s) ---
 @interval[iperf3, tracepoint:syscalls:sys_enter_clock_gettime]: 1
+@interval[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
+@interval[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
+@interval[iperf3, tracepoint:syscalls:sys_enter_bind]: 1
+@interval[iperf3, tracepoint:syscalls:sys_enter_socket]: 1
 @interval[iperf3, tracepoint:syscalls:sys_enter_setsockopt]: 2
 @interval[iperf3, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 4
-@interval[iperf3, tracepoint:syscalls:sys_enter_exit]: 4
-@interval[iperf3, tracepoint:syscalls:sys_enter_munmap]: 4
 @interval[iperf3, tracepoint:syscalls:sys_enter_madvise]: 4
+@interval[iperf3, tracepoint:syscalls:sys_enter_munmap]: 4
+@interval[iperf3, tracepoint:syscalls:sys_enter_exit]: 4
 @interval[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 8
 @interval[iperf3, tracepoint:syscalls:sys_enter_close]: 14
 @interval[iperf3, tracepoint:syscalls:sys_enter_write]: 26
-@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 48398
-@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 48477
+@interval[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 129487
+@interval[iperf3, tracepoint:syscalls:sys_enter_read]: 129958
 
---- Server syscall counts (last 2s) ---
-
-
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
---- Server syscall counts (last 2s) ---
+--- syscall counts (last 2s) ---
 
 
-=== Server cumulative syscall counts ===
+--- syscall counts (last 2s) ---
+
+
+=== cumulative syscall counts ===
 
 
 
-@total[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
-@total[iperf3, tracepoint:syscalls:sys_enter_clock_gettime]: 1
-@total[iperf3, tracepoint:syscalls:sys_enter_socket]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_getrusage]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_bind]: 1
+@total[iperf3, tracepoint:syscalls:sys_enter_socket]: 1
+@total[iperf3, tracepoint:syscalls:sys_enter_listen]: 1
+@total[iperf3, tracepoint:syscalls:sys_enter_clock_gettime]: 1
 @total[iperf3, tracepoint:syscalls:sys_enter_setsockopt]: 2
-@total[iperf3, tracepoint:syscalls:sys_enter_madvise]: 4
 @total[iperf3, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 4
-@total[iperf3, tracepoint:syscalls:sys_enter_munmap]: 4
+@total[iperf3, tracepoint:syscalls:sys_enter_madvise]: 4
 @total[iperf3, tracepoint:syscalls:sys_enter_exit]: 4
+@total[iperf3, tracepoint:syscalls:sys_enter_munmap]: 4
 @total[iperf3, tracepoint:syscalls:sys_enter_close]: 14
-@total[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 16
+@total[iperf3, tracepoint:syscalls:sys_enter_getsockopt]: 20
 @total[iperf3, tracepoint:syscalls:sys_enter_write]: 38
-@total[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 376881
-@total[iperf3, tracepoint:syscalls:sys_enter_read]: 377129
+@total[iperf3, tracepoint:syscalls:sys_enter_pselect6]: 428960
+@total[iperf3, tracepoint:syscalls:sys_enter_read]: 430557
