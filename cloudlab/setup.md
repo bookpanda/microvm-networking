@@ -61,13 +61,23 @@ sudo cp firectl /usr/bin/
 firectl -h
 ```
 ### Download rootfs, kernel
+- Firecracker repo: http://spec.ccfc.min.s3.amazonaws.com/
+- Alpine repo: https://dl-cdn.alpinelinux.org/alpine/
+
 ```bash
+# linux kernel (for testing)
+curl -fsSL -o /tmp/vmlinux-5.10.223-no-acpi http://spec.ccfc.min.s3.amazonaws.com/firecracker-ci/v1.10/x86_64/vmlinux-5.10.223-no-acpi
+
+curl -fsSL -o /tmp/debian-rootfs.ext4 http://spec.ccfc.min.s3.amazonaws.com/ci-artifacts/disks/x86_64/debian.rootfs.ext4
+
+
 # hello kernel, rootfs (can barely do anything)
 curl -fsSL -o /tmp/hello-vmlinux.bin https://s3.amazonaws.com/spec.ccfc.min/img/hello/kernel/hello-vmlinux.bin
 
 curl -fsSL -o /tmp/hello-rootfs.ext4 https://s3.amazonaws.com/spec.ccfc.min/img/hello/fsfiles/hello-rootfs.ext4
 
-# alpine kernel, rootfs (for testing)
+
+# alpine kernel, rootfs (doesn't work yet)
 wget https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-minirootfs-3.22.1-x86_64.tar.gz
 dd if=/dev/zero of=rootfs.ext4 bs=1M count=128
 mkfs.ext4 rootfs.ext4
@@ -76,8 +86,12 @@ mkdir mnt
 sudo mount -o loop rootfs.ext4 mnt
 sudo tar -xzf alpine-minirootfs-3.22.1-x86_64.tar.gz -C mnt
 sudo umount mnt
+cp rootfs.ext4 /tmp/alpine-rootfs.ext4
 
 wget https://dl-cdn.alpinelinux.org/alpine/edge/main/x86/linux-virt-6.12.46-r0.apk
 mkdir linux-virt
 tar -xzf linux-virt-6.12.46-r0.apk -C linux-virt
+cp linux-virt/boot/vmlinuz-virt /tmp/alpine-vmlinux
+
+# wget https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-virt-3.22.1-x86_64.iso
 ```
