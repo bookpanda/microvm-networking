@@ -3,6 +3,12 @@
 - debian-rootfs.ext4 (1000MB)
 
 # Throughput
+```bash
+# host
+iperf3 -s
+# vm
+iperf3 -c 192.168.100.1 -t 30 -P 4
+```
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - -
 [ ID] Interval           Transfer     Bandwidth       Retr
@@ -19,12 +25,18 @@
 ```
 ## Syscalls
 ```
-@[fc_vcpu 0, write]: 15732
-@[firecracker, read]: 27762
-@[firecracker, write]: 34796
+@total[fc_vcpu 0, write]: 15664
+@total[firecracker, read]: 27836
+@total[firecracker, write]: 35355
 ```
 
 # Latency
+```bash
+# host
+sockperf ping-pong -i 192.168.100.2 -m 64 -t 30
+# vm
+./sockperf server -i 192.168.100.2
+```
 ```
 sockperf: Summary: Latency is 68.964 usec
 sockperf: Total 212210 observations; each percentile contains 2122.10 observations
@@ -41,7 +53,6 @@ sockperf: ---> <MIN> observation =   39.109
 ```
 ## Syscalls
 ```
-@[fc_vcpu 0, write]: 1277
-@[firecracker, read]: 227399
-@[firecracker, write]: 441177
+@total[firecracker, read]: 230037
+@total[firecracker, write]: 446541
 ```
