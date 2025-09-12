@@ -1,5 +1,5 @@
 # Throughput
-## VM as client sending bulk data to a host or another VM
+## VM as client sending bulk data to a host
 ```bash
 # host
 ./bpftrace.sh
@@ -29,7 +29,7 @@ iperf3 -c 192.168.100.1 -t 30 -P 4
 ```
 
 # Latency
-## VM as client sending small requests to a host or another VM
+## VM as client sending small requests to a host
 ```bash
 # host
 ./bpftrace.sh

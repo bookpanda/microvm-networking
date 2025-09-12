@@ -1,5 +1,5 @@
 # Throughput
-## VM as server responding to bulk data from a host or another VM
+## VM as server responding to bulk data from a host
 ```bash
 # host
 ./bpftrace.sh
@@ -29,7 +29,7 @@ iperf3 -s
 ```
 
 # Latency
-## VM as server responding to host-sent small requests.
+## VM as server responding to host-sent small requests
 ```bash
 # host
 ./bpftrace.sh
