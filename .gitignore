@@ -10,3 +10,4 @@ terraform.tfstate.backup
 *.pem
 tfplan
 vm-experiment-logs
+vm-logs

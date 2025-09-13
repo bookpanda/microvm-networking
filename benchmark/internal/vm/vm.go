@@ -125,6 +125,11 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 	macAddr := fmt.Sprintf("AA:FC:00:00:00:%02X", vmIndex+1)
 	tapName := fmt.Sprintf("tap%d", vmIndex)
 
+	logDir := "./vm-logs"
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create log directory: %v", err)
+	}
+
 	cfg := firecracker.Config{
 		SocketPath:      socketPath,
 		KernelImagePath: kernelPath,
@@ -159,16 +164,16 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		},
 		ForwardSignals: []os.Signal{},
 		LogLevel:       "Debug",
-		LogPath:        filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.log", vmIndex)),
-		MetricsPath:    filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d-metrics", vmIndex)),
+		LogPath:        filepath.Join(logDir, fmt.Sprintf("firecracker-%d.log", vmIndex)),
+		MetricsPath:    filepath.Join(logDir, fmt.Sprintf("firecracker-%d-metrics", vmIndex)),
 	}
 
-	stdoutFile, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.stdout", vmIndex)))
+	stdoutFile, err := os.Create(filepath.Join(logDir, fmt.Sprintf("firecracker-%d.stdout", vmIndex)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create stdout file: %v", err)
 	}
 
-	stderrFile, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.stderr", vmIndex)))
+	stderrFile, err := os.Create(filepath.Join(logDir, fmt.Sprintf("firecracker-%d.stderr", vmIndex)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create stderr file: %v", err)
 	}
