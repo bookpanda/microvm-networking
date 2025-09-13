@@ -6,7 +6,12 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
 
 	"github.com/firecracker-microvm/firecracker-go-sdk"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
@@ -52,12 +57,63 @@ func (v *SimplifiedVM) Start(ctx context.Context) error {
 
 func (v *SimplifiedVM) Stop(ctx context.Context) error {
 	if err := v.Machine.Shutdown(ctx); err != nil {
-		return fmt.Errorf("failed to stop machine: %v", err)
+		log.Printf("Graceful shutdown failed for VM %s: %v", v.VMID, err)
 	}
 
-	if err := os.Remove(v.Socket); err != nil {
+	// wait a bit for graceful shutdown to complete
+	time.Sleep(2 * time.Second)
+
+	if err := v.killFirecrackerProcess(); err != nil {
+		log.Printf("Failed to kill Firecracker process for VM %s: %v", v.VMID, err)
+	}
+
+	// clean up socket file
+	if err := os.Remove(v.Socket); err != nil && !os.IsNotExist(err) {
 		log.Printf("failed to remove socket file: %v", err)
 	}
+	return nil
+}
+
+func (v *SimplifiedVM) killFirecrackerProcess() error {
+	cmd := exec.Command("ps", "aux")
+	output, err := cmd.Output()
+	if err != nil {
+		return fmt.Errorf("failed to list processes: %v", err)
+	}
+
+	lines := strings.Split(string(output), "\n")
+	for _, line := range lines {
+		if strings.Contains(line, "firecracker") && strings.Contains(line, v.Socket) {
+			// extract PID (second column in ps aux output)
+			fields := strings.Fields(line)
+			if len(fields) < 2 {
+				continue
+			}
+
+			pid, err := strconv.Atoi(fields[1])
+			if err != nil {
+				log.Printf("Failed to parse PID from line: %s", line)
+				continue
+			}
+
+			log.Printf("Killing Firecracker process PID %d for VM %s", pid, v.VMID)
+
+			// First try SIGTERM
+			if err := syscall.Kill(pid, syscall.SIGTERM); err != nil {
+				log.Printf("SIGTERM failed for PID %d: %v", pid, err)
+
+				// If SIGTERM fails, try SIGKILL
+				if err := syscall.Kill(pid, syscall.SIGKILL); err != nil {
+					log.Printf("SIGKILL failed for PID %d: %v", pid, err)
+					return fmt.Errorf("failed to kill process %d: %v", pid, err)
+				}
+			}
+
+			// wait a moment for the process to die
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
+
 	return nil
 }
 
