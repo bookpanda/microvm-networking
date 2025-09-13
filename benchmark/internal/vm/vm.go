@@ -13,7 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bookpanda/microvm-networking/benchmark/internal/filesystem"
 	"github.com/firecracker-microvm/firecracker-go-sdk"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
 )
@@ -128,9 +127,6 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 	tapName := fmt.Sprintf("tap%d", vmIndex)
 
 	logDir := "./vm-logs"
-	if err := filesystem.GetEmptyLogDir(logDir); err != nil {
-		return nil, fmt.Errorf("failed to create log directory: %v", err)
-	}
 
 	cfg := firecracker.Config{
 		SocketPath:      socketPath,
