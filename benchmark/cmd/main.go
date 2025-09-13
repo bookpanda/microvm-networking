@@ -65,7 +65,7 @@ func main() {
 	// kill sends SIGTERM to the process PID
 	log.Println("To stop the VMs, run: kill $(cat /tmp/firecracker.pid)")
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(5 * time.Second)
 	if err := experiment.RunVMVMBenchmark(ctx, manager); err != nil {
 		log.Fatalf("Failed to run VM VM benchmark: %v", err)
 	}

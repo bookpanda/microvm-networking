@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
@@ -39,12 +40,15 @@ func NewVMVMExperiment(manager *vm.Manager) *VMVMExperiment {
 
 func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 	experiment := NewVMVMExperiment(manager)
+	log.Println("Preparing servers...")
 	if err := experiment.prepareServers(); err != nil {
 		return fmt.Errorf("failed to prepare servers: %v", err)
 	}
+	log.Println("Tracking syscalls...")
 	if err := experiment.trackSyscalls(); err != nil {
 		return fmt.Errorf("failed to track syscalls: %v", err)
 	}
+	log.Println("Starting clients...")
 	if err := experiment.startClients(); err != nil {
 		return fmt.Errorf("failed to start clients: %v", err)
 	}
@@ -54,12 +58,18 @@ func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 
 func (e *VMVMExperiment) prepareServers() error {
 	for _, pair := range e.SCPairs {
-		cmd := exec.Command("sshpass", "-p", "root", "ssh", "root@"+pair.Server.IP, "iperf3", "-s")
-		err := cmd.Run()
+		cmd := exec.Command("sshpass", "-p", "root", "ssh", "root@"+pair.Server.IP, "nohup iperf3 -s > iperf_server.log 2>&1 &")
+		err := cmd.Start()
 		if err != nil {
-			return fmt.Errorf("failed to execute commands via SSH: %v", err)
+			return fmt.Errorf("failed to start iperf3 server via SSH: %v", err)
 		}
+		log.Printf("Started iperf3 server on VM %s", pair.Server.IP)
 	}
+
+	// Wait for servers to start up
+	log.Println("Waiting for servers to start...")
+	time.Sleep(3 * time.Second)
+
 	return nil
 }
 
@@ -74,8 +84,8 @@ func (e *VMVMExperiment) trackSyscalls() error {
 			return fmt.Errorf("failed to get client PID: %v", err)
 		}
 
-		runTraceSyscallsScript(serverPID, fmt.Sprintf("server-%s.log", pair.Server.IP))
-		runTraceSyscallsScript(clientPID, fmt.Sprintf("client-%s.log", pair.Client.IP))
+		runTraceSyscallsScript(serverPID, fmt.Sprintf("/tmp/server-%s.log", pair.Server.IP))
+		runTraceSyscallsScript(clientPID, fmt.Sprintf("/tmp/client-%s.log", pair.Client.IP))
 	}
 	return nil
 }
@@ -83,11 +93,12 @@ func (e *VMVMExperiment) trackSyscalls() error {
 func (e *VMVMExperiment) startClients() error {
 	for _, pair := range e.SCPairs {
 		cmd := exec.Command("sshpass", "-p", "root", "ssh", "root@"+pair.Client.IP,
-			"iperf3", "-c", pair.Server.IP, "-t", "30", "-P", "4")
+			"iperf3 -c "+pair.Server.IP+" -t 10 -P 4 > iperf_client.log 2>&1")
 		err := cmd.Run()
 		if err != nil {
-			return fmt.Errorf("failed to execute commands via SSH: %v", err)
+			return fmt.Errorf("failed to execute iperf3 client via SSH: %v", err)
 		}
+		log.Printf("Completed iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
 	}
 	return nil
 }
