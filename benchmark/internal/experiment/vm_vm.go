@@ -1,10 +1,14 @@
 package experiment
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/vm"
@@ -16,12 +20,21 @@ type SCPair struct {
 }
 
 type VMVMExperiment struct {
-	SCPairs []*SCPair
+	SCPairs    []*SCPair
+	LogDir     string
+	cancelFunc context.CancelFunc
+	wg         sync.WaitGroup
 }
 
-func NewVMVMExperiment(manager *vm.Manager) *VMVMExperiment {
+func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
+	logDir := "./vm-experiment-logs"
+	if err := os.MkdirAll(logDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create log directory: %v", err)
+	}
+
 	experiment := &VMVMExperiment{
 		SCPairs: make([]*SCPair, 0),
+		LogDir:  logDir,
 	}
 
 	pair := &SCPair{}
@@ -35,13 +48,24 @@ func NewVMVMExperiment(manager *vm.Manager) *VMVMExperiment {
 		}
 	}
 
-	return experiment
+	return experiment, nil
 }
 
 func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
-	experiment := NewVMVMExperiment(manager)
+	experiment, err := NewVMVMExperiment(manager)
+	if err != nil {
+		return fmt.Errorf("failed to create experiment: %v", err)
+	}
+
+	// Set up cancellation context for log capture
+	logCtx, cancel := context.WithCancel(ctx)
+	experiment.cancelFunc = cancel
+	defer experiment.Cleanup()
+
+	log.Printf("Experiment logs will be saved to: %s", experiment.LogDir)
+
 	log.Println("Preparing servers...")
-	if err := experiment.prepareServers(); err != nil {
+	if err := experiment.prepareServers(logCtx); err != nil {
 		return fmt.Errorf("failed to prepare servers: %v", err)
 	}
 	log.Println("Tracking syscalls...")
@@ -49,24 +73,82 @@ func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 		return fmt.Errorf("failed to track syscalls: %v", err)
 	}
 	log.Println("Starting clients...")
-	if err := experiment.startClients(); err != nil {
+	if err := experiment.startClients(logCtx); err != nil {
 		return fmt.Errorf("failed to start clients: %v", err)
 	}
+
+	log.Println("Waiting for log capture to complete...")
+	experiment.wg.Wait()
 
 	return nil
 }
 
-func (e *VMVMExperiment) prepareServers() error {
-	for _, pair := range e.SCPairs {
-		cmd := exec.Command("sshpass", "-p", "root", "ssh", "root@"+pair.Server.IP, "nohup iperf3 -s > iperf_server.log 2>&1 &")
-		err := cmd.Start()
-		if err != nil {
-			return fmt.Errorf("failed to start iperf3 server via SSH: %v", err)
-		}
-		log.Printf("Started iperf3 server on VM %s", pair.Server.IP)
+func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command, logFileName string) error {
+	logPath := filepath.Join(e.LogDir, logFileName)
+	logFile, err := os.Create(logPath)
+	if err != nil {
+		return fmt.Errorf("failed to create log file %s: %v", logPath, err)
 	}
 
-	// Wait for servers to start up
+	e.wg.Add(1)
+	go func() {
+		defer e.wg.Done()
+		defer logFile.Close()
+
+		cmd := exec.CommandContext(ctx, "sshpass", "-p", "root", "ssh",
+			"-o", "ConnectTimeout=5", "-o", "StrictHostKeyChecking=no",
+			"root@"+vmIP, command)
+
+		stdout, err := cmd.StdoutPipe()
+		if err != nil {
+			log.Printf("Failed to create stdout pipe for %s: %v", vmIP, err)
+			return
+		}
+
+		stderr, err := cmd.StderrPipe()
+		if err != nil {
+			log.Printf("Failed to create stderr pipe for %s: %v", vmIP, err)
+			return
+		}
+
+		if err := cmd.Start(); err != nil {
+			log.Printf("Failed to start command on %s: %v", vmIP, err)
+			return
+		}
+
+		go func() {
+			scanner := bufio.NewScanner(stdout)
+			for scanner.Scan() {
+				logFile.WriteString(fmt.Sprintf("[STDOUT] %s\n", scanner.Text()))
+			}
+		}()
+
+		go func() {
+			scanner := bufio.NewScanner(stderr)
+			for scanner.Scan() {
+				logFile.WriteString(fmt.Sprintf("[STDERR] %s\n", scanner.Text()))
+			}
+		}()
+
+		cmd.Wait()
+		log.Printf("Command completed on %s, output saved to %s", vmIP, logPath)
+	}()
+
+	return nil
+}
+
+func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
+	for i, pair := range e.SCPairs {
+		serverLogFile := fmt.Sprintf("server-%s.log", pair.Server.IP)
+
+		log.Printf("Starting iperf3 server on VM %s", pair.Server.IP)
+		if err := e.captureCommandOutput(ctx, pair.Server.IP, "iperf3 -s", serverLogFile); err != nil {
+			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
+		}
+
+		log.Printf("Started iperf3 server %d on VM %s (logs: %s)", i, pair.Server.IP, serverLogFile)
+	}
+
 	log.Println("Waiting for servers to start...")
 	time.Sleep(3 * time.Second)
 
@@ -90,16 +172,19 @@ func (e *VMVMExperiment) trackSyscalls() error {
 	return nil
 }
 
-func (e *VMVMExperiment) startClients() error {
-	for _, pair := range e.SCPairs {
-		cmd := exec.Command("sshpass", "-p", "root", "ssh", "root@"+pair.Client.IP,
-			"iperf3 -c "+pair.Server.IP+" -t 10 -P 4 > iperf_client.log 2>&1")
-		err := cmd.Run()
-		if err != nil {
-			return fmt.Errorf("failed to execute iperf3 client via SSH: %v", err)
+func (e *VMVMExperiment) startClients(ctx context.Context) error {
+	for i, pair := range e.SCPairs {
+		clientLogFile := fmt.Sprintf("client-%s-to-%s.log", pair.Client.IP, pair.Server.IP)
+		clientCommand := fmt.Sprintf("iperf3 -c %s -t 10 -P 4", pair.Server.IP)
+
+		log.Printf("Starting iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
+		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile); err != nil {
+			return fmt.Errorf("failed to start iperf3 client on %s: %v", pair.Client.IP, err)
 		}
-		log.Printf("Completed iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
+
+		log.Printf("Started iperf3 client %d from %s to %s (logs: %s)", i, pair.Client.IP, pair.Server.IP, clientLogFile)
 	}
+
 	return nil
 }
 
@@ -117,5 +202,26 @@ func runTraceSyscallsScript(pid int, logfile string) {
 }
 
 func (e *VMVMExperiment) Cleanup() error {
+	log.Println("Cleaning up experiment...")
+
+	// Cancel all log capture goroutines
+	if e.cancelFunc != nil {
+		e.cancelFunc()
+	}
+
+	// Kill any remaining iperf3 processes in the VMs
+	for _, pair := range e.SCPairs {
+		killCmd := exec.Command("sshpass", "-p", "root", "ssh",
+			"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
+			"root@"+pair.Server.IP, "pkill iperf3 || true")
+		killCmd.Run()
+
+		killCmd = exec.Command("sshpass", "-p", "root", "ssh",
+			"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
+			"root@"+pair.Client.IP, "pkill iperf3 || true")
+		killCmd.Run()
+	}
+
+	log.Printf("Experiment logs saved in: %s", e.LogDir)
 	return nil
 }
