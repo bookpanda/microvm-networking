@@ -15,7 +15,6 @@ import (
 
 	"github.com/firecracker-microvm/firecracker-go-sdk"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
-	"github.com/google/uuid"
 )
 
 type SimplifiedVM struct {
@@ -23,7 +22,7 @@ type SimplifiedVM struct {
 	Socket  string
 	Stdout  chan string
 	Stderr  chan string
-	VMID    string
+	VMID    int
 	TapName string
 	IP      string
 }
@@ -57,14 +56,14 @@ func (v *SimplifiedVM) Start(ctx context.Context) error {
 
 func (v *SimplifiedVM) Stop(ctx context.Context) error {
 	if err := v.Machine.Shutdown(ctx); err != nil {
-		log.Printf("Graceful shutdown failed for VM %s: %v", v.VMID, err)
+		log.Printf("Graceful shutdown failed for VM %d: %v", v.VMID, err)
 	}
 
 	// wait a bit for graceful shutdown to complete
 	time.Sleep(2 * time.Second)
 
 	if err := v.killFirecrackerProcess(); err != nil {
-		log.Printf("Failed to kill Firecracker process for VM %s: %v", v.VMID, err)
+		log.Printf("Failed to kill Firecracker process for VM %d: %v", v.VMID, err)
 	}
 
 	// clean up socket file
@@ -96,7 +95,7 @@ func (v *SimplifiedVM) killFirecrackerProcess() error {
 				continue
 			}
 
-			log.Printf("Killing Firecracker process PID %d for VM %s", pid, v.VMID)
+			log.Printf("Killing Firecracker process PID %d for VM %d", pid, v.VMID)
 
 			// First try SIGTERM
 			if err := syscall.Kill(pid, syscall.SIGTERM); err != nil {
@@ -118,8 +117,7 @@ func (v *SimplifiedVM) killFirecrackerProcess() error {
 }
 
 func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (*SimplifiedVM, error) {
-	vmID := uuid.New().String()
-	socketPath := filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.sock", vmID))
+	socketPath := filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.sock", vmIndex))
 
 	stdout := make(chan string, 100)
 	stderr := make(chan string, 100)
@@ -161,16 +159,16 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		},
 		ForwardSignals: []os.Signal{},
 		LogLevel:       "Debug",
-		LogPath:        filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.log", vmID)),
-		MetricsPath:    filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s-metrics", vmID)),
+		LogPath:        filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.log", vmIndex)),
+		MetricsPath:    filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d-metrics", vmIndex)),
 	}
 
-	stdoutFile, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.stdout", vmID)))
+	stdoutFile, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.stdout", vmIndex)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create stdout file: %v", err)
 	}
 
-	stderrFile, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.stderr", vmID)))
+	stderrFile, err := os.Create(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.stderr", vmIndex)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create stderr file: %v", err)
 	}
@@ -193,7 +191,7 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		Socket:  socketPath,
 		Stdout:  stdout,
 		Stderr:  stderr,
-		VMID:    vmID,
+		VMID:    vmIndex,
 		TapName: tapName,
 		IP:      fmt.Sprintf("192.168.100.%d", vmIndex+2),
 	}, nil
