@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
@@ -78,6 +79,13 @@ func (m *Manager) GetVMs() []*SimplifiedVM {
 }
 
 func (m *Manager) Cleanup() error {
+	for _, vm := range m.vms {
+		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.stdout", vm.VMID)))
+		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.stderr", vm.VMID)))
+		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s.log", vm.VMID)))
+		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%s-metrics", vm.VMID)))
+	}
+
 	return network.Cleanup(m.config.NumVMs)
 }
 

@@ -72,7 +72,7 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 	cfg := firecracker.Config{
 		SocketPath:      socketPath,
 		KernelImagePath: kernelPath,
-		KernelArgs:      "console=ttyS0 reboot=k panic=1 init=/bin/sh root=/dev/vda rw",
+		KernelArgs:      "console=ttyS0 noapic reboot=k panic=1 pci=off rw",
 		Drives: []models.Drive{
 			{
 				DriveID:      firecracker.String("1"),
