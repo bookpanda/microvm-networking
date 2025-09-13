@@ -20,6 +20,7 @@ type SimplifiedVM struct {
 	Stderr  chan string
 	VMID    string
 	TapName string
+	IP      string
 }
 
 func (v *SimplifiedVM) Start(ctx context.Context) error {
@@ -138,5 +139,6 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		Stderr:  stderr,
 		VMID:    vmID,
 		TapName: tapName,
+		IP:      fmt.Sprintf("192.168.100.%d", vmIndex+2),
 	}, nil
 }
