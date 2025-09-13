@@ -1,6 +1,13 @@
 ```bash
-go run main.go -vms=5
+# microVM = process, count them
+ps aux | grep firecracker
+ps aux | grep firecracker | grep -v grep | wc -l
 
-go run main.go -vms=3 -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/debian-rootfs.ext4
+# kill all firecracker processes
+ps aux | grep firecracker | grep -v grep | awk '{print $2}' | xargs kill -9
+
+go run cmd/main.go -vms=5
+
+go run cmd/main.go -vms=3 -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/debian-rootfs.ext4
 
 ```
