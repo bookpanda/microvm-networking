@@ -170,4 +170,7 @@ sudo umount /mnt/debian-rootfs/sys
 sudo umount /mnt/debian-rootfs/dev/pts
 sudo umount /mnt/debian-rootfs/dev
 sudo umount /mnt/debian-rootfs
+
+# fix ext4 filesystem
+e2fsck -f /tmp/debian-rootfs.ext4
 ```
