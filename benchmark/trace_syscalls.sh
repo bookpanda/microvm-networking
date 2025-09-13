@@ -9,7 +9,9 @@ else
 fi
 
 sudo bpftrace -e '
-BEGIN { printf("Tracing network syscalls for PID '$PID'...\n"); }
+BEGIN { 
+    printf("Tracing network syscalls for PID '$PID'...\n"); 
+}
 
 tracepoint:syscalls:sys_enter_* /pid == '$PID'/ {
     @interval[comm, probe]++;
@@ -20,9 +22,13 @@ interval:s:2 {
     printf("\n--- syscall counts (last 2s) ---\n");
     print(@interval);
     clear(@interval);
-}
-END { 
-    printf("\n=== cumulative syscall counts ===\n"); 
+    printf("\n--- cumulative syscall counts ---\n");
     print(@total);
+}
+
+END { 
+    printf("\n=== FINAL cumulative syscall counts ===\n"); 
+    print(@total);
+    printf("=== END OF TRACE ===\n");
 }
 ' 

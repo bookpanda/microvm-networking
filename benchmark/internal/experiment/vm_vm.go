@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/filesystem"
@@ -22,11 +23,13 @@ type SCPair struct {
 }
 
 type VMVMExperiment struct {
-	SCPairs     []*SCPair
-	logDir      string
-	syscallsDir string
-	cancelFunc  context.CancelFunc
-	wg          sync.WaitGroup
+	SCPairs       []*SCPair
+	logDir        string
+	syscallsDir   string
+	cancelFunc    context.CancelFunc
+	wg            sync.WaitGroup
+	traceProcs    []*exec.Cmd
+	traceProcsMux sync.Mutex
 }
 
 func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
@@ -81,6 +84,7 @@ func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 	if err := experiment.trackSyscalls(logCtx); err != nil {
 		return fmt.Errorf("failed to track syscalls: %v", err)
 	}
+	time.Sleep(5 * time.Second)
 	log.Println("Starting clients...")
 	if err := experiment.startClients(logCtx); err != nil {
 		return fmt.Errorf("failed to start clients: %v", err)
@@ -146,6 +150,13 @@ func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command
 			return
 		}
 
+		// Track trace processes for proper cleanup
+		if isTrace {
+			e.traceProcsMux.Lock()
+			e.traceProcs = append(e.traceProcs, cmd)
+			e.traceProcsMux.Unlock()
+		}
+
 		go func() {
 			scanner := bufio.NewScanner(stdout)
 			for scanner.Scan() {
@@ -159,6 +170,8 @@ func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command
 				logFile.WriteString(fmt.Sprintf("[STDERR] %s\n", scanner.Text()))
 			}
 		}()
+		// go io.Copy(logFile, stdout)
+		// go io.Copy(logFile, stderr)
 
 		if wait {
 			cmd.Wait()
@@ -244,6 +257,41 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 
 func (e *VMVMExperiment) Cleanup() error {
 	log.Println("Cleaning up experiment...")
+
+	// Terminate trace processes gracefully
+	e.traceProcsMux.Lock()
+	if len(e.traceProcs) > 0 {
+		log.Printf("Terminating %d bpftrace processes gracefully...", len(e.traceProcs))
+		for i, proc := range e.traceProcs {
+			if proc.Process != nil {
+				log.Printf("Sending SIGTERM to bpftrace process %d (PID: %d)", i, proc.Process.Pid)
+				err := proc.Process.Signal(syscall.SIGTERM)
+				if err != nil {
+					log.Printf("Failed to send SIGTERM to process %d: %v", proc.Process.Pid, err)
+				}
+			}
+		}
+		e.traceProcsMux.Unlock()
+
+		// Wait longer for END blocks to execute
+		log.Println("Waiting 5 seconds for bpftrace END blocks to execute...")
+		time.Sleep(5 * time.Second)
+
+		// Wait for processes to finish
+		e.traceProcsMux.Lock()
+		for i, proc := range e.traceProcs {
+			log.Printf("Waiting for bpftrace process %d to finish...", i)
+			err := proc.Wait()
+			if err != nil {
+				log.Printf("Process %d finished with error: %v", i, err)
+			} else {
+				log.Printf("Process %d finished successfully", i)
+			}
+		}
+		e.traceProcsMux.Unlock()
+	} else {
+		e.traceProcsMux.Unlock()
+	}
 
 	// Cancel all log capture goroutines
 	if e.cancelFunc != nil {
