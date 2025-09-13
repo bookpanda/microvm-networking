@@ -10,8 +10,6 @@ import (
 func CleanupExisting(numVMs int) error {
 	log.Printf("Cleaning up any existing network interfaces...")
 
-	StopDHCP()
-
 	for i := 0; i < numVMs+5; i++ {
 		tapName := fmt.Sprintf("tap%d", i)
 		cmd := exec.Command("sudo", "ip", "link", "delete", tapName)
@@ -33,7 +31,6 @@ func CleanupExisting(numVMs int) error {
 
 func Cleanup(numVMs int) error {
 	log.Printf("Cleaning up networking for %d VMs...", numVMs)
-	StopDHCP()
 
 	for i := 0; i < numVMs; i++ {
 		tapName := fmt.Sprintf("tap%d", i)
