@@ -170,8 +170,6 @@ func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command
 				logFile.WriteString(fmt.Sprintf("[STDERR] %s\n", scanner.Text()))
 			}
 		}()
-		// go io.Copy(logFile, stdout)
-		// go io.Copy(logFile, stderr)
 
 		if wait {
 			cmd.Wait()
