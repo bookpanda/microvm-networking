@@ -158,7 +158,7 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		},
 		MachineCfg: models.MachineConfiguration{
 			VcpuCount:  firecracker.Int64(1),
-			MemSizeMib: firecracker.Int64(128),
+			MemSizeMib: firecracker.Int64(256),
 		},
 		ForwardSignals: []os.Signal{},
 		LogLevel:       "Debug",
