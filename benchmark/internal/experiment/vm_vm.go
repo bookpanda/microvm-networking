@@ -143,7 +143,8 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 		serverLogFile := fmt.Sprintf("server-%s.log", pair.Server.IP)
 
 		log.Printf("Starting iperf3 server on VM %s", pair.Server.IP)
-		if err := e.captureCommandOutput(ctx, pair.Server.IP, "iperf3 -s", serverLogFile); err != nil {
+		command := "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s"
+		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile); err != nil {
 			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
 		}
 
@@ -176,7 +177,7 @@ func (e *VMVMExperiment) trackSyscalls() error {
 func (e *VMVMExperiment) startClients(ctx context.Context) error {
 	for i, pair := range e.SCPairs {
 		clientLogFile := fmt.Sprintf("client-%s-to-%s.log", pair.Client.IP, pair.Server.IP)
-		clientCommand := fmt.Sprintf("iperf3 -c %s -t 10 -P 4", pair.Server.IP)
+		clientCommand := fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 10 -P 4", pair.Server.IP)
 
 		log.Printf("Starting iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
 		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile); err != nil {

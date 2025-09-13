@@ -174,3 +174,6 @@ sudo umount /mnt/debian-rootfs
 # fix ext4 filesystem
 e2fsck -f /tmp/debian-rootfs.ext4
 ```
+### RootFS note
+- we make it read-only because we want to use same rootFS for all VMs (don't want to copy n times)
+- for iperf3 (requires writing files), we need to mount read-write blocks per VM
