@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug main.go with args",
+        "type": "go",
+        "request": "launch",
+        "mode": "debug",
+        "program": "${workspaceFolder}/benchmark/cmd/main.go",
+        "args": ["-vms=4"]
+      }
+    ]
+  }
+  

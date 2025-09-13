@@ -134,7 +134,7 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 				DriveID:      firecracker.String("1"),
 				PathOnHost:   firecracker.String(rootfsPath),
 				IsRootDevice: firecracker.Bool(true),
-				IsReadOnly:   firecracker.Bool(false),
+				IsReadOnly:   firecracker.Bool(true),
 			},
 		},
 		NetworkInterfaces: []firecracker.NetworkInterface{
