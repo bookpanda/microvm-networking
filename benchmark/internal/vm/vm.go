@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bookpanda/microvm-networking/benchmark/internal/logging"
 	"github.com/firecracker-microvm/firecracker-go-sdk"
 	"github.com/firecracker-microvm/firecracker-go-sdk/client/models"
 )
@@ -117,7 +118,8 @@ func (v *SimplifiedVM) killFirecrackerProcess() error {
 }
 
 func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (*SimplifiedVM, error) {
-	socketPath := filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.sock", vmIndex))
+	ip := fmt.Sprintf("192.168.100.%d", vmIndex+2)
+	socketPath := filepath.Join(os.TempDir(), fmt.Sprintf("vm-%s.sock", ip))
 
 	stdout := make(chan string, 100)
 	stderr := make(chan string, 100)
@@ -126,7 +128,7 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 	tapName := fmt.Sprintf("tap%d", vmIndex)
 
 	logDir := "./vm-logs"
-	if err := os.MkdirAll(logDir, 0755); err != nil {
+	if err := logging.GetEmptyLogDir(logDir); err != nil {
 		return nil, fmt.Errorf("failed to create log directory: %v", err)
 	}
 
@@ -149,7 +151,7 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 					HostDevName: tapName,
 					IPConfiguration: &firecracker.IPConfiguration{
 						IPAddr: net.IPNet{
-							IP:   net.ParseIP(fmt.Sprintf("192.168.100.%d", vmIndex+2)),
+							IP:   net.ParseIP(ip),
 							Mask: net.CIDRMask(24, 32),
 						},
 						Gateway:     net.ParseIP("192.168.100.254"),
@@ -164,16 +166,16 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		},
 		ForwardSignals: []os.Signal{},
 		LogLevel:       "Debug",
-		LogPath:        filepath.Join(logDir, fmt.Sprintf("firecracker-%d.log", vmIndex)),
-		MetricsPath:    filepath.Join(logDir, fmt.Sprintf("firecracker-%d-metrics", vmIndex)),
+		LogPath:        filepath.Join(logDir, fmt.Sprintf("vm-%s.log", ip)),
+		MetricsPath:    filepath.Join(logDir, fmt.Sprintf("vm-%s-metrics", ip)),
 	}
 
-	stdoutFile, err := os.Create(filepath.Join(logDir, fmt.Sprintf("firecracker-%d.stdout", vmIndex)))
+	stdoutFile, err := os.Create(filepath.Join(logDir, fmt.Sprintf("vm-%s.stdout", ip)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create stdout file: %v", err)
 	}
 
-	stderrFile, err := os.Create(filepath.Join(logDir, fmt.Sprintf("firecracker-%d.stderr", vmIndex)))
+	stderrFile, err := os.Create(filepath.Join(logDir, fmt.Sprintf("vm-%s.stderr", ip)))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create stderr file: %v", err)
 	}
@@ -198,6 +200,6 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		Stderr:  stderr,
 		VMID:    vmIndex,
 		TapName: tapName,
-		IP:      fmt.Sprintf("192.168.100.%d", vmIndex+2),
+		IP:      ip,
 	}, nil
 }

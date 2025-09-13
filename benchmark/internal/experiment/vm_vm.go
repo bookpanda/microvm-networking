@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/bookpanda/microvm-networking/benchmark/internal/logging"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
 
@@ -28,7 +29,7 @@ type VMVMExperiment struct {
 
 func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
 	logDir := "./vm-experiment-logs"
-	if err := os.MkdirAll(logDir, 0755); err != nil {
+	if err := logging.GetEmptyLogDir(logDir); err != nil {
 		return nil, fmt.Errorf("failed to create log directory: %v", err)
 	}
 
