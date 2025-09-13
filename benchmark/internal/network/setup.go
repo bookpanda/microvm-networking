@@ -60,6 +60,10 @@ func Setup(numVMs int) error {
 	// set up iptables rules for forwarding
 	setupIptables(config)
 
+	if err := SetupDHCP(numVMs); err != nil {
+		log.Printf("Warning: Failed to set up DHCP: %v", err)
+	}
+
 	log.Println("Networking setup completed successfully")
 	return nil
 }
