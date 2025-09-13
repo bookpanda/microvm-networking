@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
+	"github.com/bookpanda/microvm-networking/benchmark/internal/experiment"
 	_vm "github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
 
@@ -62,6 +63,10 @@ func main() {
 	manager.LogNetworkingInfo()
 	// kill sends SIGTERM to the process PID
 	log.Println("To stop the VMs, run: kill $(cat /tmp/firecracker.pid)")
+
+	if err := experiment.RunVMVMBenchmark(ctx, manager); err != nil {
+		log.Fatalf("Failed to run VM VM benchmark: %v", err)
+	}
 
 	// wait for shutdown signal
 	<-sigChan

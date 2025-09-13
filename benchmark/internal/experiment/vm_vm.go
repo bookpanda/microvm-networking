@@ -39,9 +39,15 @@ func NewVMVMExperiment(manager *vm.Manager) *VMVMExperiment {
 
 func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 	experiment := NewVMVMExperiment(manager)
-	experiment.prepareServers()
-	experiment.trackSyscalls()
-	experiment.startClients()
+	if err := experiment.prepareServers(); err != nil {
+		return fmt.Errorf("failed to prepare servers: %v", err)
+	}
+	if err := experiment.trackSyscalls(); err != nil {
+		return fmt.Errorf("failed to track syscalls: %v", err)
+	}
+	if err := experiment.startClients(); err != nil {
+		return fmt.Errorf("failed to start clients: %v", err)
+	}
 
 	return nil
 }
