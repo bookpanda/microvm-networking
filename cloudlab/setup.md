@@ -97,3 +97,31 @@ cp linux-virt/boot/vmlinuz-virt /tmp/alpine-vmlinux
 
 # wget https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-virt-3.22.1-x86_64.iso
 ```
+
+### Prepare rootfs
+```bash
+sudo mkdir /mnt/debian-rootfs
+sudo mount -o loop /tmp/debian-rootfs.ext4 /mnt/debian-rootfs
+
+sudo chroot /mnt/debian-rootfs /bin/bash
+
+useradd -m -s /bin/bash vmuser
+echo "vmuser:vm" | chpasswd
+mkdir -p /home/vmuser/.ssh
+chown -R vmuser:vmuser /home/vmuser/.ssh
+
+# host: add ssh key
+ssh-keygen -t ed25519 -C "your_email@example.com"
+cat ~/.ssh/vm.pub | sudo tee /mnt/debian-rootfs/home/vmuser/.ssh/authorized_keys
+
+# back to vm
+chown vmuser:vmuser /home/vmuser/.ssh/authorized_keys
+chmod 600 /home/vmuser/.ssh/authorized_keys
+
+# in /etc/ssh/sshd_config
+# PubkeyAuthentication yes
+
+systemctl enable ssh
+exit
+sudo umount /mnt/debian-rootfs
+```
