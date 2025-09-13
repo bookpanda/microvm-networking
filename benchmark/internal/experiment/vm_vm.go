@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bookpanda/microvm-networking/benchmark/internal/logging"
+	"github.com/bookpanda/microvm-networking/benchmark/internal/filesystem"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
 
@@ -29,7 +29,7 @@ type VMVMExperiment struct {
 
 func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
 	logDir := "./vm-experiment-logs"
-	if err := logging.GetEmptyLogDir(logDir); err != nil {
+	if err := filesystem.GetEmptyLogDir(logDir); err != nil {
 		return nil, fmt.Errorf("failed to create log directory: %v", err)
 	}
 
@@ -84,16 +84,20 @@ func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 	return nil
 }
 
-func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command, logFileName string) error {
+func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command, logFileName string, wait bool) error {
 	logPath := filepath.Join(e.LogDir, logFileName)
 	logFile, err := os.Create(logPath)
 	if err != nil {
 		return fmt.Errorf("failed to create log file %s: %v", logPath, err)
 	}
 
-	e.wg.Add(1)
+	if wait {
+		e.wg.Add(1)
+	}
 	go func() {
-		defer e.wg.Done()
+		if wait {
+			defer e.wg.Done()
+		}
 		defer logFile.Close()
 
 		cmd := exec.CommandContext(ctx, "sshpass", "-p", "root", "ssh",
@@ -131,8 +135,16 @@ func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command
 			}
 		}()
 
-		cmd.Wait()
-		log.Printf("Command completed on %s, output saved to %s", vmIP, logPath)
+		if wait {
+			cmd.Wait()
+			log.Printf("Command completed on %s, output saved to %s", vmIP, logPath)
+		} else {
+			// for servers: stop when context is canceled
+			<-ctx.Done()
+			cmd.Process.Kill() // kill ONLY server process
+			cmd.Wait()         // wait for stdout/stderr to be closed
+			log.Printf("Server on %s stopped, logs saved to %s", vmIP, logPath)
+		}
 	}()
 
 	return nil
@@ -144,7 +156,7 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 
 		log.Printf("Starting iperf3 server on VM %s", pair.Server.IP)
 		command := "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s"
-		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile); err != nil {
+		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile, false); err != nil {
 			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
 		}
 
@@ -180,7 +192,7 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 		clientCommand := fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 10 -P 4", pair.Server.IP)
 
 		log.Printf("Starting iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
-		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile); err != nil {
+		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile, true); err != nil {
 			return fmt.Errorf("failed to start iperf3 client on %s: %v", pair.Client.IP, err)
 		}
 
