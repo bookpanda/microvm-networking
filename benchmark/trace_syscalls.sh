@@ -8,14 +8,6 @@ else
     exit 1
 fi
 
-if [ -n "$2" ]; then
-    LOG_FILE="$2"
-    echo "Logging to: $LOG_FILE"
-else
-    echo "LOG_FILE not found!"
-    exit 1
-fi
-
 sudo bpftrace -e '
 BEGIN { printf("Tracing network syscalls for PID '$PID'...\n"); }
 
@@ -31,5 +23,6 @@ interval:s:2 {
 }
 END { 
     printf("\n=== cumulative syscall counts ===\n"); 
+    print(@total);
 }
-' | tee $LOG_FILE
+' 

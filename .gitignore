@@ -11,3 +11,4 @@ terraform.tfstate.backup
 tfplan
 vm-experiment-logs
 vm-logs
+vm-syscalls

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -21,10 +22,11 @@ type SCPair struct {
 }
 
 type VMVMExperiment struct {
-	SCPairs    []*SCPair
-	LogDir     string
-	cancelFunc context.CancelFunc
-	wg         sync.WaitGroup
+	SCPairs     []*SCPair
+	logDir      string
+	syscallsDir string
+	cancelFunc  context.CancelFunc
+	wg          sync.WaitGroup
 }
 
 func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
@@ -33,9 +35,15 @@ func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
 		return nil, fmt.Errorf("failed to create log directory: %v", err)
 	}
 
+	syscallsDir := "./vm-syscalls"
+	if err := filesystem.GetEmptyLogDir(syscallsDir); err != nil {
+		return nil, fmt.Errorf("failed to create syscalls directory: %v", err)
+	}
+
 	experiment := &VMVMExperiment{
-		SCPairs: make([]*SCPair, 0),
-		LogDir:  logDir,
+		SCPairs:     make([]*SCPair, 0),
+		logDir:      logDir,
+		syscallsDir: syscallsDir,
 	}
 
 	pair := &SCPair{}
@@ -63,14 +71,14 @@ func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 	experiment.cancelFunc = cancel
 	defer experiment.Cleanup()
 
-	log.Printf("Experiment logs will be saved to: %s", experiment.LogDir)
+	log.Printf("Experiment logs will be saved to: %s", experiment.logDir)
 
 	log.Println("Preparing servers...")
 	if err := experiment.prepareServers(logCtx); err != nil {
 		return fmt.Errorf("failed to prepare servers: %v", err)
 	}
 	log.Println("Tracking syscalls...")
-	if err := experiment.trackSyscalls(); err != nil {
+	if err := experiment.trackSyscalls(logCtx); err != nil {
 		return fmt.Errorf("failed to track syscalls: %v", err)
 	}
 	log.Println("Starting clients...")
@@ -84,8 +92,14 @@ func RunVMVMBenchmark(ctx context.Context, manager *vm.Manager) error {
 	return nil
 }
 
-func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command, logFileName string, wait bool) error {
-	logPath := filepath.Join(e.LogDir, logFileName)
+func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command, logFileName string, wait bool, isTrace bool) error {
+	var logPath string
+	if isTrace {
+		logPath = filepath.Join(e.syscallsDir, logFileName)
+	} else {
+		logPath = filepath.Join(e.logDir, logFileName)
+	}
+
 	logFile, err := os.Create(logPath)
 	if err != nil {
 		return fmt.Errorf("failed to create log file %s: %v", logPath, err)
@@ -100,9 +114,20 @@ func (e *VMVMExperiment) captureCommandOutput(ctx context.Context, vmIP, command
 		}
 		defer logFile.Close()
 
-		cmd := exec.CommandContext(ctx, "sshpass", "-p", "root", "ssh",
-			"-o", "ConnectTimeout=5", "-o", "StrictHostKeyChecking=no",
-			"root@"+vmIP, command)
+		var cmd *exec.Cmd
+		if isTrace {
+			// Split the command properly for exec
+			args := strings.Fields(command)
+			if len(args) == 0 {
+				log.Printf("Empty trace command for %s", vmIP)
+				return
+			}
+			cmd = exec.CommandContext(ctx, args[0], args[1:]...)
+		} else {
+			cmd = exec.CommandContext(ctx, "sshpass", "-p", "root", "ssh",
+				"-o", "ConnectTimeout=5", "-o", "StrictHostKeyChecking=no",
+				"root@"+vmIP, command)
+		}
 
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
@@ -156,7 +181,7 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 
 		log.Printf("Starting iperf3 server on VM %s", pair.Server.IP)
 		command := "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s"
-		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile, false); err != nil {
+		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile, false, false); err != nil {
 			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
 		}
 
@@ -169,7 +194,13 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 	return nil
 }
 
-func (e *VMVMExperiment) trackSyscalls() error {
+func (e *VMVMExperiment) trackSyscalls(ctx context.Context) error {
+	tracePath, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("failed to get working directory: %v", err)
+	}
+	tracePath = filepath.Join(tracePath, "trace_syscalls.sh")
+
 	for _, pair := range e.SCPairs {
 		serverPID, err := pair.Server.Machine.PID()
 		if err != nil {
@@ -180,8 +211,17 @@ func (e *VMVMExperiment) trackSyscalls() error {
 			return fmt.Errorf("failed to get client PID: %v", err)
 		}
 
-		runTraceSyscallsScript(serverPID, fmt.Sprintf("/tmp/server-%s.log", pair.Server.IP))
-		runTraceSyscallsScript(clientPID, fmt.Sprintf("/tmp/client-%s.log", pair.Client.IP))
+		serverCommand := fmt.Sprintf("sudo %s %d", tracePath, serverPID)
+		serverLogFile := fmt.Sprintf("server-%s.log", pair.Server.IP)
+		if err := e.captureCommandOutput(ctx, "", serverCommand, serverLogFile, false, true); err != nil {
+			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
+		}
+
+		clientCommand := fmt.Sprintf("sudo %s %d", tracePath, clientPID)
+		clientLogFile := fmt.Sprintf("client-%s.log", pair.Client.IP)
+		if err := e.captureCommandOutput(ctx, "", clientCommand, clientLogFile, false, true); err != nil {
+			return fmt.Errorf("failed to start iperf3 client on %s: %v", pair.Client.IP, err)
+		}
 	}
 	return nil
 }
@@ -192,7 +232,7 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 		clientCommand := fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 10 -P 4", pair.Server.IP)
 
 		log.Printf("Starting iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
-		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile, true); err != nil {
+		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile, true, false); err != nil {
 			return fmt.Errorf("failed to start iperf3 client on %s: %v", pair.Client.IP, err)
 		}
 
@@ -200,19 +240,6 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func runTraceSyscallsScript(pid int, logfile string) {
-	cmd := exec.Command("/bin/bash", "./trace_syscalls.sh", fmt.Sprintf("%d", pid), logfile)
-	cmd.Stdout = nil
-	cmd.Stderr = nil
-	err := cmd.Start()
-	if err != nil {
-		log.Fatalf("Failed to start script: %v", err)
-	}
-
-	log.Printf("Tracing script started with PID %d", cmd.Process.Pid)
-
 }
 
 func (e *VMVMExperiment) Cleanup() error {
@@ -236,6 +263,6 @@ func (e *VMVMExperiment) Cleanup() error {
 		killCmd.Run()
 	}
 
-	log.Printf("Experiment logs saved in: %s", e.LogDir)
+	log.Printf("Experiment logs saved in: %s", e.logDir)
 	return nil
 }
