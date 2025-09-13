@@ -20,12 +20,12 @@ func ParseFlags() *Config {
 	flag.StringVar(&cfg.RootfsPath, "rootfs", "/tmp/debian-rootfs.ext4", "Path to rootfs image")
 
 	mode := flag.String("mode", string(VM_VM), "Mode to run the benchmark in")
-	cfg.Mode = Mode(*mode)
+	flag.Parse()
 
+	cfg.Mode = Mode(*mode)
 	if cfg.Mode == VM_VM && cfg.NumVMs%2 != 0 {
-		log.Fatalf("Number of VMs must be even for VM_VM mode")
+		log.Fatalf("Number of VMs must be even for VM_VM mode (got %d)", cfg.NumVMs)
 	}
 
-	flag.Parse()
 	return cfg
 }
