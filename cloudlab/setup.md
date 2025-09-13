@@ -98,7 +98,7 @@ cp linux-virt/boot/vmlinuz-virt /tmp/alpine-vmlinux
 # wget https://dl-cdn.alpinelinux.org/alpine/v3.22/releases/x86_64/alpine-virt-3.22.1-x86_64.iso
 ```
 
-### Prepare rootfs
+## Prepare rootfs
 ```bash
 sudo mkdir /mnt/debian-rootfs
 sudo mount -o loop /tmp/debian-rootfs.ext4 /mnt/debian-rootfs
@@ -123,5 +123,51 @@ chmod 600 /home/vmuser/.ssh/authorized_keys
 
 systemctl enable ssh
 exit
+sudo umount /mnt/debian-rootfs
+```
+### Downloading
+```bash
+sudo mount -o loop /tmp/debian-rootfs.ext4 /mnt/debian-rootfs
+
+sudo mount --bind /proc /mnt/debian-rootfs/proc
+sudo mount --bind /sys  /mnt/debian-rootfs/sys
+sudo mount --bind /dev  /mnt/debian-rootfs/dev
+sudo mount --bind /dev/pts /mnt/debian-rootfs/dev/pts
+
+sudo cp /etc/resolv.conf /mnt/debian-rootfs/etc/resolv.conf
+
+sudo chroot /mnt/debian-rootfs /bin/bash
+ping -c 2 8.8.8.8   # tests raw IP connectivity
+ping -c 2 google.com  # tests DNS
+
+# add debian stretch repo
+echo "deb http://archive.debian.org/debian stretch main contrib non-free
+deb http://archive.debian.org/debian stretch-updates main contrib non-free
+deb http://archive.debian.org/debian-security stretch/updates main contrib non-free" > /etc/apt/sources.list
+echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+
+export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+apt-get -o Acquire::AllowInsecureRepositories=true \
+        -o Acquire::AllowDowngradeToInsecureRepositories=true update
+
+apt-get -o Acquire::AllowInsecureRepositories=true \
+        -o Acquire::AllowDowngradeToInsecureRepositories=true install \
+        gcc build-essential cmake git autoconf libtool iperf3
+
+cd /home/vmuser
+git clone https://github.com/Mellanox/sockperf.git
+cd sockperf
+./autogen.sh
+./configure
+make
+cp sockperf /usr/bin/
+cd ..
+rm -rf sockperf
+
+exit
+sudo umount /mnt/debian-rootfs/proc
+sudo umount /mnt/debian-rootfs/sys
+sudo umount /mnt/debian-rootfs/dev/pts
+sudo umount /mnt/debian-rootfs/dev
 sudo umount /mnt/debian-rootfs
 ```
