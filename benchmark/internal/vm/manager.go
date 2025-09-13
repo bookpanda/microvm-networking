@@ -25,6 +25,7 @@ func NewManager(cfg *config.Config) *Manager {
 }
 
 func (m *Manager) Initialize(ctx context.Context) error {
+	log.Println("Cleaning up existing network interfaces...")
 	if err := network.CleanupExisting(m.config.NumVMs); err != nil {
 		return fmt.Errorf("failed to clean up existing network interfaces: %v", err)
 	}
@@ -40,10 +41,10 @@ func (m *Manager) Initialize(ctx context.Context) error {
 		}
 		m.vms[i] = vm
 
-		socketFile := fmt.Sprintf("/tmp/firecracker-%d.sock", i)
-		if err := os.WriteFile(socketFile, []byte(vm.Socket), 0644); err != nil {
-			return fmt.Errorf("failed to write socket file for VM %d: %v", i, err)
-		}
+		// socketFile := fmt.Sprintf("/tmp/firecracker-%d.sock", i)
+		// if err := os.WriteFile(socketFile, []byte(vm.Socket), 0644); err != nil {
+		// 	return fmt.Errorf("failed to write socket file for VM %d: %v", i, err)
+		// }
 	}
 
 	return nil

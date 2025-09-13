@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/signal"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
@@ -38,10 +36,6 @@ func main() {
 		log.Fatalf("Failed to start VMs: %v", err)
 	}
 
-	sigChan := make(chan os.Signal, 1)
-	// notify when SIGINT or SIGTERM is received
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
 	var wg sync.WaitGroup
 	vms := manager.GetVMs()
 	for i, vm := range vms {
@@ -62,16 +56,12 @@ func main() {
 	}
 
 	manager.LogNetworkingInfo()
-	// kill sends SIGTERM to the process PID
-	log.Println("To stop the VMs, run: kill $(cat /tmp/firecracker.pid)")
 
 	time.Sleep(5 * time.Second)
 	if err := experiment.RunVMVMBenchmark(ctx, manager); err != nil {
 		log.Fatalf("Failed to run VM VM benchmark: %v", err)
 	}
 
-	// wait for shutdown signal
-	<-sigChan
 	log.Println("Shutting down VMs...")
 
 	// cleanup files
