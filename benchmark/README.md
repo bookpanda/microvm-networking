@@ -11,4 +11,14 @@ go run cmd/main.go -vms=5
 go run cmd/main.go -vms=3 -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/debian-rootfs.ext4
 
 ssh root@192.168.100.2
+sshpass -p "root" ssh root@192.168.100.2
 ```
+## Running experiments
+1. start servers
+2. start clients
+3. track syscalls via PIDs
+4. make each client start sending data to the server
+- doens't matter if clients don't start at same time:
+    - total throughput = sum all
+    - per vm throughput = avg of each client-server pair
+    - latency = avg of each client-server pair
