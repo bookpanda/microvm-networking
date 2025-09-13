@@ -94,6 +94,7 @@ func (m *Manager) LogNetworkingInfo() {
 	log.Println("VM networking setup:")
 	log.Println("  Bridge: br0 (192.168.100.254/24)")
 	for i := 0; i < m.config.NumVMs; i++ {
-		log.Printf("  VM %d: tap%d, MAC: AA:FC:00:00:00:%02X", i, i, i+1)
+		vmIP := fmt.Sprintf("192.168.100.%d", i+2)
+		log.Printf("  VM %d: tap%d, MAC: AA:FC:00:00:00:%02X, IP: %s/24", i, i, i+1, vmIP)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"path/filepath"
 
@@ -86,6 +87,14 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 				StaticConfiguration: &firecracker.StaticNetworkConfiguration{
 					MacAddress:  macAddr,
 					HostDevName: tapName,
+					IPConfiguration: &firecracker.IPConfiguration{
+						IPAddr: net.IPNet{
+							IP:   net.ParseIP(fmt.Sprintf("192.168.100.%d", vmIndex+2)),
+							Mask: net.CIDRMask(24, 32),
+						},
+						Gateway:     net.ParseIP("192.168.100.254"),
+						Nameservers: []string{"8.8.8.8", "8.8.4.4"},
+					},
 				},
 			},
 		},
