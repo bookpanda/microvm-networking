@@ -4,11 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
+	"github.com/bookpanda/microvm-networking/benchmark/internal/filesystem"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/network"
 )
 
@@ -25,7 +24,13 @@ func NewManager(cfg *config.Config) *Manager {
 }
 
 func (m *Manager) Initialize(ctx context.Context) error {
-	log.Println("Cleaning up existing network interfaces...")
+	if err := filesystem.GetEmptyLogDir("./vm-logs"); err != nil {
+		return fmt.Errorf("failed to create log directory: %v", err)
+	}
+	if err := filesystem.CleanFilesInDir("/tmp", "vm-"); err != nil {
+		return fmt.Errorf("failed to clean up vm sock files: %v", err)
+	}
+
 	if err := network.CleanupExisting(m.config.NumVMs); err != nil {
 		return fmt.Errorf("failed to clean up existing network interfaces: %v", err)
 	}
@@ -80,13 +85,6 @@ func (m *Manager) GetVMs() []*SimplifiedVM {
 }
 
 func (m *Manager) Cleanup() error {
-	for _, vm := range m.vms {
-		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.stdout", vm.VMID)))
-		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.stderr", vm.VMID)))
-		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d.log", vm.VMID)))
-		os.RemoveAll(filepath.Join(os.TempDir(), fmt.Sprintf("firecracker-%d-metrics", vm.VMID)))
-	}
-
 	return network.Cleanup(m.config.NumVMs)
 }
 
