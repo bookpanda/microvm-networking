@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/experiment"
@@ -64,6 +65,7 @@ func main() {
 	// kill sends SIGTERM to the process PID
 	log.Println("To stop the VMs, run: kill $(cat /tmp/firecracker.pid)")
 
+	time.Sleep(10 * time.Second)
 	if err := experiment.RunVMVMBenchmark(ctx, manager); err != nil {
 		log.Fatalf("Failed to run VM VM benchmark: %v", err)
 	}
