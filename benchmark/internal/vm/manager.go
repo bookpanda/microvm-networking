@@ -84,6 +84,10 @@ func (m *Manager) GetVMs() []*SimplifiedVM {
 	return m.vms
 }
 
+func (m *Manager) GetConfig() *config.Config {
+	return m.config
+}
+
 func (m *Manager) Cleanup() error {
 	return network.Cleanup(m.config.NumVMs)
 }

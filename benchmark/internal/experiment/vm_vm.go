@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/filesystem"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
@@ -23,6 +24,7 @@ type SCPair struct {
 }
 
 type VMVMExperiment struct {
+	test          config.Test
 	SCPairs       []*SCPair
 	logDir        string
 	syscallsDir   string
@@ -44,6 +46,7 @@ func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
 	}
 
 	experiment := &VMVMExperiment{
+		test:        manager.GetConfig().Test,
 		SCPairs:     make([]*SCPair, 0),
 		logDir:      logDir,
 		syscallsDir: syscallsDir,
@@ -190,13 +193,22 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 	for i, pair := range e.SCPairs {
 		serverLogFile := fmt.Sprintf("server-%s.log", pair.Server.IP)
 
-		log.Printf("Starting iperf3 server on VM %s", pair.Server.IP)
-		command := "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s"
-		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile, false, false); err != nil {
-			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
+		log.Printf("Starting server on VM %s", pair.Server.IP)
+		var command string
+		switch e.test {
+		case config.Throughput:
+			command = "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s"
+		case config.Latency:
+			command = "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp sockperf server -i " + pair.Server.IP
+		default:
+			return fmt.Errorf("invalid test: %s", e.test)
 		}
 
-		log.Printf("Started iperf3 server %d on VM %s (logs: %s)", i, pair.Server.IP, serverLogFile)
+		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile, false, false); err != nil {
+			return fmt.Errorf("failed to start server on %s: %v", pair.Server.IP, err)
+		}
+
+		log.Printf("Started server %d on VM %s (logs: %s)", i, pair.Server.IP, serverLogFile)
 	}
 
 	log.Println("Waiting for servers to start...")
@@ -225,13 +237,13 @@ func (e *VMVMExperiment) trackSyscalls(ctx context.Context) error {
 		serverCommand := fmt.Sprintf("sudo %s %d", tracePath, serverPID)
 		serverLogFile := fmt.Sprintf("server-%s.log", pair.Server.IP)
 		if err := e.captureCommandOutput(ctx, "", serverCommand, serverLogFile, false, true); err != nil {
-			return fmt.Errorf("failed to start iperf3 server on %s: %v", pair.Server.IP, err)
+			return fmt.Errorf("failed to start server on %s: %v", pair.Server.IP, err)
 		}
 
 		clientCommand := fmt.Sprintf("sudo %s %d", tracePath, clientPID)
 		clientLogFile := fmt.Sprintf("client-%s.log", pair.Client.IP)
 		if err := e.captureCommandOutput(ctx, "", clientCommand, clientLogFile, false, true); err != nil {
-			return fmt.Errorf("failed to start iperf3 client on %s: %v", pair.Client.IP, err)
+			return fmt.Errorf("failed to start client on %s: %v", pair.Client.IP, err)
 		}
 	}
 	return nil
@@ -240,14 +252,23 @@ func (e *VMVMExperiment) trackSyscalls(ctx context.Context) error {
 func (e *VMVMExperiment) startClients(ctx context.Context) error {
 	for i, pair := range e.SCPairs {
 		clientLogFile := fmt.Sprintf("client-%s-to-%s.log", pair.Client.IP, pair.Server.IP)
-		clientCommand := fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 10 -P 4", pair.Server.IP)
 
-		log.Printf("Starting iperf3 client test from %s to %s", pair.Client.IP, pair.Server.IP)
-		if err := e.captureCommandOutput(ctx, pair.Client.IP, clientCommand, clientLogFile, true, false); err != nil {
-			return fmt.Errorf("failed to start iperf3 client on %s: %v", pair.Client.IP, err)
+		var command string
+		switch e.test {
+		case config.Throughput:
+			command = fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 10 -P 4", pair.Server.IP)
+		case config.Latency:
+			command = fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp sockperf ping-pong -i %s -m 64 -t 30", pair.Server.IP)
+		default:
+			return fmt.Errorf("invalid test: %s", e.test)
 		}
 
-		log.Printf("Started iperf3 client %d from %s to %s (logs: %s)", i, pair.Client.IP, pair.Server.IP, clientLogFile)
+		log.Printf("Starting client test from %s to %s", pair.Client.IP, pair.Server.IP)
+		if err := e.captureCommandOutput(ctx, pair.Client.IP, command, clientLogFile, true, false); err != nil {
+			return fmt.Errorf("failed to start client on %s: %v", pair.Client.IP, err)
+		}
+
+		log.Printf("Started client %d from %s to %s (logs: %s)", i, pair.Client.IP, pair.Server.IP, clientLogFile)
 	}
 
 	return nil
@@ -296,16 +317,16 @@ func (e *VMVMExperiment) Cleanup() error {
 		e.cancelFunc()
 	}
 
-	// Kill any remaining iperf3 processes in the VMs
+	// Kill any remaining processes in the VMs
 	for _, pair := range e.SCPairs {
 		killCmd := exec.Command("sshpass", "-p", "root", "ssh",
 			"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
-			"root@"+pair.Server.IP, "pkill iperf3 || true")
+			"root@"+pair.Server.IP, "pkill iperf3 || pkill sockperf || true")
 		killCmd.Run()
 
 		killCmd = exec.Command("sshpass", "-p", "root", "ssh",
 			"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
-			"root@"+pair.Client.IP, "pkill iperf3 || true")
+			"root@"+pair.Client.IP, "pkill iperf3 || pkill sockperf || true")
 		killCmd.Run()
 	}
 
