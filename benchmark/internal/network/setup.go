@@ -48,7 +48,7 @@ func Setup(numVMs int) error {
 	}
 
 	// configure bridge IP (only if not already configured)
-	cmd = exec.Command("ip", "addr", "show", config.BridgeName)
+	cmd = exec.Command("sh", "-c", fmt.Sprintf("ip addr show %s | grep -q inet", config.BridgeName))
 	if err := cmd.Run(); err != nil {
 		// bridge doesn't have IP, add one
 		cmd = exec.Command("sudo", "ip", "addr", "add", config.BridgeIP, "dev", config.BridgeName)
