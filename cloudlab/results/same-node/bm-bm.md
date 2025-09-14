@@ -20,7 +20,7 @@ iperf3 -c 192.168.100.1 -t 30 -P 4
 [SUM]   0.00-30.00  sec   336 GBytes  96.2 Gbits/sec    0             sender
 [SUM]   0.00-30.00  sec   336 GBytes  96.2 Gbits/sec                  receiver
 ```
-### Syscalls
+### Server-side Syscalls
 ```
 @total[iperf3, setsockopt]: 3
 @total[iperf3, close]: 15
@@ -55,7 +55,7 @@ sockperf: ---> percentile 50.000 =   26.015
 sockperf: ---> percentile 25.000 =   25.759
 sockperf: ---> <MIN> observation =   11.395
 ```
-### Syscalls
+### Server-side Syscalls
 ```
 @total[sockperf, recvfrom]: 551953
 @total[sockperf, sendto]: 551953

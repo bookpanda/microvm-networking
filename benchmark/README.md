@@ -8,6 +8,8 @@ ps aux | grep firecracker | grep -v grep | awk '{print $2}' | xargs kill -9
 
 go run cmd/main.go -vms=4
 go run cmd/main.go -vms=4 -test=latency
+go run cmd/main.go -vms=2 -test=throughput
+go run cmd/main.go -vms=2 -test=latency
 go run cmd/main.go -vms=8
 
 go run cmd/main.go -vms=4 -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/debian-rootfs.ext4

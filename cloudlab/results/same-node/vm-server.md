@@ -20,7 +20,7 @@ iperf3 -s
 [SUM]   0.00-30.00  sec  61.0 GBytes  17.5 Gbits/sec    0             sender
 [SUM]   0.00-30.00  sec  61.0 GBytes  17.5 Gbits/sec                  receiver
 ```
-### Syscalls on microVM process
+### Syscalls on microVM process (server)
 ```
 @total[fc_vcpu 0, write]: 15131
 @total[firecracker, read]: 198492
@@ -53,7 +53,7 @@ sockperf: ---> percentile 50.000 =   65.509
 sockperf: ---> percentile 25.000 =   61.966
 sockperf: ---> <MIN> observation =   40.071
 ```
-### Syscalls on microVM process
+### Syscalls on microVM process (server)
 ```
 @total[firecracker, read]: 224897
 @total[firecracker, write]: 436562
