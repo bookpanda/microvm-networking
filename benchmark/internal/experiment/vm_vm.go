@@ -256,9 +256,9 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 		var command string
 		switch e.test {
 		case config.Throughput:
-			command = fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 10 -P 4", pair.Server.IP)
+			command = fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 30 -P 4", pair.Server.IP)
 		case config.Latency:
-			command = fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp sockperf ping-pong -i %s -m 64 -t 5", pair.Server.IP)
+			command = fmt.Sprintf("mount -t tmpfs -o size=128M tmpfs /tmp && HOME=/tmp sockperf ping-pong -i %s -m 64 -t 30", pair.Server.IP)
 		default:
 			return fmt.Errorf("invalid test: %s", e.test)
 		}
