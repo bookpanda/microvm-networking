@@ -173,6 +173,9 @@ sudo umount /mnt/debian-rootfs
 
 # fix ext4 filesystem
 e2fsck -f /tmp/debian-rootfs.ext4
+
+# on mac
+scp -i ~/.ssh/cloudlab ipankam@ms0940.utah.cloudlab.us:/tmp/debian-rootfs.ext4 ./debian-rootfs.ext4
 ```
 ### RootFS note
 - we make it read-only because we want to use same rootFS for all VMs (don't want to copy n times)
