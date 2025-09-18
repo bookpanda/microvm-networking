@@ -11,10 +11,6 @@
     - Reads/writes NIC rings
 7. Processed Packets Sent Back to NIC
 
-## current microVM flow 
-External packet → host kernel → tap → microVM kernel → microVM TCP stack → user-space app
-## TAS microVM flow (bypasses microVM TCP kernel)
-External network → host NIC/tap → Host TAS (user-space) → Virtio-net/tap to microVM → microVM app
 
 ## DPDK
 ```bash
@@ -43,13 +39,18 @@ sudo dpdk-devbind.py --bind=vfio-pci 0000:03:00.0
 # port-topology = how ports are connected inside testpmd
 sudo dpdk-testpmd -l 0-1 -n 4 -- --port-topology=chained
 ```
-## TAS for microVMs
-1. microVMs don't need VFIO access, use virtio-net instead
+# 1 TAS on host for microVMs (sidecar)
+The IPC for a one-way shared memory crossing is measured to be around 250 nanoseconds. While this is a measurable cost, it's significantly less than the multiple microseconds (or even milliseconds at the tail) of latency added by a traditional in-kernel stack1. microVMs don't need VFIO access, use virtio-net instead
 - networking go through tap devices
 - TAS can accelerate TCP inside the host, routing traffic between microVMs over these virtual interfaces
-2. run single TAS on the host
+## current microVM flow 
+External packet → host kernel → tap → microVM kernel → microVM TCP stack → user-space app
+## TAS microVM flow (bypasses microVM TCP kernel)
+External network → host NIC/tap → Host TAS (user-space) → Virtio-net/tap to microVM → microVM app
+
 ## Components
 ### Tap/virtio interception on the host
+- You don’t bind virtio/tap to DPDK like VFIO, because tap interfaces are already in userspace. Instead, you tell DPDK which interface to attach to via its PMD driver
 - Each microVM is connected via a tap device.
 - TAS attaches to the tap device using DPDK or AF_XDP (user-space packet I/O).
 - TAS can read/write packets directly on the tap interface without passing them to the microVM kernel.
@@ -58,3 +59,4 @@ sudo dpdk-testpmd -l 0-1 -n 4 -- --port-topology=chained
 - MicroVM apps must use a TAS-aware API or socket library.
 - When the app sends TCP data, it goes through a special virtio interface (or via a control socket) to the host TAS.
 - The TAS emulates the TCP stack in user-space, so the microVM kernel is completely bypassed.
+- can't use `iperf3` or `sockperf` as they use standard sockets, not TAS-aware sockets
