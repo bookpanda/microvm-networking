@@ -1,18 +1,18 @@
 # Setup
 ```bash
-sudo apt install -y dpdk dpdk-dev libdpdk-dev
+# dpdk
+cd ~
+wget https://fast.dpdk.org/rel/dpdk-19.11.14.tar.xz
+tar xf dpdk-19.11.14.tar.xz
+mv dpdk-stable-19.11.14 dpdk-inst
 
-# allocate 1024 hugepages in mem (2MB each, DPDK uses for zero-copy)
-echo 1024 | sudo tee /proc/sys/vm/nr_hugepages
-# check current hugepages allocation
-grep HugePages /proc/meminfo
+cd ~/dpdk-inst
+make config T=x86_64-native-linuxapp-gcc
+make -j
 
-# loads the VFIO driver, allows DPDK to bind NICs directly to user space
-sudo modprobe vfio-pci
-# check
-lsmod | grep vfio
-
-# lists all NICs and shows which driver each NIC uses
-sudo dpdk-devbind.py --status
+# tas
+cd ~/code/tas
+make clean
+make RTE_SDK=~/dpdk-inst/build
 
 ```
