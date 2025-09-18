@@ -69,8 +69,10 @@ firectl -h
 ```bash
 # linux kernel (for testing)
 curl -fsSL -o /tmp/vmlinux-5.10.223-no-acpi http://spec.ccfc.min.s3.amazonaws.com/firecracker-ci/v1.10/x86_64/vmlinux-5.10.223-no-acpi
-
+# base rootfs
 curl -fsSL -o /tmp/debian-rootfs.ext4 http://spec.ccfc.min.s3.amazonaws.com/ci-artifacts/disks/x86_64/debian.rootfs.ext4
+# customized rootfs
+curl -fsSL -o /tmp/debian-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/debian-rootfs.ext4
 
 
 # hello kernel, rootfs (can barely do anything)
