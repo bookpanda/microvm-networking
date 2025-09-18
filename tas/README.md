@@ -52,6 +52,7 @@ External network → host NIC/tap → Host TAS (user-space) → Virtio-net/tap t
 ### Tap/virtio interception on the host
 - You don’t bind virtio/tap to DPDK like VFIO, because tap interfaces are already in userspace. Instead, you tell DPDK which interface to attach to via its PMD driver
 - Each microVM is connected via a tap device.
+- No dpdk-devbind.py is needed for tap interfaces (it's for physical NICs e.g. VFIO, UIO).
 - TAS attaches to the tap device using DPDK or AF_XDP (user-space packet I/O).
 - TAS can read/write packets directly on the tap interface without passing them to the microVM kernel.
 
