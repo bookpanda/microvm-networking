@@ -12,6 +12,7 @@ make -j$(nproc)
 
 # tas
 cd ~/code/tas
+# replace pthread_yield() with sched_yield()
 make clean
 make RTE_SDK=~/dpdk-inst/build
 
