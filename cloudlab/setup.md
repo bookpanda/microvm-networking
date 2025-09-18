@@ -17,6 +17,7 @@ sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl ac
 # let you run Firecracker as your user without needing full sudo
 sudo setfacl -m u:${USER}:rw /dev/kvm
 sudo usermod -aG kvm $USER
+sudo chmod 666 /dev/kvm
 
 # c
 sudo apt install -y cmake clangd clang
