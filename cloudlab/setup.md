@@ -8,6 +8,8 @@ ssh -T git@github.com
 git config --global user.name "Your Name"
 git config --global user.email "you@example.com"
 
+git clone git@github.com:bookpanda/microvm-networking.git
+
 # core
 sudo apt update
 sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl acl sockperf isc-dhcp-server sshpass
