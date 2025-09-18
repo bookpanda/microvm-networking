@@ -8,7 +8,7 @@ mv dpdk-stable-19.11.14 dpdk-inst
 
 cd ~/dpdk-inst
 make config T=x86_64-native-linuxapp-gcc
-make -j
+make -j$(nproc)
 
 # tas
 cd ~/code/tas
