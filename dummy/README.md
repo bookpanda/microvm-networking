@@ -1,0 +1,4 @@
+```bash
+cmake --build .
+
+```
