@@ -13,3 +13,7 @@ ${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp
 add_executable(dummy ${SOURCE_FILES})
 # include_directories(include)
 target_include_directories(dummy PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+set_target_properties(dummy PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build
+)
