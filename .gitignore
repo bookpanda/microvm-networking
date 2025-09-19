@@ -26,4 +26,3 @@ Makefile
 *.dylib
 *.dll
 *.lib
-dummy

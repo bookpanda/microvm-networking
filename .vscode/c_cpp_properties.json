@@ -2,8 +2,13 @@
     "configurations": [
         {
             "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/include/c++/14",
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/include"
+            ],
             "compilerPath": "/usr/bin/clang++",
-            "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-clang-x64"
         }
