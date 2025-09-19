@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.12)
 
+# Include directories for examples
+include_directories(../include)
+
 # Example programs
 add_executable(hello_world hello_world.c)
 target_link_libraries(hello_world microvm_net_static)

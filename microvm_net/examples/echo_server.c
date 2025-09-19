@@ -10,7 +10,7 @@
 #include <signal.h>
 #include <getopt.h>
 #include <time.h>
-#include "microvm_net.h"
+#include "../include/microvm_net.h"
 
 static volatile int running = 1;
 

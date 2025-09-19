@@ -12,7 +12,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <math.h>
-#include "microvm_net.h"
+#include "../include/microvm_net.h"
 
 #define MAX_LATENCY_SAMPLES 100000
 

@@ -3,10 +3,11 @@
  * @brief Lock-free ring buffer implementation
  */
 
-#include "ring_buffer.h"
+#include "../include/ring_buffer.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <stdio.h>
 
 #define RING_ALIGN_UP(size, align) (((size) + (align) - 1) & ~((align) - 1))
 #define IS_POWER_OF_2(n) ((n) && !((n) & ((n) - 1)))
@@ -21,9 +22,13 @@ size_t microvm_net_ring_get_memsize(uint32_t element_size, uint32_t count) {
 }
 
 int microvm_net_ring_init(microvm_net_ring_t *ring, uint32_t element_size, uint32_t count) {
+    printf("DEBUG: Ring init - element_size: %u, count: %u, is_power_of_2: %d\n", 
+           element_size, count, IS_POWER_OF_2(count));
     if (!ring || element_size == 0 || count == 0 || !IS_POWER_OF_2(count)) {
+        printf("DEBUG: Ring init failed validation\n");
         return -1;
     }
+    printf("DEBUG: Ring init validation passed\n");
     
     memset(ring, 0, sizeof(*ring));
     
@@ -46,9 +51,11 @@ static inline void ring_copy_elements(void *dst, const void *src,
 
 static uint32_t ring_do_enqueue(microvm_net_ring_t *ring, const void *objs,
                                  uint32_t count, bool is_sp, bool exact) {
-    uint32_t prod_head, prod_next;
+    uint_fast32_t prod_head, prod_next;
     uint32_t cons_tail;
     uint32_t free_entries;
+    
+    printf("DEBUG: Enqueue - requested count: %u\n", count);
     
     do {
         prod_head = atomic_load_explicit(&ring->prod_head, memory_order_relaxed);
@@ -56,7 +63,11 @@ static uint32_t ring_do_enqueue(microvm_net_ring_t *ring, const void *objs,
         
         free_entries = (ring->mask + cons_tail - prod_head);
         
+        printf("DEBUG: Enqueue - prod_head: %u, cons_tail: %u, mask: %u, free_entries: %u\n", 
+               (uint32_t)prod_head, cons_tail, ring->mask, free_entries);
+        
         if (count > free_entries) {
+            printf("DEBUG: Enqueue - count (%u) > free_entries (%u), exact: %d\n", count, free_entries, exact);
             if (exact) {
                 return 0;
             }
@@ -64,6 +75,7 @@ static uint32_t ring_do_enqueue(microvm_net_ring_t *ring, const void *objs,
         }
         
         if (count == 0) {
+            printf("DEBUG: Enqueue - count is 0, returning\n");
             return 0;
         }
         
@@ -111,7 +123,7 @@ static uint32_t ring_do_enqueue(microvm_net_ring_t *ring, const void *objs,
 
 static uint32_t ring_do_dequeue(microvm_net_ring_t *ring, void *objs,
                                  uint32_t count, bool is_sc, bool exact) {
-    uint32_t cons_head, cons_next;
+    uint_fast32_t cons_head, cons_next;
     uint32_t prod_tail;
     uint32_t entries;
     

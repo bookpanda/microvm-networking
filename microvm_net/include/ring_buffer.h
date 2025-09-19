@@ -15,6 +15,7 @@ extern "C" {
 #include <stdalign.h>
 #include <stdatomic.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define MICROVM_NET_CACHE_LINE_SIZE 64
@@ -24,9 +25,9 @@ extern "C" {
  */
 typedef struct {
   // Ring configuration
-  uint32_t size;          // Size of ring (must be power of 2)
-  uint32_t mask;          // Size - 1 (for fast modulo)
-  uint32_t element_size;  // Size of each element in bytes
+  uint32_t size;         // Size of ring (must be power of 2)
+  uint32_t mask;         // Size - 1 (for fast modulo)
+  uint32_t element_size; // Size of each element in bytes
 
   // Producer state (cache-line aligned)
   _Alignas(MICROVM_NET_CACHE_LINE_SIZE) atomic_uint_fast32_t prod_head;
@@ -136,8 +137,8 @@ static inline uint32_t microvm_net_ring_count(const microvm_net_ring_t *ring) {
  * @param ring Ring buffer
  * @return Number of free slots
  */
-static inline uint32_t microvm_net_ring_free_count(
-    const microvm_net_ring_t *ring) {
+static inline uint32_t
+microvm_net_ring_free_count(const microvm_net_ring_t *ring) {
   return (ring->mask + 1) - microvm_net_ring_count(ring) - 1;
 }
 
@@ -167,4 +168,4 @@ static inline bool microvm_net_ring_full(const microvm_net_ring_t *ring) {
 }
 #endif
 
-#endif  // MICROVM_NET_RING_BUFFER_H_
+#endif // MICROVM_NET_RING_BUFFER_H_

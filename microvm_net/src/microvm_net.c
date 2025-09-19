@@ -3,10 +3,10 @@
  * @brief Main implementation of the microvm networking stack
  */
 
-#include "microvm_net.h"
-#include "ring_buffer.h"
-#include "packet_io.h"
-#include "buffer_pool.h"
+#include "../include/microvm_net.h"
+#include "../include/ring_buffer.h"
+#include "../include/packet_io.h"
+#include "../include/buffer_pool.h"
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <stdatomic.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #define DEFAULT_RING_SIZE 1024
 #define DEFAULT_BUFFER_COUNT 2048
@@ -129,8 +130,10 @@ microvm_net_channel_t* microvm_net_channel_create(const microvm_net_config_t *co
     
     microvm_net_channel_t *channel = calloc(1, sizeof(*channel));
     if (!channel) {
+        printf("DEBUG: Failed to allocate channel memory\n");
         return NULL;
     }
+    printf("DEBUG: Channel memory allocated successfully\n");
     
     // Set default configuration
     if (config) {
@@ -161,16 +164,22 @@ microvm_net_channel_t* microvm_net_channel_create(const microvm_net_config_t *co
     size_t rx_ring_size = microvm_net_ring_get_memsize(sizeof(uint32_t), ring_size);
     size_t flows_size = MICROVM_NET_MAX_FLOWS * sizeof(microvm_net_flow_t);
     
+    printf("DEBUG: Ring sizes - tx: %zu, rx: %zu, flows: %zu\n", tx_ring_size, rx_ring_size, flows_size);
+    
     channel->shm_size = tx_ring_size + rx_ring_size + flows_size;
     channel->shm_size = (channel->shm_size + 4095) & ~4095;  // Page align
+    
+    printf("DEBUG: Total shared memory size: %zu\n", channel->shm_size);
     
     // Allocate shared memory
     channel->shm_base = mmap(NULL, channel->shm_size, PROT_READ | PROT_WRITE,
                              MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (channel->shm_base == MAP_FAILED) {
+        printf("DEBUG: mmap failed for shared memory\n");
         free(channel);
         return NULL;
     }
+    printf("DEBUG: Shared memory allocated successfully\n");
     
     // Setup memory layout
     char *mem_ptr = (char*)channel->shm_base;
@@ -184,12 +193,15 @@ microvm_net_channel_t* microvm_net_channel_create(const microvm_net_config_t *co
     channel->flows = (microvm_net_flow_t*)mem_ptr;
     
     // Initialize rings
+    printf("DEBUG: Initializing rings...\n");
     if (microvm_net_ring_init(channel->tx_ring, sizeof(uint32_t), ring_size) != 0 ||
         microvm_net_ring_init(channel->rx_ring, sizeof(uint32_t), ring_size) != 0) {
+        printf("DEBUG: Ring initialization failed\n");
         munmap(channel->shm_base, channel->shm_size);
         free(channel);
         return NULL;
     }
+    printf("DEBUG: Rings initialized successfully\n");
     
     // Create buffer pool
     microvm_net_buffer_pool_config_t pool_config = {
@@ -199,12 +211,15 @@ microvm_net_channel_t* microvm_net_channel_create(const microvm_net_config_t *co
         .cache_size = 64
     };
     
+    printf("DEBUG: Creating buffer pool...\n");
     channel->buffer_pool = microvm_net_buffer_pool_create(&pool_config);
     if (!channel->buffer_pool) {
+        printf("DEBUG: Buffer pool creation failed\n");
         munmap(channel->shm_base, channel->shm_size);
         free(channel);
         return NULL;
     }
+    printf("DEBUG: Buffer pool created successfully\n");
     
     // Initialize statistics
     atomic_store_explicit(&channel->tx_packets, 0, memory_order_relaxed);
@@ -247,6 +262,7 @@ void microvm_net_channel_destroy(microvm_net_channel_t *channel) {
 int microvm_net_bind(microvm_net_channel_t *channel, 
                      const char *local_ip, 
                      uint16_t local_port) {
+    (void)local_port;  // Unused parameter
     if (!channel || !local_ip) {
         return -1;
     }

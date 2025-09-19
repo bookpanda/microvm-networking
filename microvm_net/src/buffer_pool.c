@@ -3,13 +3,14 @@
  * @brief Buffer pool implementation
  */
 
-#include "buffer_pool.h"
-#include "ring_buffer.h"
+#include "../include/buffer_pool.h"
+#include "../include/ring_buffer.h"
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <errno.h>
 #include <stdatomic.h>
+#include <stdio.h>
 
 #ifndef MAP_HUGETLB
 #define MAP_HUGETLB 0x40000  // Linux-specific flag
@@ -44,11 +45,16 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
     const microvm_net_buffer_pool_config_t *config) {
     
     if (!config || config->buffer_size == 0 || config->buffer_count == 0) {
+        printf("DEBUG: Invalid buffer pool config\n");
         return NULL;
     }
     
+    printf("DEBUG: Creating buffer pool - size: %zu, count: %u\n", 
+           config->buffer_size, config->buffer_count);
+    
     microvm_net_buffer_pool_t *pool = calloc(1, sizeof(*pool));
     if (!pool) {
+        printf("DEBUG: Failed to allocate buffer pool struct\n");
         return NULL;
     }
     
@@ -60,7 +66,19 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
     size_t aligned_buffer_size = ALIGN_UP(config->buffer_size, 64);  // Cache-line aligned
     size_t buffers_memory = aligned_buffer_size * config->buffer_count;
     size_t descriptors_memory = sizeof(microvm_net_buffer_t) * config->buffer_count;
-    size_t ring_memory = microvm_net_ring_get_memsize(sizeof(uint32_t), config->buffer_count);
+    
+    // Ring size needs to be buffer_count + 1, rounded up to power of 2
+    uint32_t ring_size = config->buffer_count + 1;
+    if ((ring_size & (ring_size - 1)) != 0) {
+        ring_size--;
+        ring_size |= ring_size >> 1;
+        ring_size |= ring_size >> 2;
+        ring_size |= ring_size >> 4;
+        ring_size |= ring_size >> 8;
+        ring_size |= ring_size >> 16;
+        ring_size++;
+    }
+    size_t ring_memory = microvm_net_ring_get_memsize(sizeof(uint32_t), ring_size);
     
     pool->memory_size = buffers_memory + descriptors_memory + ring_memory;
     
@@ -71,8 +89,10 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
         pool->memory_size = ALIGN_UP(pool->memory_size, HUGEPAGE_SIZE);
     }
     
+    printf("DEBUG: Allocating %zu bytes for buffer pool memory\n", pool->memory_size);
     pool->memory_base = mmap(NULL, pool->memory_size, PROT_READ | PROT_WRITE, flags, -1, 0);
     if (pool->memory_base == MAP_FAILED) {
+        printf("DEBUG: First mmap failed, trying fallback\n");
         // Fallback to regular pages if hugepages failed
         if (flags & MAP_HUGETLB) {
             flags &= ~MAP_HUGETLB;
@@ -80,10 +100,12 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
         }
         
         if (pool->memory_base == MAP_FAILED) {
+            printf("DEBUG: Buffer pool mmap failed completely\n");
             free(pool);
             return NULL;
         }
     }
+    printf("DEBUG: Buffer pool memory allocated successfully\n");
     
     // Setup memory layout
     char *mem_ptr = (char*)pool->memory_base;
@@ -98,11 +120,14 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
     
     // Free ring
     pool->free_ring = (microvm_net_ring_t*)mem_ptr;
-    if (microvm_net_ring_init(pool->free_ring, sizeof(uint32_t), config->buffer_count) != 0) {
+    printf("DEBUG: Initializing free ring with size %u to hold %u buffers\n", ring_size, config->buffer_count);
+    if (microvm_net_ring_init(pool->free_ring, sizeof(uint32_t), ring_size) != 0) {
+        printf("DEBUG: Free ring initialization failed\n");
         munmap(pool->memory_base, pool->memory_size);
         free(pool);
         return NULL;
     }
+    printf("DEBUG: Free ring initialized successfully\n");
     
     // Initialize buffer descriptors
     for (uint32_t i = 0; i < config->buffer_count; i++) {
@@ -113,8 +138,10 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
     }
     
     // Initialize free ring with all buffer indices
+    printf("DEBUG: Allocating indices array\n");
     uint32_t *indices = malloc(config->buffer_count * sizeof(uint32_t));
     if (!indices) {
+        printf("DEBUG: Failed to allocate indices array\n");
         munmap(pool->memory_base, pool->memory_size);
         free(pool);
         return NULL;
@@ -124,10 +151,13 @@ microvm_net_buffer_pool_t* microvm_net_buffer_pool_create(
         indices[i] = i;
     }
     
+    printf("DEBUG: Enqueueing %u buffer indices to free ring\n", config->buffer_count);
     uint32_t enqueued = microvm_net_ring_sp_enqueue_bulk(pool->free_ring, indices, config->buffer_count);
     free(indices);
     
+    printf("DEBUG: Enqueued %u out of %u indices\n", enqueued, config->buffer_count);
     if (enqueued != config->buffer_count) {
+        printf("DEBUG: Failed to enqueue all buffer indices\n");
         munmap(pool->memory_base, pool->memory_size);
         free(pool);
         return NULL;

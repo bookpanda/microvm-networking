@@ -3,8 +3,8 @@
  * @brief TAP-based packet I/O implementation
  */
 
-#include "packet_io.h"
-#include "buffer_pool.h"
+#include "../include/packet_io.h"
+#include "../include/buffer_pool.h"
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -179,6 +179,7 @@ int microvm_net_pktio_set_ip(microvm_net_pktio_t *pktio,
     struct ifreq ifr;
     memset(&ifr, 0, sizeof(ifr));
     strncpy(ifr.ifr_name, pktio->interface, IFNAMSIZ - 1);
+    ifr.ifr_name[IFNAMSIZ - 1] = '\0';
     
     // Set IP address
     struct sockaddr_in *addr = (struct sockaddr_in*)&ifr.ifr_addr;
@@ -194,6 +195,7 @@ int microvm_net_pktio_set_ip(microvm_net_pktio_t *pktio,
     if (netmask) {
         memset(&ifr, 0, sizeof(ifr));
         strncpy(ifr.ifr_name, pktio->interface, IFNAMSIZ - 1);
+    ifr.ifr_name[IFNAMSIZ - 1] = '\0';
         
         struct sockaddr_in *mask = (struct sockaddr_in*)&ifr.ifr_netmask;
         mask->sin_family = AF_INET;
@@ -219,6 +221,7 @@ int microvm_net_pktio_get_mac(microvm_net_pktio_t *pktio, uint8_t mac_addr[6]) {
     struct ifreq ifr;
     memset(&ifr, 0, sizeof(ifr));
     strncpy(ifr.ifr_name, pktio->interface, IFNAMSIZ - 1);
+    ifr.ifr_name[IFNAMSIZ - 1] = '\0';
     
     if (ioctl(sock_fd, SIOCGIFHWADDR, &ifr) < 0) {
         close(sock_fd);
