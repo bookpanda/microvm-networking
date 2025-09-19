@@ -12,4 +12,17 @@ tfplan
 vm-experiment-logs
 vm-logs
 vm-syscalls
+
+# c/c++
 build
+CMakeFiles
+cmake_install.cmake
+CMakeCache.txt
+Makefile
+*.cmake
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.lib
