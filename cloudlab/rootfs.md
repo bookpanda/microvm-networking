@@ -12,13 +12,20 @@ apt update
 apt install -y build-essential cmake git sudo autoconf libtool iperf3 sockperf
 g++ --version    # should be g++ 10+
 cmake --version
+
+cd ~
+git clone https://github.com/bookpanda/microvm-userspace-stack.git
+cd microvm-userspace-stack
+cmake -S . -B build
+cmake --build build
+
 exit
 
 cd ~
-fallocate -l 4G debian-bullseye-rootfs.ext4
-mkfs.ext4 debian-bullseye-rootfs.ext4
-sudo mount -o loop debian-bullseye-rootfs.ext4 ~/mnt
-sudo cp -a ~/debian-bullseye-rootfs/. ~/mnt/
+fallocate -l 1G minbase-bullseye-rootfs.ext4
+mkfs.ext4 minbase-bullseye-rootfs.ext4
+sudo mount -o loop minbase-bullseye-rootfs.ext4 ~/mnt
+sudo cp -a ~/minbase-bullseye-rootfs/. ~/mnt/
 sudo umount ~/mnt
 
 ```
