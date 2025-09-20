@@ -3,13 +3,13 @@
 sudo apt update
 sudo apt install debootstrap
 
-mkdir ~/debian-bullseye-rootfs
+mkdir ~/minbase-bullseye-rootfs
 # checl the arch
-sudo debootstrap --arch=amd64 bullseye ~/debian-bullseye-rootfs http://deb.debian.org/debian/
-sudo chroot ~/debian-bullseye-rootfs /bin/bash
+sudo debootstrap --arch=amd64 --variant=minbase bullseye ~/minbase-bullseye-rootfs http://deb.debian.org/debian/
+sudo chroot ~/minbase-bullseye-rootfs /bin/bash
 
 apt update
-apt install build-essential cmake git sudo
+apt install -y build-essential cmake git sudo autoconf libtool iperf3 sockperf
 g++ --version    # should be g++ 10+
 cmake --version
 exit
@@ -22,3 +22,6 @@ sudo cp -a ~/debian-bullseye-rootfs/. ~/mnt/
 sudo umount ~/mnt
 
 ```
+### RootFS note
+- we make it read-only because we want to use same rootFS for all VMs (don't want to copy n times)
+- for iperf3 (requires writing files), we need to mount read-write blocks per VM
