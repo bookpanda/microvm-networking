@@ -6,8 +6,10 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
+	"github.com/bookpanda/microvm-networking/benchmark/internal/experiment"
 	_vm "github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
 
@@ -55,28 +57,28 @@ func main() {
 
 	manager.LogNetworkingInfo()
 
-	// time.Sleep(5 * time.Second)
-	// if err := experiment.RunVMVMBenchmark(ctx, manager); err != nil {
-	// 	log.Fatalf("Failed to run VM VM benchmark: %v", err)
-	// }
+	time.Sleep(5 * time.Second)
+	if err := experiment.RunVMVMBenchmark(ctx, manager); err != nil {
+		log.Fatalf("Failed to run VM VM benchmark: %v", err)
+	}
 
-	// log.Println("Shutting down VMs...")
+	log.Println("Shutting down VMs...")
 
-	// // cleanup files
-	// os.Remove(pidFile)
-	// for i := 0; i < cfg.NumVMs; i++ {
-	// 	socketFile := fmt.Sprintf("/tmp/firecracker-%d.sock", i)
-	// 	os.Remove(socketFile)
-	// }
+	// cleanup files
+	os.Remove(pidFile)
+	for i := 0; i < cfg.NumVMs; i++ {
+		socketFile := fmt.Sprintf("/tmp/firecracker-%d.sock", i)
+		os.Remove(socketFile)
+	}
 
-	// // stop all VMs and cleanup
-	// if err := manager.Stop(ctx); err != nil {
-	// 	log.Printf("Failed to stop VMs: %v", err)
-	// }
+	// stop all VMs and cleanup
+	if err := manager.Stop(ctx); err != nil {
+		log.Printf("Failed to stop VMs: %v", err)
+	}
 
-	// if err := manager.Cleanup(); err != nil {
-	// 	log.Printf("Failed to cleanup networking: %v", err)
-	// }
+	if err := manager.Cleanup(); err != nil {
+		log.Printf("Failed to cleanup networking: %v", err)
+	}
 
-	// log.Printf("All %d VMs stopped successfully", cfg.NumVMs)
+	log.Printf("All %d VMs stopped successfully", cfg.NumVMs)
 }
