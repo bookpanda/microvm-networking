@@ -17,8 +17,8 @@ func ParseFlags() *Config {
 	cfg := &Config{}
 
 	flag.IntVar(&cfg.NumVMs, "vms", 1, "Number of VMs to create")
-	flag.StringVar(&cfg.KernelPath, "kernel", "/tmp/vmlinux-5.10.223-no-acpi", "Path to kernel image")
-	flag.StringVar(&cfg.RootfsPath, "rootfs", "/tmp/debian-rootfs.ext4", "Path to rootfs image")
+	flag.StringVar(&cfg.KernelPath, "kernel", "~/tmp/vmlinux-5.10.223-no-acpi", "Path to kernel image")
+	flag.StringVar(&cfg.RootfsPath, "rootfs", "~/tmp/minbase-bullseye-rootfs.ext4", "Path to rootfs image")
 
 	mode := flag.String("mode", string(VM_VM), "Mode to run the benchmark in")
 	test := flag.String("test", string(Throughput), "Test to run the benchmark in")

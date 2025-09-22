@@ -1,5 +1,9 @@
 # RootFS
 ```bash
+# S3 url for pre-built rootfs
+curl -fsSL -o ~/tmp/minbase-bullseye-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/minbase-bullseye-rootfs.ext4
+
+
 sudo apt update
 sudo apt install debootstrap
 
@@ -13,17 +17,22 @@ apt install -y build-essential cmake git sudo autoconf libtool iperf3 sockperf
 g++ --version    # should be g++ 10+
 cmake --version
 
-cd ~
+cd /root
 git clone https://github.com/bookpanda/microvm-userspace-stack.git
 cd microvm-userspace-stack
 cmake -S . -B build
 cmake --build build
+cp /root/microvm-userspace-stack/build/vm_app /root/vm_app
 
 exit
 
 cd ~
+
 fallocate -l 1G minbase-bullseye-rootfs.ext4
+truncate -s 1G minbase-bullseye-rootfs.ext4
+
 mkfs.ext4 minbase-bullseye-rootfs.ext4
+mkdir mnt
 sudo mount -o loop minbase-bullseye-rootfs.ext4 ~/mnt
 sudo cp -a ~/minbase-bullseye-rootfs/. ~/mnt/
 sudo umount ~/mnt
