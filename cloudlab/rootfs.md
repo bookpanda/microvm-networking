@@ -8,21 +8,31 @@ sudo apt update
 sudo apt install debootstrap
 
 mkdir ~/minbase-bullseye-rootfs
-# checl the arch
+# check the arch
 sudo debootstrap --arch=amd64 --variant=minbase bullseye ~/minbase-bullseye-rootfs http://deb.debian.org/debian/
+
+sudo cp -r ~/code/microvm-userspace-stack ~/minbase-bullseye-rootfs/root/microvm-userspace-stack
+
 sudo chroot ~/minbase-bullseye-rootfs /bin/bash
 
 apt update
-apt install -y build-essential cmake git sudo autoconf libtool iperf3 sockperf
+apt install -y build-essential cmake git sudo autoconf libtool iperf3 sockperf openssh-server
 g++ --version    # should be g++ 10+
 cmake --version
 
-cd /root
-git clone https://github.com/bookpanda/microvm-userspace-stack.git
-cd microvm-userspace-stack
+cd /root/microvm-userspace-stack
+# git clone https://github.com/bookpanda/microvm-userspace-stack.git
 cmake -S . -B build
 cmake --build build
 cp /root/microvm-userspace-stack/build/vm_app /root/vm_app
+
+passwd
+sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+
+# systemctl enable ssh
+/etc/init.d/ssh start
 
 exit
 
@@ -36,7 +46,17 @@ mkdir mnt
 sudo mount -o loop minbase-bullseye-rootfs.ext4 ~/mnt
 sudo cp -a ~/minbase-bullseye-rootfs/. ~/mnt/
 sudo umount ~/mnt
+```
+## Editing
+```bash
+sudo mount -o loop minbase-bullseye-rootfs.ext4 ~/mnt
+sudo chroot ~/mnt /bin/bash
 
+
+sudo umount ~/mnt
+
+# on mac
+scp -i ~/.ssh/cloudlab ipankam@amd128.utah.cloudlab.us:/tmp/minbase-bullseye-rootfs.ext4 ./minbase-bullseye-rootfs.ext4
 ```
 ### RootFS note
 - we make it read-only because we want to use same rootFS for all VMs (don't want to copy n times)
