@@ -6,9 +6,9 @@ curl -fL --progress-bar -o /tmp/minbase-bullseye-rootfs.ext4 https://cloudlab-mi
 sudo apt update
 sudo apt install debootstrap
 
-mkdir ~/minbase-bookworm-rootfs
+mkdir ~/minbase-bullseye-rootfs
 # check the arch
-sudo debootstrap --arch=amd64 --variant=minbase bullseye ~/minbase-bookworm-rootfs http://deb.debian.org/debian/
+sudo debootstrap --arch=amd64 --variant=minbase --include openssh-server,nano bullseye ~/minbase-bullseye-rootfs http://deb.debian.org/debian/
 
 sudo cp -r ~/code/microvm-userspace-stack ~/minbase-bullseye-rootfs/root/microvm-userspace-stack
 
@@ -26,6 +26,7 @@ cmake --build build
 cp /root/microvm-userspace-stack/build/vm_app /root/vm_app
 
 passwd
+passwd root
 sed -i 's/^#  PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 # sed -i 's/^ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config
 # sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -51,7 +52,9 @@ sudo umount ~/mnt
 sudo mount -o loop,rw minbase-bullseye-rootfs.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
 
-sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh_config ~/mnt/etc/ssh/ssh_config
+# sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh_config ~/mnt/etc/ssh/ssh_config
+sudo cp ~/code/microvm-networking/cloudlab/rootfs/sshd_config ~/mnt/etc/ssh/sshd_config
+# /usr/sbin/sshd -D
 # sudo cp ~/code/microvm-networking/cloudlab/rootfs/common-session ~/mnt/etc/pam.d/common-session
 
 # never mess with /etc/init.d/ssh 
