@@ -1,6 +1,6 @@
 [filesystem]
 type = "Ext4"
-size_mib = 250
+size_mib = 1000
 
 [container]
 engine = "Docker"
@@ -12,8 +12,9 @@ image = { name = "docker.io/library/debian", tag = "bookworm-slim" }
 script_inline = """
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
 apt update
-apt install -y udev systemd-sysv iputils-ping curl openssh-server
+apt install -y udev systemd-sysv iputils-ping curl openssh-server build-essential cmake git sudo autoconf libtool iperf3 sockperf
 
 mkdir -p /var/run/sshd
 sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
