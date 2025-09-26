@@ -1,15 +1,19 @@
 #!/bin/bash
-
 PORT=5000
 
 while true; do
-    # Listen on vsock port 5000, execute sockperf when host/VM sends "RUN"
+    # Listen on vsock port and fork a child per connection.
+    # For each line received, feed it to `bash -s` so complex commands run.
     socat -v VSOCK-LISTEN:$PORT,reuseaddr,fork SYSTEM:"bash -c '
-        while read cmd; do
-            if [ \"\$cmd\" = \"RUN\" ]; then
-                echo \"Running sockperf\";
-                sockperf ping-pong -i 127.0.0.1 -p 5001;
-                echo \"DONE\";
+        while IFS= read -r cmd; do
+            if [ -z \"\$cmd\" ]; then
+                # ignore empty lines
+                continue
             fi
-        done'"
+            printf \"[listener] Running: %s\n\" \"\$cmd\" >&2
+            # execute the received command by piping it to bash -s
+            printf \"%s\n\" \"\$cmd\" | bash -s
+            printf \"[listener] DONE\n\" >&2
+        done
+    '"
 done
