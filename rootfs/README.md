@@ -1,7 +1,7 @@
 ## RootFS
-- typically, 1 rootFS per function
+- typically, 1 rootfs per function (the code is already in the rootfs, we only need to send inputs)
 - no SSHing into VMs (it takes 30s) for experiments
-- we make it read-only because we want to use same rootFS for all VMs (don't want to copy n times)
+- we make it read-only because we want to use same rootfs for all VMs (don't want to copy n times)
 - for iperf3 (requires writing files), we need to mount read-write blocks per VM
 ```bash
 # install docker
@@ -26,6 +26,14 @@ echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 which buildfs
 
+# generate rootfs
 sudo -E ~/.cargo/bin/buildfs run -o debian.ext4 ./build_script.toml
 cp debian.ext4 /tmp/debian.ext4
+```
+
+## Mounting
+```bash
+sudo mount -o loop,rw debian.ext4 ~/mnt
+sudo chroot ~/mnt /bin/bash
+sudo umount ~/mnt
 ```
