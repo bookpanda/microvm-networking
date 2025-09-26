@@ -6,9 +6,9 @@ curl -fL --progress-bar -o /tmp/minbase-bullseye-rootfs.ext4 https://cloudlab-mi
 sudo apt update
 sudo apt install debootstrap
 
-mkdir ~/minbase-bullseye-rootfs
+mkdir ~/minbase-bookworm-rootfs
 # check the arch
-sudo debootstrap --arch=amd64 --variant=minbase bullseye ~/minbase-bullseye-rootfs http://deb.debian.org/debian/
+sudo debootstrap --arch=amd64 --variant=minbase bullseye ~/minbase-bookworm-rootfs http://deb.debian.org/debian/
 
 sudo cp -r ~/code/microvm-userspace-stack ~/minbase-bullseye-rootfs/root/microvm-userspace-stack
 
@@ -52,6 +52,7 @@ sudo mount -o loop,rw minbase-bullseye-rootfs.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
 
 sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh_config ~/mnt/etc/ssh/ssh_config
+# sudo cp ~/code/microvm-networking/cloudlab/rootfs/common-session ~/mnt/etc/pam.d/common-session
 
 # never mess with /etc/init.d/ssh 
 # sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh ~/mnt/etc/init.d/ssh
