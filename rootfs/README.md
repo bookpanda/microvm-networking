@@ -35,5 +35,12 @@ cp debian.ext4 /tmp/debian.ext4
 ```bash
 sudo mount -o loop,rw debian.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
+
+sudo cp ~/code/microvm-networking/cloudlab/testing/vsock-listener.sh ~/mnt/usr/local/bin/vsock-listener.sh
+sudo chmod +x ~/mnt/usr/local/bin/vsock-listener.sh
+
+sudo cp ~/code/microvm-networking/cloudlab/testing/vsock-listener.service ~/mnt/etc/systemd/system/vsock-listener.service
+sudo systemctl enable vsock-listener.service
+
 sudo umount ~/mnt
 ```

@@ -1,0 +1,12 @@
+[Unit]
+Description=VSock listener
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/vsock-listener.sh
+Restart=always
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
