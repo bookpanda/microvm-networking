@@ -49,7 +49,7 @@ sudo umount ~/mnt
 ```
 ## Editing
 ```bash
-sudo mount -o loop,rw minbase-bullseye-rootfs.ext4 ~/mnt
+sudo mount -o loop,rw debian.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
 
 # sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh_config ~/mnt/etc/ssh/ssh_config

@@ -1,3 +1,8 @@
+## RootFS
+- typically, 1 rootFS per function
+- no SSHing into VMs (it takes 30s) for experiments
+- we make it read-only because we want to use same rootFS for all VMs (don't want to copy n times)
+- for iperf3 (requires writing files), we need to mount read-write blocks per VM
 ```bash
 # install docker
 sudo apt update
@@ -11,7 +16,8 @@ echo \
 
 sudo apt update
 sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
+```
+```bash
 sudo apt install -y rustup
 rustup update stable
 cargo install buildfs
@@ -20,7 +26,6 @@ echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 which buildfs
 
-sudo usermod -aG docker $USER
-newgrp docker
-buildfs run -o debian.ext4 ./build_script.toml
+sudo -E ~/.cargo/bin/buildfs run -o debian.ext4 ./build_script.toml
+cp debian.ext4 /tmp/debian.ext4
 ```
