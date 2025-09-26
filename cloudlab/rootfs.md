@@ -26,9 +26,9 @@ cmake --build build
 cp /root/microvm-userspace-stack/build/vm_app /root/vm_app
 
 passwd
-sed -i 's/^#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
-sed -i 's/^ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config
-sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
+sed -i 's/^#  PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# sed -i 's/^ChallengeResponseAuthentication.*/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config
+# sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # systemctl enable ssh
 /etc/init.d/ssh start
@@ -50,7 +50,7 @@ sudo umount ~/mnt
 ```bash
 sudo mount -o loop minbase-bullseye-rootfs.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
-
+sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh_config ~/mnt/etc/ssh/ssh_config
 
 sudo umount ~/mnt
 
