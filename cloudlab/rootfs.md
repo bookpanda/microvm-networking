@@ -52,7 +52,9 @@ sudo mount -o loop,rw minbase-bullseye-rootfs.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
 
 sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh_config ~/mnt/etc/ssh/ssh_config
-sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh ~/mnt/etc/init.d/ssh
+
+# never mess with /etc/init.d/ssh 
+# sudo cp ~/code/microvm-networking/cloudlab/rootfs/ssh ~/mnt/etc/init.d/ssh
 
 sudo umount ~/mnt
 
