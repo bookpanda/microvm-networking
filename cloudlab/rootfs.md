@@ -1,8 +1,7 @@
 # RootFS
 ```bash
 # S3 url for pre-built rootfs
-curl -fsSL -o /tmp/minbase-bullseye-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/minbase-bullseye-rootfs.ext4
-
+curl -fL --progress-bar -o /tmp/minbase-bullseye-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/minbase-bullseye-rootfs.ext4
 
 sudo apt update
 sudo apt install debootstrap
