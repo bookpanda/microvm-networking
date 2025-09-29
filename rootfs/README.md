@@ -27,13 +27,13 @@ source ~/.bashrc
 which buildfs
 
 # generate rootfs
-sudo -E ~/.cargo/bin/buildfs run -o debian.ext4 ./build_script.toml
-cp debian.ext4 /tmp/debian.ext4
+sudo -E ~/.cargo/bin/buildfs run -o debian-rootfs.ext4 ./build_script.toml
+cp debian-rootfs.ext4 /tmp/debian-rootfs.ext4
 ```
 
 ## Mounting
 ```bash
-sudo mount -o loop,rw debian.ext4 ~/mnt
+sudo mount -o loop,rw debian-rootfs.ext4 ~/mnt
 sudo chroot ~/mnt /bin/bash
 
 sudo cp ~/code/microvm-networking/cloudlab/testing/vsock-listener.sh ~/mnt/usr/local/bin/vsock-listener.sh
