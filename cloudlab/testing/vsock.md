@@ -8,3 +8,14 @@ cd ~/code/microvm-networking/cloudlab/testing
 
 socat -v - VSOCK-CONNECT:2:5000
 ```
+
+## Example
+```bash
+# vm: run server
+socat VSOCK-LISTEN:52,fork -
+
+# host: client
+socat - UNIX-CONNECT:./vsock-192.168.100.2.sock
+CONNECT 52
+# now anything sent to ./vsock-192.168.100.2.sock will be sent to the vm
+```

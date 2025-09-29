@@ -30,6 +30,9 @@ func (m *Manager) Initialize(ctx context.Context) error {
 	if err := filesystem.CleanFilesInDir("/tmp", "vm-"); err != nil {
 		return fmt.Errorf("failed to clean up vm sock files: %v", err)
 	}
+	if err := filesystem.CleanFilesInDir("/tmp", "vsock-"); err != nil {
+		return fmt.Errorf("failed to clean up vsock files: %v", err)
+	}
 
 	if err := network.CleanupExisting(m.config.NumVMs); err != nil {
 		return fmt.Errorf("failed to clean up existing network interfaces: %v", err)

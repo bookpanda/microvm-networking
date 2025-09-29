@@ -14,7 +14,7 @@ script_inline = """
 
 export DEBIAN_FRONTEND=noninteractive
 apt update
-apt install -y udev systemd-sysv iputils-ping curl openssh-server build-essential cmake git sudo autoconf libtool iperf3 sockperf
+apt install -y udev systemd-sysv iputils-ping curl openssh-server build-essential cmake git sudo autoconf libtool iperf3 sockperf socat
 
 mkdir -p /var/run/sshd
 sed -i 's/^#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config

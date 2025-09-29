@@ -129,9 +129,16 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 	logDir := "./vm-logs"
 
 	cfg := firecracker.Config{
-		SocketPath:      socketPath,
+		SocketPath:      socketPath, // host-FC process communication
 		KernelImagePath: kernelPath,
 		KernelArgs:      "console=ttyS0 noapic reboot=k panic=1 pci=off rw",
+		VsockDevices: []firecracker.VsockDevice{ // host-guest(vm) communication
+			{
+				ID:   fmt.Sprintf("vsock-%d", vmIndex),
+				Path: filepath.Join(os.TempDir(), fmt.Sprintf("vsock-%s.sock", ip)),
+				CID:  uint32(vmIndex + 3),
+			},
+		},
 		Drives: []models.Drive{
 			{
 				DriveID:      firecracker.String("1"),
