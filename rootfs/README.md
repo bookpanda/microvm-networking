@@ -34,10 +34,11 @@ cp debian-rootfs.ext4 /tmp/debian-rootfs.ext4
 ## Mounting
 ```bash
 sudo mount -o loop,rw debian-rootfs.ext4 ~/mnt
+sudo cp -r ~/code/firecracker-vsock ~/mnt/root/firecracker-vsock
+
 sudo chroot ~/mnt /bin/bash
 
-sudo cp -r ~/code/firecracker-vsock ~/mnt/root/firecracker-vsock
-cd ~/mnt/root/firecracker-vsock
+cd /root/firecracker-vsock
 cmake .
 cmake --build .
 cp /root/firecracker-vsock/build/server /root/server
