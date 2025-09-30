@@ -204,7 +204,7 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 			return fmt.Errorf("invalid test: %s", e.test)
 		}
 
-		if err := e.captureCommandOutput(ctx, pair.Server.IP, command, serverLogFile, false, false); err != nil {
+		if err := e.captureCommandOutputVsock(ctx, pair.Server.VsockPath, 1234, command, serverLogFile, false); err != nil {
 			return fmt.Errorf("failed to start server on %s: %v", pair.Server.IP, err)
 		}
 
@@ -264,7 +264,7 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 		}
 
 		log.Printf("Starting client test from %s to %s", pair.Client.IP, pair.Server.IP)
-		if err := e.captureCommandOutput(ctx, pair.Client.IP, command, clientLogFile, true, false); err != nil {
+		if err := e.captureCommandOutputVsock(ctx, pair.Client.VsockPath, 1234, command, clientLogFile, true); err != nil {
 			return fmt.Errorf("failed to start client on %s: %v", pair.Client.IP, err)
 		}
 
@@ -318,17 +318,17 @@ func (e *VMVMExperiment) Cleanup() error {
 	}
 
 	// Kill any remaining processes in the VMs
-	for _, pair := range e.SCPairs {
-		killCmd := exec.Command("sshpass", "-p", "root", "ssh",
-			"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
-			"root@"+pair.Server.IP, "pkill iperf3 || pkill sockperf || true")
-		killCmd.Run()
+	// for _, pair := range e.SCPairs {
+	// 	killCmd := exec.Command("sshpass", "-p", "root", "ssh",
+	// 		"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
+	// 		"root@"+pair.Server.IP, "pkill iperf3 || pkill sockperf || true")
+	// 	killCmd.Run()
 
-		killCmd = exec.Command("sshpass", "-p", "root", "ssh",
-			"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
-			"root@"+pair.Client.IP, "pkill iperf3 || pkill sockperf || true")
-		killCmd.Run()
-	}
+	// 	killCmd = exec.Command("sshpass", "-p", "root", "ssh",
+	// 		"-o", "ConnectTimeout=2", "-o", "StrictHostKeyChecking=no",
+	// 		"root@"+pair.Client.IP, "pkill iperf3 || pkill sockperf || true")
+	// 	killCmd.Run()
+	// }
 
 	log.Printf("Experiment logs saved in: %s", e.logDir)
 	return nil
