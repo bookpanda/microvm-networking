@@ -16,6 +16,9 @@ go run cmd/main.go -vms=4 -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/deb
 
 ssh root@192.168.100.2
 sshpass -p "root" ssh root@192.168.100.2
+
+socat - UNIX-CONNECT:/tmp/vsock-192.168.100.2.sock
+CONNECT 1234
 ```
 ## Running experiments
 1. start servers
