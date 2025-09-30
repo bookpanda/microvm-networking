@@ -43,11 +43,13 @@ cmake .
 cmake --build .
 cp /root/firecracker-vsock/build/server /root/server
 
-# sudo cp ~/code/microvm-networking/cloudlab/testing/vsock-listener.sh ~/mnt/usr/local/bin/vsock-listener.sh
-# sudo chmod +x ~/mnt/usr/local/bin/vsock-listener.sh
-
-# sudo cp ~/code/microvm-networking/cloudlab/testing/vsock-listener.service ~/mnt/etc/systemd/system/vsock-listener.service
-# sudo systemctl enable vsock-listener.service
+sudo cp ~/code/microvm-networking/benchmark/user_data.sh ~/mnt/root/user_data.sh
+chmod +x /root/user_data.sh
+sudo cp ~/code/microvm-networking/rootfs/server.service ~/mnt/etc/systemd/system/server.service
+sudo systemctl enable server.service
 
 sudo umount ~/mnt
+
+# check
+sudo systemctl status server.service
 ```

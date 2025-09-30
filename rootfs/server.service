@@ -1,0 +1,12 @@
+[Unit]
+Description=My Server Service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/root/user_data.sh
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
