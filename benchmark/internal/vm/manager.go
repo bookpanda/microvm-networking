@@ -63,7 +63,7 @@ func (m *Manager) Start(ctx context.Context) error {
 		if err := vm.Start(ctx); err != nil {
 			return fmt.Errorf("failed to start VM %d: %v", i, err)
 		}
-		log.Printf("VM %d started successfully. Socket: %s", i, vm.Socket)
+		log.Printf("VM %d started successfully. Socket: %s", i, vm.SocketPath)
 	}
 	return nil
 }

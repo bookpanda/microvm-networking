@@ -18,13 +18,15 @@ import (
 )
 
 type SimplifiedVM struct {
-	Machine *firecracker.Machine
-	Socket  string
-	Stdout  chan string
-	Stderr  chan string
-	VMID    int
-	TapName string
-	IP      string
+	Machine    *firecracker.Machine
+	SocketPath string
+	VsockPath  string
+	VsockCID   uint32
+	Stdout     chan string
+	Stderr     chan string
+	VMID       int
+	TapName    string
+	IP         string
 }
 
 func (v *SimplifiedVM) Start(ctx context.Context) error {
@@ -67,7 +69,7 @@ func (v *SimplifiedVM) Stop(ctx context.Context) error {
 	}
 
 	// clean up socket file
-	if err := os.Remove(v.Socket); err != nil && !os.IsNotExist(err) {
+	if err := os.Remove(v.SocketPath); err != nil && !os.IsNotExist(err) {
 		log.Printf("failed to remove socket file: %v", err)
 	}
 	return nil
@@ -82,7 +84,7 @@ func (v *SimplifiedVM) killFirecrackerProcess() error {
 
 	lines := strings.Split(string(output), "\n")
 	for _, line := range lines {
-		if strings.Contains(line, "firecracker") && strings.Contains(line, v.Socket) {
+		if strings.Contains(line, "firecracker") && strings.Contains(line, v.SocketPath) {
 			// extract PID (second column in ps aux output)
 			fields := strings.Fields(line)
 			if len(fields) < 2 {
@@ -119,6 +121,8 @@ func (v *SimplifiedVM) killFirecrackerProcess() error {
 func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (*SimplifiedVM, error) {
 	ip := fmt.Sprintf("192.168.100.%d", vmIndex+2)
 	socketPath := filepath.Join(os.TempDir(), fmt.Sprintf("vm-%s.sock", ip))
+	vsockPath := filepath.Join(os.TempDir(), fmt.Sprintf("vsock-%s.sock", ip))
+	cid := uint32(vmIndex + 3)
 
 	stdout := make(chan string, 100)
 	stderr := make(chan string, 100)
@@ -135,8 +139,8 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 		VsockDevices: []firecracker.VsockDevice{ // host-guest(vm) communication
 			{
 				ID:   fmt.Sprintf("vsock-%d", vmIndex),
-				Path: filepath.Join(os.TempDir(), fmt.Sprintf("vsock-%s.sock", ip)),
-				CID:  uint32(vmIndex + 3),
+				Path: vsockPath,
+				CID:  cid,
 			},
 		},
 		Drives: []models.Drive{
@@ -197,12 +201,14 @@ func CreateVM(ctx context.Context, kernelPath, rootfsPath string, vmIndex int) (
 	}
 
 	return &SimplifiedVM{
-		Machine: machine,
-		Socket:  socketPath,
-		Stdout:  stdout,
-		Stderr:  stderr,
-		VMID:    vmIndex,
-		TapName: tapName,
-		IP:      ip,
+		Machine:    machine,
+		SocketPath: socketPath,
+		VsockPath:  vsockPath,
+		VsockCID:   cid,
+		Stdout:     stdout,
+		Stderr:     stderr,
+		VMID:       vmIndex,
+		TapName:    tapName,
+		IP:         ip,
 	}, nil
 }

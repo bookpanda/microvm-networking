@@ -1,48 +1,80 @@
 package experiment
 
 import (
+	"bufio"
+	"context"
 	"fmt"
-	"io"
-
-	"golang.org/x/sys/unix"
+	"log"
+	"net"
+	"os"
+	"path/filepath"
+	"strings"
 )
 
-func sendCommandVsock(cid, port uint32, cmd string) (string, error) {
-	fd, err := unix.Socket(unix.AF_VSOCK, unix.SOCK_STREAM, 0)
+func sendCommandVsock(sockPath string, port uint32, cmd string) (string, error) {
+	conn, err := net.Dial("unix", sockPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to create vsock: %v", err)
+		return "", fmt.Errorf("failed to connect to %s: %v", sockPath, err)
 	}
-	defer unix.Close(fd)
+	defer conn.Close()
 
-	addr := &unix.SockaddrVM{
-		CID:  cid,  // VM CID
-		Port: port, // vsock port server is listening on
-	}
-
-	if err := unix.Connect(fd, addr); err != nil {
-		return "", fmt.Errorf("failed to connect: %v", err)
+	_, err = fmt.Fprintf(conn, "CONNECT %d\n", port)
+	if err != nil {
+		return "", fmt.Errorf("failed to send CONNECT: %v", err)
 	}
 
-	// Send command
-	if _, err := unix.Write(fd, []byte(cmd+"\n")); err != nil {
+	// send the actual command
+	_, err = fmt.Fprintf(conn, "%s\n", cmd)
+	if err != nil {
 		return "", fmt.Errorf("failed to send command: %v", err)
 	}
 
-	// Read output
-	buf := make([]byte, 4096)
-	var output []byte
+	// Send command
+	_, err = fmt.Fprintf(conn, "%s\n", cmd)
+	if err != nil {
+		return "", fmt.Errorf("failed to send command: %v", err)
+	}
+
+	reader := bufio.NewReader(conn)
+	var output strings.Builder
 	for {
-		n, err := unix.Read(fd, buf)
-		if n > 0 {
-			output = append(output, buf[:n]...)
+		line, err := reader.ReadString('\n')
+		if len(line) > 0 {
+			output.WriteString(line)
 		}
 		if err != nil {
-			if err == io.EOF {
-				break
-			}
-			return "", fmt.Errorf("read error: %v", err)
+			// EOF or connection closed
+			break
 		}
 	}
 
-	return string(output), nil
+	return output.String(), nil
+}
+
+func (e *VMVMExperiment) captureCommandOutputVsock(ctx context.Context, sockPath string, port uint32, command, logFileName string, wait bool) error {
+	logPath := filepath.Join(e.logDir, logFileName)
+
+	if wait {
+		e.wg.Add(1)
+	}
+
+	go func() {
+		if wait {
+			defer e.wg.Done()
+		}
+
+		output, err := sendCommandVsock(sockPath, port, command)
+		if err != nil {
+			log.Printf("VM %s %d: command failed: %v", sockPath, port, err)
+			output = fmt.Sprintf("Error: %v\n", err)
+		}
+
+		if err := os.WriteFile(logPath, []byte(output), 0644); err != nil {
+			log.Printf("VM %s %d: failed to write log file %s: %v", sockPath, port, logPath, err)
+		} else {
+			log.Printf("VM %s %d: command output saved to %s", sockPath, port, logPath)
+		}
+	}()
+
+	return nil
 }
