@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto.network.v1;
+
+option go_package = "proto/network/v1";
+
+service NetworkService {
+  rpc Setup(SetupNetworkRequest) returns (SetupNetworkResponse){}
+  rpc Cleanup(CleanupNetworkRequest) returns (CleanupNetworkResponse){}
+}
+
+message SetupNetworkRequest{
+  string subnet = 1;
+  string bridgeIP = 2;
+  int32 numVMs = 3;
+}
+
+message SetupNetworkResponse{
+}
+
+message CleanupNetworkRequest{
+  int32 numVMs = 1;
+}
+
+message CleanupNetworkResponse{
+}

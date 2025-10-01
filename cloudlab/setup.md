@@ -12,7 +12,7 @@ git clone git@github.com:bookpanda/microvm-networking.git
 
 # core
 sudo apt update
-sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl acl sockperf isc-dhcp-server sshpass bpftrace linux-headers-$(uname -r) socat cloud-image-utils
+sudo apt install -y build-essential libseccomp-dev pkg-config libssl-dev curl acl sockperf isc-dhcp-server sshpass bpftrace linux-headers-$(uname -r) socat cloud-image-utils protobuf-compiler
 
 # let you run Firecracker as your user without needing full sudo
 sudo setfacl -m u:${USER}:rw /dev/kvm

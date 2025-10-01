@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package proto.vm.v1;
+
+option go_package = "proto/vm/v1";
+
+service VmService {
+  rpc Create(CreateVmRequest) returns (CreateVmResponse){}
+  rpc SendCommand(SendCommandVmRequest) returns (SendCommandVmResponse){}
+  rpc TrackSyscalls(TrackSyscallsVmRequest) returns (TrackSyscallsVmResponse){}
+}
+
+message Vm{
+  string ip = 1;
+  string kernelPath = 3;
+  string rootfsPath = 4;
+}
+
+message CreateVmRequest{
+  string ip = 1;
+  string kernelPath = 2;
+  string rootfsPath = 3;
+}
+
+message CreateVmResponse{
+  Vm vm = 1;
+}
+
+message SendCommandVmRequest{
+  string ip = 1;
+  string command = 2;
+}
+
+message SendCommandVmResponse{
+  string output = 1;
+}
+
+message TrackSyscallsVmRequest{
+}
+
+message TrackSyscallsVmResponse{
+}
