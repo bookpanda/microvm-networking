@@ -28,6 +28,13 @@ func main() {
 
 	ctx := context.Background()
 
+	log.Printf("Cleaning up VM...")
+	_, err = vmClient.Cleanup(ctx, &vmProto.CleanupVmRequest{})
+	if err != nil {
+		log.Fatalf("Failed to cleanup VM: %v", err)
+	}
+
+	log.Printf("Cleaning up network...")
 	_, err = networkClient.Cleanup(ctx, &networkProto.CleanupNetworkRequest{
 		NumVMs: 2,
 	})
@@ -35,17 +42,19 @@ func main() {
 		log.Fatalf("Failed to cleanup network: %v", err)
 	}
 
+	log.Printf("Cleaning up filesystem...")
+	_, err = filesystemClient.Cleanup(ctx, &filesystemProto.CleanupFileSystemRequest{})
+	if err != nil {
+		log.Fatalf("Failed to cleanup filesystem: %v", err)
+	}
+
+	log.Printf("Setting up network...")
 	_, err = networkClient.Setup(ctx, &networkProto.SetupNetworkRequest{
-		NumVMs: 2,
+		NumVMs:   2,
 		BridgeIP: "192.168.100.1",
 	})
 	if err != nil {
 		log.Fatalf("Failed to setup network: %v", err)
-	}
-
-	_, err = filesystemClient.Cleanup(ctx, &filesystemProto.CleanupFileSystemRequest{})
-	if err != nil {
-		log.Fatalf("Failed to cleanup filesystem: %v", err)
 	}
 
 	log.Printf("Starting VM...")
