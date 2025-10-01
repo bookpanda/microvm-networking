@@ -37,6 +37,7 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 echo 'export PATH="$PATH:$(go env GOPATH)/bin"' >> ~/.bashrc
 source ~/.bashrc
 
+shopt -s globstar
 protoc \
   --go_out=. \
   --go-grpc_out=. \

@@ -28,12 +28,17 @@ func main() {
 
 	ctx := context.Background()
 
-	_, err = networkClient.Cleanup(ctx, &networkProto.CleanupNetworkRequest{})
+	_, err = networkClient.Cleanup(ctx, &networkProto.CleanupNetworkRequest{
+		NumVMs: 2,
+	})
 	if err != nil {
 		log.Fatalf("Failed to cleanup network: %v", err)
 	}
 
-	_, err = networkClient.Setup(ctx, &networkProto.SetupNetworkRequest{})
+	_, err = networkClient.Setup(ctx, &networkProto.SetupNetworkRequest{
+		NumVMs: 2,
+		BridgeIP: "192.168.100.1",
+	})
 	if err != nil {
 		log.Fatalf("Failed to setup network: %v", err)
 	}

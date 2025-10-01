@@ -111,6 +111,7 @@ func (*SetupNetworkResponse) Descriptor() ([]byte, []int) {
 
 type CleanupNetworkRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	NumVMs        int32                  `protobuf:"varint,1,opt,name=numVMs,proto3" json:"numVMs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -143,6 +144,13 @@ func (x *CleanupNetworkRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CleanupNetworkRequest.ProtoReflect.Descriptor instead.
 func (*CleanupNetworkRequest) Descriptor() ([]byte, []int) {
 	return file_proto_network_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CleanupNetworkRequest) GetNumVMs() int32 {
+	if x != nil {
+		return x.NumVMs
+	}
+	return 0
 }
 
 type CleanupNetworkResponse struct {
@@ -189,8 +197,9 @@ const file_proto_network_proto_rawDesc = "" +
 	"\x13SetupNetworkRequest\x12\x1a\n" +
 	"\bbridgeIP\x18\x01 \x01(\tR\bbridgeIP\x12\x16\n" +
 	"\x06numVMs\x18\x02 \x01(\x05R\x06numVMs\"\x16\n" +
-	"\x14SetupNetworkResponse\"\x17\n" +
-	"\x15CleanupNetworkRequest\"\x18\n" +
+	"\x14SetupNetworkResponse\"/\n" +
+	"\x15CleanupNetworkRequest\x12\x16\n" +
+	"\x06numVMs\x18\x01 \x01(\x05R\x06numVMs\"\x18\n" +
 	"\x16CleanupNetworkResponse2\xca\x01\n" +
 	"\x0eNetworkService\x12X\n" +
 	"\x05Setup\x12%.proto.network.v1.SetupNetworkRequest\x1a&.proto.network.v1.SetupNetworkResponse\"\x00\x12^\n" +
