@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
 	filesystemProto "github.com/bookpanda/microvm-networking/benchmark/proto/filesystem/v1"
@@ -41,12 +43,29 @@ func main() {
 		log.Fatalf("Failed to cleanup filesystem: %v", err)
 	}
 
-	vmClient.Create(ctx, &vmProto.CreateVmRequest{
-		Ip:         "192.168.100.2",
-		KernelPath: cfg.KernelPath,
-		RootfsPath: cfg.RootfsPath,
+	log.Printf("Starting VM...")
+	ips := []string{"192.168.100.2", "192.168.100.3"}
+	for _, ip := range ips {
+		vmClient.Create(ctx, &vmProto.CreateVmRequest{
+			Ip:         ip,
+			KernelPath: cfg.KernelPath,
+			RootfsPath: cfg.RootfsPath,
+		})
+	}
+
+	time.Sleep(5 * time.Second)
+
+	vmClient.SendCommand(ctx, &vmProto.SendCommandVmRequest{
+		Ip:      "192.168.100.2",
+		Command: "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s",
 	})
-	// log.Printf("Starting %d VMs...", cfg.NumVMs)
+	vmClient.TrackSyscalls(ctx, &vmProto.TrackSyscallsVmRequest{})
+	time.Sleep(5 * time.Second)
+
+	vmClient.SendCommand(ctx, &vmProto.SendCommandVmRequest{
+		Ip:      "192.168.100.3",
+		Command: fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 30 -P 4", ips[0]),
+	})
 
 	// // Save PID file
 	// pidFile := "/tmp/firecracker.pid"
