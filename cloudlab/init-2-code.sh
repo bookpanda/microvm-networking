@@ -32,10 +32,11 @@ echo "Downloading linux kernel..."
 curl -fL --progress-bar -o /tmp/vmlinux-5.10.223-no-acpi http://spec.ccfc.min.s3.amazonaws.com/firecracker-ci/v1.10/x86_64/vmlinux-5.10.223-no-acpi
 # rootfs
 echo "Downloading rootfs..."
-# curl -fL --progress-bar -o /tmp/debian-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/debian-rootfs.ext4
+curl -fL --progress-bar -o /tmp/debian-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/debian-rootfs.ext4
 
 # code
 mkdir -p ~/code
+mkdir -p ~/mnt
 cd ~/code
 git clone git@github.com:bookpanda/microvm-networking.git
 git clone git@github.com:bookpanda/firecracker-runner-node.git runner-node
