@@ -33,3 +33,5 @@ mkdir -p ~/code
 cd ~/code
 git clone git@github.com:bookpanda/microvm-networking.git
 git clone git@github.com:bookpanda/firecracker-runner-node.git
+
+cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
