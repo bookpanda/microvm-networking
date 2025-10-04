@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"time"
 
@@ -82,11 +83,37 @@ func main() {
 	log.Printf("Syscalls being tracked")
 
 	log.Printf("Starting client VM...")
-	vmClient.SendCommand(ctx, &vmProto.SendCommandVmRequest{
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+
+	stream, err := vmClient.SendClientCommand(ctx, &vmProto.SendClientCommandVmRequest{
 		Ip:      "192.168.100.3",
 		Command: fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 30 -P 4", ips[0]),
 	})
-	log.Printf("Client VM started")
+	if err != nil {
+		log.Fatalf("could not start job: %v", err)
+	}
+
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			break // server finished sending
+		}
+		if err != nil {
+			log.Fatalf("error receiving: %v", err)
+		}
+		fmt.Printf("Notification: job %s\n", resp.Output)
+	}
+
+	time.Sleep(5 * time.Second)
+	log.Printf("Stopping syscalls tracking...")
+	vmClient.StopSyscalls(ctx, &vmProto.StopSyscallsVmRequest{})
+
+	// vmClient.SendCommand(ctx, &vmProto.SendCommandVmRequest{
+	// 	Ip:      "192.168.100.3",
+	// 	Command: fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 30 -P 4", ips[0]),
+	// })
+	// log.Printf("Client VM started")
 	// // Save PID file
 	// pidFile := "/tmp/firecracker.pid"
 	// pid := os.Getpid()

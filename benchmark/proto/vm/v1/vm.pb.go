@@ -7,11 +7,12 @@
 package v1
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -289,6 +290,102 @@ func (x *SendCommandVmResponse) GetOutput() string {
 	return ""
 }
 
+type SendClientCommandVmRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ip            string                 `protobuf:"bytes,1,opt,name=ip,proto3" json:"ip,omitempty"`
+	Command       string                 `protobuf:"bytes,2,opt,name=command,proto3" json:"command,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendClientCommandVmRequest) Reset() {
+	*x = SendClientCommandVmRequest{}
+	mi := &file_proto_vm_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendClientCommandVmRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendClientCommandVmRequest) ProtoMessage() {}
+
+func (x *SendClientCommandVmRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vm_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendClientCommandVmRequest.ProtoReflect.Descriptor instead.
+func (*SendClientCommandVmRequest) Descriptor() ([]byte, []int) {
+	return file_proto_vm_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SendClientCommandVmRequest) GetIp() string {
+	if x != nil {
+		return x.Ip
+	}
+	return ""
+}
+
+func (x *SendClientCommandVmRequest) GetCommand() string {
+	if x != nil {
+		return x.Command
+	}
+	return ""
+}
+
+type SendClientCommandVmResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Output        string                 `protobuf:"bytes,1,opt,name=output,proto3" json:"output,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendClientCommandVmResponse) Reset() {
+	*x = SendClientCommandVmResponse{}
+	mi := &file_proto_vm_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendClientCommandVmResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendClientCommandVmResponse) ProtoMessage() {}
+
+func (x *SendClientCommandVmResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_vm_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendClientCommandVmResponse.ProtoReflect.Descriptor instead.
+func (*SendClientCommandVmResponse) Descriptor() ([]byte, []int) {
+	return file_proto_vm_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SendClientCommandVmResponse) GetOutput() string {
+	if x != nil {
+		return x.Output
+	}
+	return ""
+}
+
 type TrackSyscallsVmRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -297,7 +394,7 @@ type TrackSyscallsVmRequest struct {
 
 func (x *TrackSyscallsVmRequest) Reset() {
 	*x = TrackSyscallsVmRequest{}
-	mi := &file_proto_vm_proto_msgTypes[5]
+	mi := &file_proto_vm_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -309,7 +406,7 @@ func (x *TrackSyscallsVmRequest) String() string {
 func (*TrackSyscallsVmRequest) ProtoMessage() {}
 
 func (x *TrackSyscallsVmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vm_proto_msgTypes[5]
+	mi := &file_proto_vm_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -322,7 +419,7 @@ func (x *TrackSyscallsVmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrackSyscallsVmRequest.ProtoReflect.Descriptor instead.
 func (*TrackSyscallsVmRequest) Descriptor() ([]byte, []int) {
-	return file_proto_vm_proto_rawDescGZIP(), []int{5}
+	return file_proto_vm_proto_rawDescGZIP(), []int{7}
 }
 
 type TrackSyscallsVmResponse struct {
@@ -333,7 +430,7 @@ type TrackSyscallsVmResponse struct {
 
 func (x *TrackSyscallsVmResponse) Reset() {
 	*x = TrackSyscallsVmResponse{}
-	mi := &file_proto_vm_proto_msgTypes[6]
+	mi := &file_proto_vm_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -345,7 +442,7 @@ func (x *TrackSyscallsVmResponse) String() string {
 func (*TrackSyscallsVmResponse) ProtoMessage() {}
 
 func (x *TrackSyscallsVmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vm_proto_msgTypes[6]
+	mi := &file_proto_vm_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -358,7 +455,7 @@ func (x *TrackSyscallsVmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TrackSyscallsVmResponse.ProtoReflect.Descriptor instead.
 func (*TrackSyscallsVmResponse) Descriptor() ([]byte, []int) {
-	return file_proto_vm_proto_rawDescGZIP(), []int{6}
+	return file_proto_vm_proto_rawDescGZIP(), []int{8}
 }
 
 type StopSyscallsVmRequest struct {
@@ -369,7 +466,7 @@ type StopSyscallsVmRequest struct {
 
 func (x *StopSyscallsVmRequest) Reset() {
 	*x = StopSyscallsVmRequest{}
-	mi := &file_proto_vm_proto_msgTypes[7]
+	mi := &file_proto_vm_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -381,7 +478,7 @@ func (x *StopSyscallsVmRequest) String() string {
 func (*StopSyscallsVmRequest) ProtoMessage() {}
 
 func (x *StopSyscallsVmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vm_proto_msgTypes[7]
+	mi := &file_proto_vm_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -394,7 +491,7 @@ func (x *StopSyscallsVmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopSyscallsVmRequest.ProtoReflect.Descriptor instead.
 func (*StopSyscallsVmRequest) Descriptor() ([]byte, []int) {
-	return file_proto_vm_proto_rawDescGZIP(), []int{7}
+	return file_proto_vm_proto_rawDescGZIP(), []int{9}
 }
 
 type StopSyscallsVmResponse struct {
@@ -405,7 +502,7 @@ type StopSyscallsVmResponse struct {
 
 func (x *StopSyscallsVmResponse) Reset() {
 	*x = StopSyscallsVmResponse{}
-	mi := &file_proto_vm_proto_msgTypes[8]
+	mi := &file_proto_vm_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +514,7 @@ func (x *StopSyscallsVmResponse) String() string {
 func (*StopSyscallsVmResponse) ProtoMessage() {}
 
 func (x *StopSyscallsVmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vm_proto_msgTypes[8]
+	mi := &file_proto_vm_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -430,7 +527,7 @@ func (x *StopSyscallsVmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopSyscallsVmResponse.ProtoReflect.Descriptor instead.
 func (*StopSyscallsVmResponse) Descriptor() ([]byte, []int) {
-	return file_proto_vm_proto_rawDescGZIP(), []int{8}
+	return file_proto_vm_proto_rawDescGZIP(), []int{10}
 }
 
 type CleanupVmRequest struct {
@@ -441,7 +538,7 @@ type CleanupVmRequest struct {
 
 func (x *CleanupVmRequest) Reset() {
 	*x = CleanupVmRequest{}
-	mi := &file_proto_vm_proto_msgTypes[9]
+	mi := &file_proto_vm_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -453,7 +550,7 @@ func (x *CleanupVmRequest) String() string {
 func (*CleanupVmRequest) ProtoMessage() {}
 
 func (x *CleanupVmRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vm_proto_msgTypes[9]
+	mi := &file_proto_vm_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +563,7 @@ func (x *CleanupVmRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CleanupVmRequest.ProtoReflect.Descriptor instead.
 func (*CleanupVmRequest) Descriptor() ([]byte, []int) {
-	return file_proto_vm_proto_rawDescGZIP(), []int{9}
+	return file_proto_vm_proto_rawDescGZIP(), []int{11}
 }
 
 type CleanupVmResponse struct {
@@ -477,7 +574,7 @@ type CleanupVmResponse struct {
 
 func (x *CleanupVmResponse) Reset() {
 	*x = CleanupVmResponse{}
-	mi := &file_proto_vm_proto_msgTypes[10]
+	mi := &file_proto_vm_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -489,7 +586,7 @@ func (x *CleanupVmResponse) String() string {
 func (*CleanupVmResponse) ProtoMessage() {}
 
 func (x *CleanupVmResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_vm_proto_msgTypes[10]
+	mi := &file_proto_vm_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -502,7 +599,7 @@ func (x *CleanupVmResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CleanupVmResponse.ProtoReflect.Descriptor instead.
 func (*CleanupVmResponse) Descriptor() ([]byte, []int) {
-	return file_proto_vm_proto_rawDescGZIP(), []int{10}
+	return file_proto_vm_proto_rawDescGZIP(), []int{12}
 }
 
 var File_proto_vm_proto protoreflect.FileDescriptor
@@ -533,16 +630,22 @@ const file_proto_vm_proto_rawDesc = "" +
 	"\acommand\x18\x02 \x01(\tR\acommand\x12\x12\n" +
 	"\x04wait\x18\x03 \x01(\bR\x04wait\"/\n" +
 	"\x15SendCommandVmResponse\x12\x16\n" +
+	"\x06output\x18\x01 \x01(\tR\x06output\"F\n" +
+	"\x1aSendClientCommandVmRequest\x12\x0e\n" +
+	"\x02ip\x18\x01 \x01(\tR\x02ip\x12\x18\n" +
+	"\acommand\x18\x02 \x01(\tR\acommand\"5\n" +
+	"\x1bSendClientCommandVmResponse\x12\x16\n" +
 	"\x06output\x18\x01 \x01(\tR\x06output\"\x18\n" +
 	"\x16TrackSyscallsVmRequest\"\x19\n" +
 	"\x17TrackSyscallsVmResponse\"\x17\n" +
 	"\x15StopSyscallsVmRequest\"\x18\n" +
 	"\x16StopSyscallsVmResponse\"\x12\n" +
 	"\x10CleanupVmRequest\"\x13\n" +
-	"\x11CleanupVmResponse2\xb1\x03\n" +
+	"\x11CleanupVmResponse2\x9d\x04\n" +
 	"\tVmService\x12G\n" +
 	"\x06Create\x12\x1c.proto.vm.v1.CreateVmRequest\x1a\x1d.proto.vm.v1.CreateVmResponse\"\x00\x12V\n" +
-	"\vSendCommand\x12!.proto.vm.v1.SendCommandVmRequest\x1a\".proto.vm.v1.SendCommandVmResponse\"\x00\x12\\\n" +
+	"\vSendCommand\x12!.proto.vm.v1.SendCommandVmRequest\x1a\".proto.vm.v1.SendCommandVmResponse\"\x00\x12j\n" +
+	"\x11SendClientCommand\x12'.proto.vm.v1.SendClientCommandVmRequest\x1a(.proto.vm.v1.SendClientCommandVmResponse\"\x000\x01\x12\\\n" +
 	"\rTrackSyscalls\x12#.proto.vm.v1.TrackSyscallsVmRequest\x1a$.proto.vm.v1.TrackSyscallsVmResponse\"\x00\x12Y\n" +
 	"\fStopSyscalls\x12\".proto.vm.v1.StopSyscallsVmRequest\x1a#.proto.vm.v1.StopSyscallsVmResponse\"\x00\x12J\n" +
 	"\aCleanup\x12\x1d.proto.vm.v1.CleanupVmRequest\x1a\x1e.proto.vm.v1.CleanupVmResponse\"\x00B\rZ\vproto/vm/v1b\x06proto3"
@@ -559,34 +662,38 @@ func file_proto_vm_proto_rawDescGZIP() []byte {
 	return file_proto_vm_proto_rawDescData
 }
 
-var file_proto_vm_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_proto_vm_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_proto_vm_proto_goTypes = []any{
-	(*Vm)(nil),                      // 0: proto.vm.v1.Vm
-	(*CreateVmRequest)(nil),         // 1: proto.vm.v1.CreateVmRequest
-	(*CreateVmResponse)(nil),        // 2: proto.vm.v1.CreateVmResponse
-	(*SendCommandVmRequest)(nil),    // 3: proto.vm.v1.SendCommandVmRequest
-	(*SendCommandVmResponse)(nil),   // 4: proto.vm.v1.SendCommandVmResponse
-	(*TrackSyscallsVmRequest)(nil),  // 5: proto.vm.v1.TrackSyscallsVmRequest
-	(*TrackSyscallsVmResponse)(nil), // 6: proto.vm.v1.TrackSyscallsVmResponse
-	(*StopSyscallsVmRequest)(nil),   // 7: proto.vm.v1.StopSyscallsVmRequest
-	(*StopSyscallsVmResponse)(nil),  // 8: proto.vm.v1.StopSyscallsVmResponse
-	(*CleanupVmRequest)(nil),        // 9: proto.vm.v1.CleanupVmRequest
-	(*CleanupVmResponse)(nil),       // 10: proto.vm.v1.CleanupVmResponse
+	(*Vm)(nil),                          // 0: proto.vm.v1.Vm
+	(*CreateVmRequest)(nil),             // 1: proto.vm.v1.CreateVmRequest
+	(*CreateVmResponse)(nil),            // 2: proto.vm.v1.CreateVmResponse
+	(*SendCommandVmRequest)(nil),        // 3: proto.vm.v1.SendCommandVmRequest
+	(*SendCommandVmResponse)(nil),       // 4: proto.vm.v1.SendCommandVmResponse
+	(*SendClientCommandVmRequest)(nil),  // 5: proto.vm.v1.SendClientCommandVmRequest
+	(*SendClientCommandVmResponse)(nil), // 6: proto.vm.v1.SendClientCommandVmResponse
+	(*TrackSyscallsVmRequest)(nil),      // 7: proto.vm.v1.TrackSyscallsVmRequest
+	(*TrackSyscallsVmResponse)(nil),     // 8: proto.vm.v1.TrackSyscallsVmResponse
+	(*StopSyscallsVmRequest)(nil),       // 9: proto.vm.v1.StopSyscallsVmRequest
+	(*StopSyscallsVmResponse)(nil),      // 10: proto.vm.v1.StopSyscallsVmResponse
+	(*CleanupVmRequest)(nil),            // 11: proto.vm.v1.CleanupVmRequest
+	(*CleanupVmResponse)(nil),           // 12: proto.vm.v1.CleanupVmResponse
 }
 var file_proto_vm_proto_depIdxs = []int32{
 	0,  // 0: proto.vm.v1.CreateVmResponse.vm:type_name -> proto.vm.v1.Vm
 	1,  // 1: proto.vm.v1.VmService.Create:input_type -> proto.vm.v1.CreateVmRequest
 	3,  // 2: proto.vm.v1.VmService.SendCommand:input_type -> proto.vm.v1.SendCommandVmRequest
-	5,  // 3: proto.vm.v1.VmService.TrackSyscalls:input_type -> proto.vm.v1.TrackSyscallsVmRequest
-	7,  // 4: proto.vm.v1.VmService.StopSyscalls:input_type -> proto.vm.v1.StopSyscallsVmRequest
-	9,  // 5: proto.vm.v1.VmService.Cleanup:input_type -> proto.vm.v1.CleanupVmRequest
-	2,  // 6: proto.vm.v1.VmService.Create:output_type -> proto.vm.v1.CreateVmResponse
-	4,  // 7: proto.vm.v1.VmService.SendCommand:output_type -> proto.vm.v1.SendCommandVmResponse
-	6,  // 8: proto.vm.v1.VmService.TrackSyscalls:output_type -> proto.vm.v1.TrackSyscallsVmResponse
-	8,  // 9: proto.vm.v1.VmService.StopSyscalls:output_type -> proto.vm.v1.StopSyscallsVmResponse
-	10, // 10: proto.vm.v1.VmService.Cleanup:output_type -> proto.vm.v1.CleanupVmResponse
-	6,  // [6:11] is the sub-list for method output_type
-	1,  // [1:6] is the sub-list for method input_type
+	5,  // 3: proto.vm.v1.VmService.SendClientCommand:input_type -> proto.vm.v1.SendClientCommandVmRequest
+	7,  // 4: proto.vm.v1.VmService.TrackSyscalls:input_type -> proto.vm.v1.TrackSyscallsVmRequest
+	9,  // 5: proto.vm.v1.VmService.StopSyscalls:input_type -> proto.vm.v1.StopSyscallsVmRequest
+	11, // 6: proto.vm.v1.VmService.Cleanup:input_type -> proto.vm.v1.CleanupVmRequest
+	2,  // 7: proto.vm.v1.VmService.Create:output_type -> proto.vm.v1.CreateVmResponse
+	4,  // 8: proto.vm.v1.VmService.SendCommand:output_type -> proto.vm.v1.SendCommandVmResponse
+	6,  // 9: proto.vm.v1.VmService.SendClientCommand:output_type -> proto.vm.v1.SendClientCommandVmResponse
+	8,  // 10: proto.vm.v1.VmService.TrackSyscalls:output_type -> proto.vm.v1.TrackSyscallsVmResponse
+	10, // 11: proto.vm.v1.VmService.StopSyscalls:output_type -> proto.vm.v1.StopSyscallsVmResponse
+	12, // 12: proto.vm.v1.VmService.Cleanup:output_type -> proto.vm.v1.CleanupVmResponse
+	7,  // [7:13] is the sub-list for method output_type
+	1,  // [1:7] is the sub-list for method input_type
 	1,  // [1:1] is the sub-list for extension type_name
 	1,  // [1:1] is the sub-list for extension extendee
 	0,  // [0:1] is the sub-list for field type_name
@@ -603,7 +710,7 @@ func file_proto_vm_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_vm_proto_rawDesc), len(file_proto_vm_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
