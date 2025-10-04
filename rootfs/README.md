@@ -43,9 +43,10 @@ cmake .
 cmake --build .
 cp /root/firecracker-vsock/build/server /root/server
 
-sudo cp ~/code/microvm-networking/benchmark/user_data.sh ~/mnt/root/user_data.sh
-chmod +x /root/user_data.sh
+sudo cp ~/code/microvm-networking/rootfs/user_data.sh ~/mnt/root/user_data.sh
 sudo cp ~/code/microvm-networking/rootfs/server.service ~/mnt/etc/systemd/system/server.service
+# inside VM
+chmod +x /root/user_data.sh
 sudo systemctl enable server.service
 
 sudo umount ~/mnt
