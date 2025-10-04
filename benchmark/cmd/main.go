@@ -71,7 +71,7 @@ func main() {
 	time.Sleep(5 * time.Second)
 
 	log.Printf("Starting server VM...")
-	vmClient.SendCommand(ctx, &vmProto.SendCommandVmRequest{
+	vmClient.SendServerCommand(ctx, &vmProto.SendServerCommandVmRequest{
 		Ip:      "192.168.100.2",
 		Command: "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s",
 	})
