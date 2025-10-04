@@ -29,6 +29,9 @@ which buildfs
 # generate rootfs
 sudo -E ~/.cargo/bin/buildfs run -o debian-rootfs.ext4 ./build_script.toml
 cp debian-rootfs.ext4 /tmp/debian-rootfs.ext4
+
+# on mac
+scp -i ~/.ssh/cloudlab ipankam@amd195.utah.cloudlab.us:/tmp/debian-rootfs.ext4 ./debian-rootfs.ext4
 ```
 
 ## Mounting
