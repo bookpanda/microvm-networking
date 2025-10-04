@@ -55,8 +55,8 @@ func NewExperiment(config *config.Config) (*Experiment, error) {
 
 func (e *Experiment) RunBenchmark(ctx context.Context) error {
 	for _, node := range e.nodes {
+		e.wg.Add(1)
 		go func(node *Node) {
-			e.wg.Add(1)
 			defer e.wg.Done()
 			err := e.setupNode(ctx, node)
 			if err != nil {
@@ -74,8 +74,8 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 			if vmConfig.Type != "server" {
 				continue
 			}
+			e.wg.Add(1)
 			go func() {
-				e.wg.Add(1)
 				defer e.wg.Done()
 				err := e.startServer(ctx, node, &vmConfig)
 				if err != nil {
@@ -89,8 +89,8 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 
 	log.Printf("Starting to track syscalls...")
 	for _, node := range e.nodes {
+		e.wg.Add(1)
 		go func(node *Node) {
-			e.wg.Add(1)
 			defer e.wg.Done()
 			err := e.trackSyscalls(ctx, node)
 			if err != nil {
@@ -111,8 +111,8 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 			if vmConfig.Type != "client" {
 				continue
 			}
+			e.wg.Add(1)
 			go func() {
-				e.wg.Add(1)
 				defer e.wg.Done()
 				err := e.startClient(ctx, node, &vmConfig)
 				if err != nil {
