@@ -172,6 +172,7 @@ func (e *Experiment) setupNode(ctx context.Context, node *Node) error {
 			Ip:         vmConfig.IP,
 			KernelPath: e.config.KernelPath,
 			RootfsPath: e.config.RootfsPath,
+			GatewayIP:  node.config.BridgeIP,
 		})
 		if err != nil {
 			log.Fatalf("[%s]: Failed to create VM: %v", node.conn.Target(), err)

@@ -14,6 +14,9 @@ sshpass -p "root" ssh root@192.168.100.2
 
 socat - UNIX-CONNECT:/tmp/vsock-192.168.100.2.sock
 CONNECT 1234
+
+sudo ip route add 192.168.101.0/24 via 10.10.1.2
+sudo ip route add 192.168.100.0/24 via 10.10.1.1
 ```
 ## Running experiments
 1. start servers
