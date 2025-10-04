@@ -22,6 +22,7 @@ const (
 	VmService_Create_FullMethodName        = "/proto.vm.v1.VmService/Create"
 	VmService_SendCommand_FullMethodName   = "/proto.vm.v1.VmService/SendCommand"
 	VmService_TrackSyscalls_FullMethodName = "/proto.vm.v1.VmService/TrackSyscalls"
+	VmService_StopSyscalls_FullMethodName  = "/proto.vm.v1.VmService/StopSyscalls"
 	VmService_Cleanup_FullMethodName       = "/proto.vm.v1.VmService/Cleanup"
 )
 
@@ -32,6 +33,7 @@ type VmServiceClient interface {
 	Create(ctx context.Context, in *CreateVmRequest, opts ...grpc.CallOption) (*CreateVmResponse, error)
 	SendCommand(ctx context.Context, in *SendCommandVmRequest, opts ...grpc.CallOption) (*SendCommandVmResponse, error)
 	TrackSyscalls(ctx context.Context, in *TrackSyscallsVmRequest, opts ...grpc.CallOption) (*TrackSyscallsVmResponse, error)
+	StopSyscalls(ctx context.Context, in *StopSyscallsVmRequest, opts ...grpc.CallOption) (*StopSyscallsVmResponse, error)
 	Cleanup(ctx context.Context, in *CleanupVmRequest, opts ...grpc.CallOption) (*CleanupVmResponse, error)
 }
 
@@ -73,6 +75,16 @@ func (c *vmServiceClient) TrackSyscalls(ctx context.Context, in *TrackSyscallsVm
 	return out, nil
 }
 
+func (c *vmServiceClient) StopSyscalls(ctx context.Context, in *StopSyscallsVmRequest, opts ...grpc.CallOption) (*StopSyscallsVmResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StopSyscallsVmResponse)
+	err := c.cc.Invoke(ctx, VmService_StopSyscalls_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *vmServiceClient) Cleanup(ctx context.Context, in *CleanupVmRequest, opts ...grpc.CallOption) (*CleanupVmResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CleanupVmResponse)
@@ -90,6 +102,7 @@ type VmServiceServer interface {
 	Create(context.Context, *CreateVmRequest) (*CreateVmResponse, error)
 	SendCommand(context.Context, *SendCommandVmRequest) (*SendCommandVmResponse, error)
 	TrackSyscalls(context.Context, *TrackSyscallsVmRequest) (*TrackSyscallsVmResponse, error)
+	StopSyscalls(context.Context, *StopSyscallsVmRequest) (*StopSyscallsVmResponse, error)
 	Cleanup(context.Context, *CleanupVmRequest) (*CleanupVmResponse, error)
 	mustEmbedUnimplementedVmServiceServer()
 }
@@ -109,6 +122,9 @@ func (UnimplementedVmServiceServer) SendCommand(context.Context, *SendCommandVmR
 }
 func (UnimplementedVmServiceServer) TrackSyscalls(context.Context, *TrackSyscallsVmRequest) (*TrackSyscallsVmResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TrackSyscalls not implemented")
+}
+func (UnimplementedVmServiceServer) StopSyscalls(context.Context, *StopSyscallsVmRequest) (*StopSyscallsVmResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method StopSyscalls not implemented")
 }
 func (UnimplementedVmServiceServer) Cleanup(context.Context, *CleanupVmRequest) (*CleanupVmResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Cleanup not implemented")
@@ -188,6 +204,24 @@ func _VmService_TrackSyscalls_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VmService_StopSyscalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StopSyscallsVmRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VmServiceServer).StopSyscalls(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VmService_StopSyscalls_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VmServiceServer).StopSyscalls(ctx, req.(*StopSyscallsVmRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _VmService_Cleanup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CleanupVmRequest)
 	if err := dec(in); err != nil {
@@ -224,6 +258,10 @@ var VmService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TrackSyscalls",
 			Handler:    _VmService_TrackSyscalls_Handler,
+		},
+		{
+			MethodName: "StopSyscalls",
+			Handler:    _VmService_StopSyscalls_Handler,
 		},
 		{
 			MethodName: "Cleanup",

@@ -74,17 +74,19 @@ func main() {
 		Ip:      "192.168.100.2",
 		Command: "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s",
 	})
+	log.Printf("Server VM started")
 
-	log.Printf("Tracking syscalls...")
+	log.Printf("Starting to track syscalls...")
 	vmClient.TrackSyscalls(ctx, &vmProto.TrackSyscallsVmRequest{})
 	time.Sleep(5 * time.Second)
+	log.Printf("Syscalls being tracked")
 
 	log.Printf("Starting client VM...")
 	vmClient.SendCommand(ctx, &vmProto.SendCommandVmRequest{
 		Ip:      "192.168.100.3",
 		Command: fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 30 -P 4", ips[0]),
 	})
-
+	log.Printf("Client VM started")
 	// // Save PID file
 	// pidFile := "/tmp/firecracker.pid"
 	// pid := os.Getpid()

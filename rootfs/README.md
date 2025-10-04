@@ -4,6 +4,9 @@
 - we make it read-only because we want to use same rootfs for all VMs (don't want to copy n times)
 - for iperf3 (requires writing files), we need to mount read-write blocks per VM
 ```bash
+# existing configured rootfs in s3
+curl -fL --progress-bar -o /tmp/debian-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/debian-rootfs.ext4
+
 # install docker
 sudo apt update
 sudo apt install -y ca-certificates curl gnupg lsb-release
