@@ -1,6 +1,7 @@
 # Setup baremetal
 ```bash
 ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+# you can also put "config" in ~/.ssh/config to avoid typing the email every time
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github
 ssh -T git@github.com
