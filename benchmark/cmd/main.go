@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	cfg := config.ParseFlags()
+	cfg := config.NewConfig()
 
 	nodeConn, err := grpc.NewClient("10.10.1.2:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
