@@ -18,6 +18,8 @@ eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/github
 ssh -T git@github.com
 
+sudo chmod 666 /dev/kvm
+
 # go
 wget https://go.dev/dl/go1.23.7.linux-amd64.tar.gz
 sudo rm -rf /usr/local/go
