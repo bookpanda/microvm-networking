@@ -18,7 +18,7 @@ import (
 func main() {
 	cfg := config.ParseFlags()
 
-	nodeConn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	nodeConn, err := grpc.NewClient("10.10.1.2:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to create gRPC client: %v", err)
 	}

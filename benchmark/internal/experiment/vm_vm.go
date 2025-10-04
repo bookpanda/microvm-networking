@@ -13,7 +13,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/filesystem"
 	"github.com/bookpanda/microvm-networking/benchmark/internal/vm"
 )
@@ -24,7 +23,7 @@ type SCPair struct {
 }
 
 type VMVMExperiment struct {
-	test          config.Test
+	test          string
 	SCPairs       []*SCPair
 	logDir        string
 	syscallsDir   string
@@ -46,7 +45,7 @@ func NewVMVMExperiment(manager *vm.Manager) (*VMVMExperiment, error) {
 	}
 
 	experiment := &VMVMExperiment{
-		test:        manager.GetConfig().Test,
+		test:        "",
 		SCPairs:     make([]*SCPair, 0),
 		logDir:      logDir,
 		syscallsDir: syscallsDir,
@@ -196,9 +195,9 @@ func (e *VMVMExperiment) prepareServers(ctx context.Context) error {
 		log.Printf("Starting server on VM %s", pair.Server.IP)
 		var command string
 		switch e.test {
-		case config.Throughput:
+		case "throughput":
 			command = "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -s"
-		case config.Latency:
+		case "latency":
 			command = "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp sockperf server -i " + pair.Server.IP
 		default:
 			return fmt.Errorf("invalid test: %s", e.test)
@@ -255,9 +254,9 @@ func (e *VMVMExperiment) startClients(ctx context.Context) error {
 
 		var command string
 		switch e.test {
-		case config.Throughput:
+		case "throughput":
 			command = fmt.Sprintf("mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp iperf3 -c %s -t 30 -P 4", pair.Server.IP)
-		case config.Latency:
+		case "latency":
 			command = fmt.Sprintf("mount -t tmpfs -o size=128M tmpfs /tmp && HOME=/tmp sockperf ping-pong -i %s -m 64 -t 30", pair.Server.IP)
 		default:
 			return fmt.Errorf("invalid test: %s", e.test)
