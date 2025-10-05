@@ -66,7 +66,22 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 	}
 	e.wg.Wait()
 	log.Printf("Nodes setup")
-	time.Sleep(3 * time.Second)
+
+	// Setup cross-node routing
+	// log.Printf("Setting up cross-node routing...")
+	// for _, node := range e.nodes {
+	// 	e.wg.Add(1)
+	// 	go func(node *Node) {
+	// 		defer e.wg.Done()
+	// 		err := e.setupCrossNodeRouting(ctx, node)
+	// 		if err != nil {
+	// 			log.Fatalf("[%s]: Failed to setup cross-node routing: %v", node.conn.Target(), err)
+	// 		}
+	// 	}(node)
+	// }
+	// e.wg.Wait()
+	// log.Printf("Cross-node routing setup completed")
+	// time.Sleep(3 * time.Second)
 
 	log.Printf("Starting servers...")
 	for _, node := range e.nodes {
@@ -122,7 +137,7 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 		}
 	}
 	e.wg.Wait()
-	log.Printf("Clients started")
+	log.Printf("Clients finished")
 
 	time.Sleep(5 * time.Second)
 	log.Printf("Stopping syscalls tracking...")
@@ -180,6 +195,49 @@ func (e *Experiment) setupNode(ctx context.Context, node *Node) error {
 	}
 
 	return nil
+}
+
+func (e *Experiment) setupCrossNodeRouting(ctx context.Context, node *Node) error {
+	log.Printf("[%s]: Setting up cross-node routing...", node.conn.Target())
+
+	// For each other node, set up routing and NAT
+	for _, otherNode := range e.nodes {
+		if otherNode.config.IP == node.config.IP {
+			continue // Skip self
+		}
+
+		// Get the subnet from the other node's bridge IP (e.g., "192.168.101.1" -> "192.168.101.0/24")
+		remoteSubnet := getBridgeSubnet(otherNode.config.BridgeIP)
+
+		log.Printf("[%s]: Adding route to %s via %s", node.conn.Target(), remoteSubnet, otherNode.config.IP)
+		_, err := node.netwClient.SetupCrossNodeRoute(ctx, &networkProto.SetupCrossNodeRouteRequest{
+			RemoteSubnet:  remoteSubnet,
+			RemoteNodeIP:  otherNode.config.IP,
+			LocalBridgeIP: node.config.BridgeIP,
+		})
+		if err != nil {
+			log.Printf("[%s]: Failed to setup route to %s: %v", node.conn.Target(), remoteSubnet, err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+func getBridgeSubnet(bridgeIP string) string {
+	// Extract first 3 octets and add .0/24
+	// e.g., "192.168.100.1" -> "192.168.100.0/24"
+	parts := make([]byte, 0, len(bridgeIP))
+	octets := 0
+	for i := 0; i < len(bridgeIP) && octets < 3; i++ {
+		if bridgeIP[i] == '.' {
+			octets++
+			parts = append(parts, '.')
+		} else {
+			parts = append(parts, bridgeIP[i])
+		}
+	}
+	return string(parts) + "0/24"
 }
 
 func (e *Experiment) startServer(ctx context.Context, node *Node, vmConfig *config.VMConfig) error {
