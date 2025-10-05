@@ -83,6 +83,7 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 	// log.Printf("Cross-node routing setup completed")
 	// time.Sleep(3 * time.Second)
 
+	time.Sleep(3 * time.Second) // VERY IMPORTANT TO WAIT FOR MICROVM TO START
 	log.Printf("Starting servers...")
 	for _, node := range e.nodes {
 		for _, vmConfig := range node.config.VMs {
@@ -90,13 +91,13 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 				continue
 			}
 			e.wg.Add(1)
-			go func() {
+			go func(n *Node, vm *config.VMConfig) {
 				defer e.wg.Done()
-				err := e.startServer(ctx, node, &vmConfig)
+				err := e.startServer(ctx, n, vm)
 				if err != nil {
-					log.Fatalf("[%s]: Failed to start server VM: %v", node.conn.Target(), err)
+					log.Fatalf("[%s]: Failed to start server VM: %v", n.conn.Target(), err)
 				}
-			}()
+			}(node, &vmConfig)
 		}
 	}
 	e.wg.Wait()
@@ -127,13 +128,13 @@ func (e *Experiment) RunBenchmark(ctx context.Context) error {
 				continue
 			}
 			e.wg.Add(1)
-			go func() {
+			go func(n *Node, vm *config.VMConfig) {
 				defer e.wg.Done()
-				err := e.startClient(ctx, node, &vmConfig)
+				err := e.startClient(ctx, n, vm)
 				if err != nil {
-					log.Fatalf("[%s]: Failed to start client: %v", node.conn.Target(), err)
+					log.Fatalf("[%s]: Failed to start client: %v", n.conn.Target(), err)
 				}
-			}()
+			}(node, &vmConfig)
 		}
 	}
 	e.wg.Wait()
@@ -197,49 +198,6 @@ func (e *Experiment) setupNode(ctx context.Context, node *Node) error {
 	return nil
 }
 
-func (e *Experiment) setupCrossNodeRouting(ctx context.Context, node *Node) error {
-	log.Printf("[%s]: Setting up cross-node routing...", node.conn.Target())
-
-	// For each other node, set up routing and NAT
-	for _, otherNode := range e.nodes {
-		if otherNode.config.IP == node.config.IP {
-			continue // Skip self
-		}
-
-		// Get the subnet from the other node's bridge IP (e.g., "192.168.101.1" -> "192.168.101.0/24")
-		remoteSubnet := getBridgeSubnet(otherNode.config.BridgeIP)
-
-		log.Printf("[%s]: Adding route to %s via %s", node.conn.Target(), remoteSubnet, otherNode.config.IP)
-		_, err := node.netwClient.SetupCrossNodeRoute(ctx, &networkProto.SetupCrossNodeRouteRequest{
-			RemoteSubnet:  remoteSubnet,
-			RemoteNodeIP:  otherNode.config.IP,
-			LocalBridgeIP: node.config.BridgeIP,
-		})
-		if err != nil {
-			log.Printf("[%s]: Failed to setup route to %s: %v", node.conn.Target(), remoteSubnet, err)
-			return err
-		}
-	}
-
-	return nil
-}
-
-func getBridgeSubnet(bridgeIP string) string {
-	// Extract first 3 octets and add .0/24
-	// e.g., "192.168.100.1" -> "192.168.100.0/24"
-	parts := make([]byte, 0, len(bridgeIP))
-	octets := 0
-	for i := 0; i < len(bridgeIP) && octets < 3; i++ {
-		if bridgeIP[i] == '.' {
-			octets++
-			parts = append(parts, '.')
-		} else {
-			parts = append(parts, bridgeIP[i])
-		}
-	}
-	return string(parts) + "0/24"
-}
-
 func (e *Experiment) startServer(ctx context.Context, node *Node, vmConfig *config.VMConfig) error {
 	log.Printf("[%s]: Starting server VM...", node.conn.Target())
 	_, err := node.vmClient.SendServerCommand(ctx, &vmProto.SendServerCommandVmRequest{
@@ -275,6 +233,7 @@ func (e *Experiment) startClient(ctx context.Context, node *Node, vmConfig *conf
 	for {
 		resp, err := stream.Recv()
 		if err == io.EOF {
+			log.Printf("[%s]: Server finished sending", node.conn.Target())
 			break // server finished sending
 		}
 		if err != nil {
