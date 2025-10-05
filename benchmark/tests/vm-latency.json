@@ -1,0 +1,28 @@
+{
+    "nodes": [
+        {
+            "ip": "10.10.1.1",
+            "port": 50051,
+            "bridge_ip": "192.168.100.1",
+            "vms": [
+                {
+                    "ip": "192.168.100.2",
+                    "type": "server",
+                    "command": "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp sockperf server -i 192.168.100.2"
+                }
+            ]
+        }, 
+        {
+            "ip": "10.10.1.2",
+            "port": 50051,
+            "bridge_ip": "192.168.101.1",
+            "vms": [
+                {
+                    "ip": "192.168.101.2",
+                    "type": "client",
+                    "command": "mount -t tmpfs -o size=64M tmpfs /tmp && HOME=/tmp sockperf ping-pong -i 192.168.100.2 -m 64 -t 30"
+                }
+            ]
+        }    
+    ]
+}
