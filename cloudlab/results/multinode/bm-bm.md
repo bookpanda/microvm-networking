@@ -4,7 +4,7 @@
 # server
 iperf3 -s
 # client
-iperf3 -c 192.168.100.2 -t 30 -P 4
+iperf3 -c 10.10.1.1 -t 30 -P 4
 ```
 ```
 
