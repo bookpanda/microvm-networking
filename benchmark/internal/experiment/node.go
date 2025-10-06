@@ -67,6 +67,7 @@ func (e *Experiment) setupNode(ctx context.Context, node *Node, createVMs bool) 
 }
 
 func (e *Experiment) startNodeServer(ctx context.Context, node *Node) error {
+	log.Printf("[%s]: Starting server node...", node.conn.Target())
 	_, err := node.nodeClient.SendServerCommand(ctx, &nodeProto.SendServerCommandNodeRequest{
 		Command: node.config.Command,
 	})
@@ -78,6 +79,7 @@ func (e *Experiment) startNodeServer(ctx context.Context, node *Node) error {
 }
 
 func (e *Experiment) startNodeClient(ctx context.Context, node *Node) error {
+	log.Printf("[%s]: Starting client node...", node.conn.Target())
 	_, err := node.nodeClient.SendClientCommand(ctx, &nodeProto.SendClientCommandNodeRequest{
 		Command: node.config.Command,
 	})
