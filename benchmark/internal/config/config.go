@@ -19,6 +19,7 @@ type NodeConfig struct {
 	Port     int        `json:"port"`
 	BridgeIP string     `json:"bridge_ip"`
 	VMs      []VMConfig `json:"vms"`
+	Command  string     `json:"command"`
 }
 
 type VMConfig struct {

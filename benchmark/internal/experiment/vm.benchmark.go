@@ -14,7 +14,7 @@ func (e *Experiment) RunVMBenchmark(ctx context.Context) error {
 		e.wg.Add(1)
 		go func(node *Node) {
 			defer e.wg.Done()
-			err := e.setupNode(ctx, node)
+			err := e.setupNode(ctx, node, true)
 			if err != nil {
 				log.Fatalf("[%s]: Failed to setup node: %v", node.conn.Target(), err)
 			}

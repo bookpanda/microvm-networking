@@ -7,6 +7,7 @@ import (
 	"github.com/bookpanda/microvm-networking/benchmark/internal/config"
 	filesystemProto "github.com/bookpanda/microvm-networking/benchmark/proto/filesystem/v1"
 	networkProto "github.com/bookpanda/microvm-networking/benchmark/proto/network/v1"
+	nodeProto "github.com/bookpanda/microvm-networking/benchmark/proto/node/v1"
 	vmProto "github.com/bookpanda/microvm-networking/benchmark/proto/vm/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -20,6 +21,7 @@ type Experiment struct {
 
 type Node struct {
 	conn       *grpc.ClientConn
+	nodeClient nodeProto.NodeServiceClient
 	vmClient   vmProto.VmServiceClient
 	netwClient networkProto.NetworkServiceClient
 	fsClient   filesystemProto.FileSystemServiceClient
@@ -39,6 +41,7 @@ func NewExperiment(config *config.Config) (*Experiment, error) {
 		}
 		experiment.nodes = append(experiment.nodes, &Node{
 			conn:       conn,
+			nodeClient: nodeProto.NewNodeServiceClient(conn),
 			vmClient:   vmProto.NewVmServiceClient(conn),
 			netwClient: networkProto.NewNetworkServiceClient(conn),
 			fsClient:   filesystemProto.NewFileSystemServiceClient(conn),
