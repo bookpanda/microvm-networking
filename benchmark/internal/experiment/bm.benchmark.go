@@ -25,6 +25,9 @@ func (e *Experiment) RunBMBenchmark(ctx context.Context) error {
 	// time.Sleep(3 * time.Second) // VERY IMPORTANT TO WAIT FOR MICROVM TO START
 	log.Printf("Starting servers...")
 	for _, node := range e.nodes {
+		if node.config.Type != "server" {
+			continue
+		}
 		e.wg.Add(1)
 		go func(n *Node) {
 			defer e.wg.Done()
@@ -37,19 +40,6 @@ func (e *Experiment) RunBMBenchmark(ctx context.Context) error {
 	e.wg.Wait()
 	log.Printf("Servers started")
 
-	log.Printf("Starting to track syscalls...")
-	for _, node := range e.nodes {
-		e.wg.Add(1)
-		go func(node *Node) {
-			defer e.wg.Done()
-			err := e.trackSyscalls(ctx, node)
-			if err != nil {
-				log.Fatalf("[%s]: Failed to track syscalls: %v", node.conn.Target(), err)
-			}
-		}(node)
-	}
-	e.wg.Wait()
-	log.Printf("Syscalls being tracked")
 	time.Sleep(3 * time.Second)
 
 	log.Printf("Starting clients...")
@@ -57,6 +47,9 @@ func (e *Experiment) RunBMBenchmark(ctx context.Context) error {
 	defer cancel()
 
 	for _, node := range e.nodes {
+		if node.config.Type != "client" {
+			continue
+		}
 		e.wg.Add(1)
 		go func(n *Node) {
 			defer e.wg.Done()

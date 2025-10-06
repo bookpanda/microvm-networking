@@ -5,6 +5,7 @@
             "port": 50051,
             "bridge_ip": "192.168.100.1",
             "vms": [],
+            "type": "server",
             "command": "iperf3 -s"
         },
         {
@@ -12,6 +13,7 @@
             "port": 50051,
             "bridge_ip": "192.168.101.1",
             "vms": [],
+            "type": "client",
             "command": "iperf3 -c 10.10.1.1 -t 30 -P 4"
         }    
     ]

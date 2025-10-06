@@ -11,8 +11,14 @@ import (
 )
 
 func (e *Experiment) setupNode(ctx context.Context, node *Node, createVMs bool) error {
+	log.Printf("[%s]: Cleaning up node...", node.conn.Target())
+	_, err := node.nodeClient.Cleanup(ctx, &nodeProto.CleanupNodeRequest{})
+	if err != nil {
+		log.Fatalf("[%s]: Failed to cleanup VM: %v", node.conn.Target(), err)
+	}
+
 	log.Printf("[%s]: Cleaning up VM...", node.conn.Target())
-	_, err := node.vmClient.Cleanup(ctx, &vmProto.CleanupVmRequest{})
+	_, err = node.vmClient.Cleanup(ctx, &vmProto.CleanupVmRequest{})
 	if err != nil {
 		log.Fatalf("[%s]: Failed to cleanup VM: %v", node.conn.Target(), err)
 	}

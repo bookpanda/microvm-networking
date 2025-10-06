@@ -9,13 +9,13 @@ import (
 )
 
 func main() {
-	cfg := config.NewConfig()
+	cfg := config.NewConfig("bm-throughput")
 	experiment, err := experiment.NewExperiment(cfg)
 	if err != nil {
 		log.Fatalf("Failed to create experiment: %v", err)
 	}
 
-	err = experiment.RunVMBenchmark(context.Background())
+	err = experiment.RunBMBenchmark(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to run benchmark: %v", err)
 	}

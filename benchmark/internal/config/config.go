@@ -19,6 +19,7 @@ type NodeConfig struct {
 	Port     int        `json:"port"`
 	BridgeIP string     `json:"bridge_ip"`
 	VMs      []VMConfig `json:"vms"`
+	Type     string     `json:"type"`
 	Command  string     `json:"command"`
 }
 
@@ -28,11 +29,11 @@ type VMConfig struct {
 	Command string `json:"command"`
 }
 
-func NewConfig() *Config {
+func NewConfig(testConfig string) *Config {
 	cfg := &Config{}
 
 	var configFile string
-	flag.StringVar(&configFile, "config", "./tests/vm-latency.json", "Path to configuration JSON file")
+	flag.StringVar(&configFile, "config", fmt.Sprintf("./tests/%s.json", testConfig), "Path to configuration JSON file")
 	flag.StringVar(&cfg.KernelPath, "kernel", "/tmp/vmlinux-5.10.223-no-acpi", "Path to kernel image")
 	flag.StringVar(&cfg.RootfsPath, "rootfs", "/tmp/debian-rootfs.ext4", "Path to rootfs image")
 

@@ -22,6 +22,7 @@ const (
 	NodeService_SendServerCommand_FullMethodName = "/proto.node.v1.NodeService/SendServerCommand"
 	NodeService_SendClientCommand_FullMethodName = "/proto.node.v1.NodeService/SendClientCommand"
 	NodeService_StopSyscalls_FullMethodName      = "/proto.node.v1.NodeService/StopSyscalls"
+	NodeService_Cleanup_FullMethodName           = "/proto.node.v1.NodeService/Cleanup"
 )
 
 // NodeServiceClient is the client API for NodeService service.
@@ -31,6 +32,7 @@ type NodeServiceClient interface {
 	SendServerCommand(ctx context.Context, in *SendServerCommandNodeRequest, opts ...grpc.CallOption) (*SendServerCommandNodeResponse, error)
 	SendClientCommand(ctx context.Context, in *SendClientCommandNodeRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[SendClientCommandNodeResponse], error)
 	StopSyscalls(ctx context.Context, in *StopSyscallsNodeRequest, opts ...grpc.CallOption) (*StopSyscallsNodeResponse, error)
+	Cleanup(ctx context.Context, in *CleanupNodeRequest, opts ...grpc.CallOption) (*CleanupNodeResponse, error)
 }
 
 type nodeServiceClient struct {
@@ -80,6 +82,16 @@ func (c *nodeServiceClient) StopSyscalls(ctx context.Context, in *StopSyscallsNo
 	return out, nil
 }
 
+func (c *nodeServiceClient) Cleanup(ctx context.Context, in *CleanupNodeRequest, opts ...grpc.CallOption) (*CleanupNodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CleanupNodeResponse)
+	err := c.cc.Invoke(ctx, NodeService_Cleanup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NodeServiceServer is the server API for NodeService service.
 // All implementations must embed UnimplementedNodeServiceServer
 // for forward compatibility.
@@ -87,6 +99,7 @@ type NodeServiceServer interface {
 	SendServerCommand(context.Context, *SendServerCommandNodeRequest) (*SendServerCommandNodeResponse, error)
 	SendClientCommand(*SendClientCommandNodeRequest, grpc.ServerStreamingServer[SendClientCommandNodeResponse]) error
 	StopSyscalls(context.Context, *StopSyscallsNodeRequest) (*StopSyscallsNodeResponse, error)
+	Cleanup(context.Context, *CleanupNodeRequest) (*CleanupNodeResponse, error)
 	mustEmbedUnimplementedNodeServiceServer()
 }
 
@@ -105,6 +118,9 @@ func (UnimplementedNodeServiceServer) SendClientCommand(*SendClientCommandNodeRe
 }
 func (UnimplementedNodeServiceServer) StopSyscalls(context.Context, *StopSyscallsNodeRequest) (*StopSyscallsNodeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method StopSyscalls not implemented")
+}
+func (UnimplementedNodeServiceServer) Cleanup(context.Context, *CleanupNodeRequest) (*CleanupNodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Cleanup not implemented")
 }
 func (UnimplementedNodeServiceServer) mustEmbedUnimplementedNodeServiceServer() {}
 func (UnimplementedNodeServiceServer) testEmbeddedByValue()                     {}
@@ -174,6 +190,24 @@ func _NodeService_StopSyscalls_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NodeService_Cleanup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CleanupNodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeServiceServer).Cleanup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: NodeService_Cleanup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeServiceServer).Cleanup(ctx, req.(*CleanupNodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // NodeService_ServiceDesc is the grpc.ServiceDesc for NodeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -188,6 +222,10 @@ var NodeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StopSyscalls",
 			Handler:    _NodeService_StopSyscalls_Handler,
+		},
+		{
+			MethodName: "Cleanup",
+			Handler:    _NodeService_Cleanup_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
