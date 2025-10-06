@@ -1,4 +1,9 @@
 # microvm-networking
+### Related Repos
+- [gRPC server for managing Firecracker microVMs in node](https://github.com/bookpanda/firecracker-runner-node)
+- [microVMs vsock server (for sending commands)](https://github.com/bookpanda/firecracker-vsock)
+- [CloudLab profile configuration](https://github.com/bookpanda/cloudlab-microvm-profile)
+
 ### Infrastructure
 Since macbooks don't have KVM support, need to use a baremetal server to run Firecracker's microVMs, so either:
 - AWS: metal instances (lowest $4/hr)
