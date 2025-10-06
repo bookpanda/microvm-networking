@@ -2,6 +2,8 @@ package experiment
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"log"
 
 	filesystemProto "github.com/bookpanda/microvm-networking/benchmark/proto/filesystem/v1"
@@ -80,11 +82,24 @@ func (e *Experiment) startNodeServer(ctx context.Context, node *Node) error {
 
 func (e *Experiment) startNodeClient(ctx context.Context, node *Node) error {
 	log.Printf("[%s]: Starting client node...", node.conn.Target())
-	_, err := node.nodeClient.SendClientCommand(ctx, &nodeProto.SendClientCommandNodeRequest{
+	stream, err := node.nodeClient.SendClientCommand(ctx, &nodeProto.SendClientCommandNodeRequest{
 		Command: node.config.Command,
 	})
 	if err != nil {
 		log.Fatalf("[%s]: Failed to start client VM: %v", node.conn.Target(), err)
+	}
+
+	for {
+		resp, err := stream.Recv()
+		if err == io.EOF {
+			log.Printf("[%s]: Server finished sending", node.conn.Target())
+			break // server finished sending
+		}
+		if err != nil {
+			log.Fatalf("[%s]: Failed to receive client node %s: %v", node.conn.Target(), node.config.Command, err)
+		}
+		fmt.Printf("[%s]: Notification: %s\n", node.conn.Target(), resp.Output)
+
 	}
 
 	return nil
