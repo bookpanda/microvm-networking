@@ -59,9 +59,6 @@ func (e *Experiment) RunVMBenchmark(ctx context.Context) error {
 	time.Sleep(3 * time.Second)
 
 	log.Printf("Starting clients...")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
 	for _, node := range e.nodes {
 		for _, vmConfig := range node.config.VMs {
 			if vmConfig.Type != "client" {
