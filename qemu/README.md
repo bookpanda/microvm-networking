@@ -16,23 +16,17 @@ wget --progress=bar:force https://cloud-images.ubuntu.com/jammy/current/jammy-se
 ```
 ## Run
 ```bash
-# 1024MB RAM, ubuntu image, 2 vCPUs
+# 2GB RAM, 2 vCPUs (smp), ubuntu image, simple NAT networking, forwards port 5201 to VM
 qemu-system-x86_64 \
   -enable-kvm \
-  -m 1024 \
-  -hda ubuntu.img \
-  -boot c \
+  -m 2048 \
+  -smp 2 \
   -cpu host \
-  -smp 2
-
-qemu-system-x86_64 \
-  -enable-kvm \
-  -m 512 \
-  -smp 1 \
-  -kernel vmlinuz \
-  -initrd initrd.img \
-  -append "root=/dev/ram console=ttyS0" \
+  -hda /tmp/ubuntu.img \
+  -boot c \
   -nographic \
   -netdev user,id=net0,hostfwd=tcp::5201-:5201 \
   -device virtio-net-pci,netdev=net0
+
+
 ```
