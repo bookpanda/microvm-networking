@@ -1,0 +1,20 @@
+{
+    "nodes": [
+        {
+            "ip": "10.10.1.2",
+            "port": 50051,
+            "bridge_ip": "192.168.100.1",
+            "vms": [],
+            "type": "server",
+            "command": "sockperf server -i 10.10.1.2"
+        },
+        {
+            "ip": "10.10.1.1",
+            "port": 50051,
+            "bridge_ip": "192.168.101.1",
+            "vms": [],
+            "type": "client",
+            "command": "sockperf ping-pong -i 10.10.1.2 -m 64 -t 30"
+        }    
+    ]
+}

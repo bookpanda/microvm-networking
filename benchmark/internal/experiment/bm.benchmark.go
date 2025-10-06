@@ -43,9 +43,6 @@ func (e *Experiment) RunBMBenchmark(ctx context.Context) error {
 	time.Sleep(3 * time.Second)
 
 	log.Printf("Starting clients...")
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
-	defer cancel()
-
 	for _, node := range e.nodes {
 		if node.config.Type != "client" {
 			continue
