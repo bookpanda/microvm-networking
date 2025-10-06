@@ -15,7 +15,7 @@ func main() {
 		log.Fatalf("Failed to create experiment: %v", err)
 	}
 
-	err = experiment.RunBenchmark(context.Background())
+	err = experiment.RunVMBenchmark(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to run benchmark: %v", err)
 	}
