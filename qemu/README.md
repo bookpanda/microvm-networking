@@ -12,7 +12,8 @@ sudo kvm-ok
 qemu-system-x86_64 -accel help
 
 wget --progress=bar:force https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img -O /tmp/ubuntu.img
-
+ 
+# user: ubuntu, password: ubuntu
 cloud-localds /tmp/my-seed.img user-data
 
 ps aux | grep qemu | grep -v grep | awk '{print $2}' | xargs kill -9
