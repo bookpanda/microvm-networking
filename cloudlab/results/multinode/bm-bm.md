@@ -1,5 +1,5 @@
 # Throughput
-## VM as server responding to bulk data from a VM
+## BM as server responding to bulk data from a BM
 ```bash
 # server
 iperf3 -s
@@ -76,7 +76,7 @@ iperf3 -c 10.10.1.1 -t 30 -P 4
 ```
 
 # Latency
-## VM as server responding to VM-sent small requests
+## BM as server responding to BM-sent small requests
 ```bash
 # server
 sockperf server -i 10.10.1.2
