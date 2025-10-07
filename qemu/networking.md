@@ -17,7 +17,7 @@ sudo ip addr add 192.168.101.1/24 dev br0
 sudo ip link set br0 up
 # sudo iptables -t nat -A POSTROUTING -s 192.168.101.0/24 -o eth0 -j MASQUERADE
 
-
+# CAUTION: DON'T PUT BR0 INSIDE VM, IT WILL CAUSE PROBLEMS
 # vm 0
 sudo ip addr add 192.168.100.2/24 dev ens3
 sudo ip link set ens3 up
@@ -68,7 +68,15 @@ sudo iptables -I FORWARD 1 -i br0 -o br0 -j ACCEPT
 sudo iptables -t nat -A POSTROUTING -s 192.168.100.0/24 ! -d 192.168.100.0/24 -j MASQUERADE
 sudo iptables -A FORWARD -i br0 -o enp65s0f0np0 -s 192.168.101.0/24 -j ACCEPT
 sudo iptables -A FORWARD -o br0 -i enp65s0f0np0 -d 192.168.101.0/24 -j ACCEPT
+sudo iptables -I FORWARD -s 192.168.100.0/24 -d 192.168.101.0/24 -j ACCEPT
+sudo iptables -I FORWARD -s 192.168.101.0/24 -d 192.168.100.0/24 -j ACCEPT
+sudo iptables -I INPUT -s 192.168.101.0/24 -d 192.168.100.1 -j ACCEPT
 
 # host 1
 sudo iptables -t nat -A POSTROUTING -s 192.168.101.0/24 ! -d 192.168.101.0/24 -j MASQUERADE
+sudo iptables -A FORWARD -i br0 -o enp65s0f0np0 -s 192.168.100.0/24 -j ACCEPT
+sudo iptables -A FORWARD -o br0 -i enp65s0f0np0 -d 192.168.100.0/24 -j ACCEPT
+sudo iptables -I FORWARD -s 192.168.100.0/24 -d 192.168.101.0/24 -j ACCEPT
+sudo iptables -I FORWARD -s 192.168.101.0/24 -d 192.168.100.0/24 -j ACCEPT
+sudo iptables -I INPUT -s 192.168.100.0/24 -d 192.168.101.1 -j ACCEPT
 ```

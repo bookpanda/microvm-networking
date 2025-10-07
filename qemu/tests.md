@@ -13,3 +13,10 @@ iperf3 -s
 # host: 30s, 4 threads
 iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
+
+# Syscalls
+```bash
+# get pid of process with most cpu usage
+ps aux | grep qemu
+~/code/microvm-networking/benchmark/trace_syscalls.sh <pid>
+```
