@@ -52,6 +52,4 @@ sudo qemu-system-x86_64 \
 # inside VM
 sudo apt update
 sudo apt install -y iperf3 sockperf
-
-ip addr show
 ```
