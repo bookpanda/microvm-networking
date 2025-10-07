@@ -55,6 +55,7 @@ sudo qemu-system-x86_64 \
   -device virtio-net-pci,netdev=net0
 
 # vhost boosting
+# firecracker: 108% cpu when testing, qemu: 40-60% cpu
 # consumes 10-30% cpu core, 0.4% mem (CPU starts at 30% after boot, gradually decreases to 10%)
 sudo ip tuntap add dev tap0 mode tap
 sudo ip link set tap0 up
