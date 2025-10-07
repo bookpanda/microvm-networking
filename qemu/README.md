@@ -54,5 +54,18 @@ sudo qemu-system-x86_64 \
   -netdev bridge,id=net0,br=br0 \
   -device virtio-net-pci,netdev=net0
 
+# vhost boosting
+sudo qemu-system-x86_64 \
+  -enable-kvm \
+  -m 2048 \
+  -smp 2 \
+  -cpu host \
+  -hda /tmp/ubuntu.img \
+  -cdrom /tmp/my-seed.img \
+  -boot c \
+  -nographic \
+  -netdev bridge,id=net0,br=br0 \
+  -device virtio-net-pci,netdev=net0,vhost=on
+
 
 ```
