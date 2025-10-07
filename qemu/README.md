@@ -55,17 +55,20 @@ sudo qemu-system-x86_64 \
   -device virtio-net-pci,netdev=net0
 
 # vhost boosting
+sudo ip tuntap add dev tap0 mode tap
+sudo ip link set tap0 up
+sudo ip link set tap0 master br0
+
 sudo qemu-system-x86_64 \
   -enable-kvm \
   -m 2048 \
   -smp 2 \
   -cpu host \
   -hda /tmp/ubuntu.img \
-  -cdrom /tmp/my-seed.img \
   -boot c \
   -nographic \
-  -netdev bridge,id=net0,br=br0 \
-  -device virtio-net-pci,netdev=net0,vhost=on
+  -netdev tap,id=net0,ifname=tap0,script=no,downscript=no,vhost=on \
+  -device virtio-net-pci,netdev=net0
 
 
 ```
