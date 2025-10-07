@@ -23,7 +23,7 @@ ps aux | grep qemu | grep -v grep | awk '{print $2}' | xargs kill -9
 ```bash
 # 2GB RAM, 2 vCPUs (smp), ubuntu image, simple NAT networking, 
 # forwards host port 5201 to VM port 5201 (TCP only, UDP requires bridged or TAP networking)
-# isock around 5Gbits/s
+# isock 5.2Gbits/s
 sudo qemu-system-x86_64 \
   -enable-kvm \
   -m 2048 \
@@ -37,6 +37,7 @@ sudo qemu-system-x86_64 \
   -device virtio-net-pci,netdev=net0
 
 # bridged (can do UDP now)
+# isock 16.2Gbits/s
 sudo qemu-system-x86_64 \
   -enable-kvm \
   -m 2048 \
