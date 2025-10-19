@@ -46,6 +46,12 @@ sudo dpdk-testpmd -l 8-11 -n 4 --no-pci \
   --huge-dir=/mnt/huge --file-prefix=vhost -- -i
 ```
 
+## Test with Firecracker
+```bash
+sudo firecracker --no-api --config-file fc_config.json
+# user: root, pass: root
+```
+
 ## Troubleshoot
 ```bash
 lscpu | grep NUMA
