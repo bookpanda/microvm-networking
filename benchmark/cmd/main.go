@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cfg := config.NewConfig("vm-throughput")
+	cfg := config.NewConfig("vm-latency")
 	// cfg := config.NewConfig("bm-throughput")
 	// cfg := config.NewConfig("bm-latency")
 	experiment, err := experiment.NewExperiment(cfg)

@@ -7,40 +7,57 @@ iperf3 -s
 iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
 ```
-[STDOUT] - - - - - - - - - - - - - - - - - - - - - - - - -
-[STDOUT] [ ID] Interval           Transfer     Bandwidth
-[STDOUT] [  5]   0.00-30.02  sec  0.00 Bytes  0.00 bits/sec                  sender
-[STDOUT] [  5]   0.00-30.02  sec  15.6 GBytes  4.45 Gbits/sec                  receiver
-[STDOUT] [  7]   0.00-30.02  sec  0.00 Bytes  0.00 bits/sec                  sender
-[STDOUT] [  7]   0.00-30.02  sec  15.5 GBytes  4.44 Gbits/sec                  receiver
-[STDOUT] [  9]   0.00-30.02  sec  0.00 Bytes  0.00 bits/sec                  sender
-[STDOUT] [  9]   0.00-30.02  sec  15.3 GBytes  4.38 Gbits/sec                  receiver
-[STDOUT] [ 11]   0.00-30.02  sec  0.00 Bytes  0.00 bits/sec                  sender
-[STDOUT] [ 11]   0.00-30.02  sec  15.0 GBytes  4.29 Gbits/sec                  receiver
-[STDOUT] [SUM]   0.00-30.02  sec  0.00 Bytes  0.00 bits/sec                  sender
-[STDOUT] [SUM]   0.00-30.02  sec  61.4 GBytes  17.6 Gbits/sec                  receiver
+[OUTPUT] [ ID] Interval           Transfer     Bitrate         Retr
+[OUTPUT] [  7]   0.00-30.00  sec  19.1 GBytes  5.46 Gbits/sec    0             sender
+[OUTPUT] [  7]   0.00-30.00  sec  19.1 GBytes  5.46 Gbits/sec                  receiver
+[OUTPUT] [  9]   0.00-30.00  sec  18.9 GBytes  5.41 Gbits/sec    0             sender
+[OUTPUT] [  9]   0.00-30.00  sec  18.9 GBytes  5.41 Gbits/sec                  receiver
+[OUTPUT] [ 11]   0.00-30.00  sec  18.9 GBytes  5.40 Gbits/sec    0             sender
+[OUTPUT] [ 11]   0.00-30.00  sec  18.9 GBytes  5.40 Gbits/sec                  receiver
+[OUTPUT] [ 13]   0.00-30.00  sec  18.8 GBytes  5.39 Gbits/sec    0             sender
+[OUTPUT] [ 13]   0.00-30.00  sec  18.8 GBytes  5.39 Gbits/sec                  receiver
+[OUTPUT] [SUM]   0.00-30.00  sec  75.6 GBytes  21.7 Gbits/sec    0             sender
+[OUTPUT] [SUM]   0.00-30.00  sec  75.6 GBytes  21.7 Gbits/sec                  receiver
 ```
 ### Syscalls on server process
 ```
-[STDOUT] --- cumulative syscall counts ---
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_lseek]: 23
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 235509
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 240729
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 250544
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 435378
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 450500
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 1096616
+[STDOUT] --- total syscall counts ---
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 200750
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 252001
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 252740
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 482191
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 562285
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 1271585
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 519155921
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 687664320
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 2335941802
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 5860559809
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 15640085321
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 30232056814
 ```
 ### Syscalls on client process
 ```
-[STDOUT] --- cumulative syscall counts ---
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_lseek]: 125
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 54443
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 88380
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 112016
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 114938
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 519669
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 992395
+[STDOUT] --- total syscall counts ---
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_ioctl]: 1
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_recvfrom]: 4
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 46283
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 59147
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 72253
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 82976
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 615445
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 1257337
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_ioctl]: 4278
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_recvfrom]: 46556
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 94715426
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 203828120
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 2014684770
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 2517544240
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 22775536117
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 30774532057
 ```
 
 # Latency
