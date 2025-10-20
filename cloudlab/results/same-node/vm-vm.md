@@ -69,41 +69,61 @@ sockperf ping-pong -i 192.168.100.2 -m 64 -t 30
 ./sockperf server -i 192.168.100.2
 ```
 ```
-[STDOUT] sockperf: ========= Printing statistics for Server No: 0
-[STDOUT] sockperf: [Valid Duration] RunTime=29.549 sec; SentMessages=94416; ReceivedMessages=94416
-[STDOUT] sockperf: [2;35m====> avg-latency=156.309 (std-dev=101.155, mean-ad=62.044, median-ad=8.582, siqr=6.420, cv=0.647, std-error=0.329, 99.0% ci=[155.461, 157.157])[0m
-[STDOUT] sockperf: # dropped messages = 0; # duplicated messages = 0; # out-of-order messages = 0
-[STDOUT] sockperf: Summary: Latency is 156.309 usec
-[STDOUT] sockperf: [2;35mTotal 94416 observations[0m; each percentile contains 944.16 observations
-[STDOUT] sockperf: ---> <MAX> observation =  768.182
-[STDOUT] sockperf: ---> percentile 99.999 =  767.523
-[STDOUT] sockperf: ---> percentile 99.990 =  735.845
-[STDOUT] sockperf: ---> percentile 99.900 =  581.216
-[STDOUT] sockperf: ---> percentile 99.000 =  561.029
-[STDOUT] sockperf: ---> percentile 90.000 =  260.583
-[STDOUT] sockperf: ---> percentile 75.000 =  128.459
-[STDOUT] sockperf: ---> percentile 50.000 =  120.567
-[STDOUT] sockperf: ---> percentile 25.000 =  115.618
-[STDOUT] sockperf: ---> <MIN> observation =   79.330
+[OUTPUT] sockperf: [Total Run] RunTime=30.000 sec; Warm up time=400 msec; SentMessages=201170; ReceivedMessages=201169
+[OUTPUT] sockperf: ========= Printing statistics for Server No: 0
+[OUTPUT] sockperf: [Valid Duration] RunTime=29.550 sec; SentMessages=198378; ReceivedMessages=198378
+[OUTPUT] sockperf: [2;35m====> avg-latency=74.449 (std-dev=3.660)[0m
+[OUTPUT] sockperf: # dropped messages = 0; # duplicated messages = 0; # out-of-order messages = 0
+[OUTPUT] sockperf: Summary: Latency is 74.449 usec
+[OUTPUT] sockperf: [2;35mTotal 198378 observations[0m; each percentile contains 1983.78 observations
+[OUTPUT] sockperf: ---> <MAX> observation =  290.965
+[OUTPUT] sockperf: ---> percentile 99.999 =  205.705
+[OUTPUT] sockperf: ---> percentile 99.990 =  135.819
+[OUTPUT] sockperf: ---> percentile 99.900 =   88.856
+[OUTPUT] sockperf: ---> percentile 99.000 =   84.884
+[OUTPUT] sockperf: ---> percentile 90.000 =   79.949
+[OUTPUT] sockperf: ---> percentile 75.000 =   75.877
+[OUTPUT] sockperf: ---> percentile 50.000 =   72.911
+[OUTPUT] sockperf: ---> percentile 25.000 =   72.170
+[OUTPUT] sockperf: ---> <MIN> observation =   67.120
 ```
 ### Syscalls on server process
 ```
-[STDOUT] --- cumulative syscall counts ---
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 95245
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 98131
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 190494
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 193380
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 193385
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 380984
+[STDOUT] --- total syscall counts ---
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 201175
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 207270
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 402351
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 408446
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 408455
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 804698
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 395094448
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 1001531123
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 1220983493
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 1337703890
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 26900230342
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 31812982515
 ```
 ### Syscalls on client process
 ```
-[STDOUT] --- cumulative syscall counts ---
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_lseek]: 195
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 94638
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 97797
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 189367
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 192135
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 192231
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 378708
+[STDOUT] --- total syscall counts ---
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_ioctl]: 1
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_recvfrom]: 4
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 201175
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 207525
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 402389
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 408457
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 408476
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 804742
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_ioctl]: 6973
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_recvfrom]: 22953
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 392278437
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 992534536
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 1219978548
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 1328476310
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 27062759939
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 31935105589
 ```
