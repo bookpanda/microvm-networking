@@ -21,27 +21,43 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
 ### Syscalls on server process
 ```
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 123565
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 124294
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 138015
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 163632
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 266526
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 617340
+[STDOUT] --- total syscall counts ---
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 125880
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 126130
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 128282
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 133010
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 266881
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 617066
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 266880147
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 414686000
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 2259799787
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 3233888438
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 21199346769
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 30335638095
 ```
 ### Syscalls on client process
 ```
+[STDOUT] --- total syscall counts ---
 [STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_ioctl]: 1
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_close]: 1
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_accept4]: 1
 [STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_recvfrom]: 4
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_ctl]: 6
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_lseek]: 86
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 88554
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 171307
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 191669
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 252548
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 393557
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 612158
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 82226
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 152698
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 178015
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 231868
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 377290
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 611606
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_ioctl]: 4318
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_recvfrom]: 24938
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 178715731
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 537127757
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 1481277788
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 12300902661
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 13814503411
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 30312316986
 ```
 
 # Latency
@@ -73,25 +89,41 @@ sockperf server -i 192.168.100.2
 ```
 ### Syscalls on server process
 ```
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 169190
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 174316
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 338380
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 343506
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 343511
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 676756
+[STDOUT] --- total syscall counts ---
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 171416
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 176609
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 342828
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 348020
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 348027
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 685646
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 337514720
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 1079568044
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 1132353780
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 1278204220
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 31338106034
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 36590728696
 ```
 ### Syscalls on client process
 ```
+[STDOUT] --- total syscall counts ---
 [STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_ioctl]: 1
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_accept4]: 1
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_close]: 1
 [STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_recvfrom]: 4
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_ctl]: 6
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_lseek]: 219
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 169190
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 174558
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 338416
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 343512
-[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 343531
-[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 676796
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_writev]: 171416
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_read]: 176835
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_write]: 342867
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_readv]: 348030
+[STDOUT] @total[firecracker, tracepoint:syscalls:sys_enter_epoll_pwait]: 348050
+[STDOUT] @total[fc_vcpu 0, tracepoint:syscalls:sys_enter_ioctl]: 685694
+[STDOUT] 
+[STDOUT] --- cumulative syscall time (ns) ---
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_ioctl]: 4097
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_recvfrom]: 25197
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_read]: 331147111
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_readv]: 1062012071
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_write]: 1077289072
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_writev]: 1308416804
+[STDOUT] @time[firecracker, tracepoint:syscalls:sys_exit_epoll_pwait]: 27362322358
+[STDOUT] @time[fc_vcpu 0, tracepoint:syscalls:sys_exit_ioctl]: 32606767107
 ```
