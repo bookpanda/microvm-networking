@@ -6,15 +6,7 @@ ps aux | grep firecracker | grep -v grep | wc -l
 # kill all firecracker processes
 ps aux | grep firecracker | grep -v grep | awk '{print $2}' | xargs kill -9
 
-go run cmd/main.go
-go run cmd/main.go -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/debian-rootfs.ext4
-
-ssh root@192.168.100.2
-sshpass -p "root" ssh root@192.168.100.2
-
-socat - UNIX-CONNECT:/tmp/vsock-192.168.100.2.sock
-CONNECT 1234
-
+### RUN BEFORE BENCHMARKING TO CONNECT NODES###
 # node 1
 sudo ip route add 192.168.101.0/24 via 10.10.1.2
 sudo iptables -t nat -A POSTROUTING -s 192.168.100.0/24 -d 192.168.101.0/24 -j ACCEPT
@@ -24,6 +16,16 @@ sudo iptables -t nat -A POSTROUTING -d 192.168.101.0/24 -j SNAT --to-source 192.
 sudo ip route add 192.168.100.0/24 via 10.10.1.1
 sudo iptables -t nat -A POSTROUTING -s 192.168.101.0/24 -d 192.168.100.0/24 -j ACCEPT
 sudo iptables -t nat -A POSTROUTING -d 192.168.100.0/24 -j SNAT --to-source 192.168.101.1
+
+go run cmd/main.go
+go run cmd/main.go -kernel=/tmp/vmlinux-5.10.223-no-acpi -rootfs=/tmp/debian-rootfs.ext4
+
+ssh root@192.168.100.2
+sshpass -p "root" ssh root@192.168.100.2
+
+socat - UNIX-CONNECT:/tmp/vsock-192.168.100.2.sock
+CONNECT 1234
+
 ```
 ## Running experiments
 1. start servers
