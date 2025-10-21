@@ -22,7 +22,7 @@ sudo apt install -y bcc libcereal-dev libgtest-dev pahole
 git clone --recurse-submodules https://github.com/bpftrace/bpftrace
 mkdir -p bpftrace/build
 cd bpftrace/build
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF ../
+cmake -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_LIBBPF=OFF -DBUILD_TESTING=OFF ../
 make
 sudo make install
 ```
