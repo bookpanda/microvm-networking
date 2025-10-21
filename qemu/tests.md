@@ -18,5 +18,5 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 ```bash
 # get pid of process with most cpu usage
 ps aux | grep qemu
-~/code/microvm-networking/benchmark/trace_syscalls.sh <pid>
+~/code/runner-node/trace_syscalls.sh <pid>
 ```
