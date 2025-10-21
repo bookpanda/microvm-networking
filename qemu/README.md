@@ -57,6 +57,10 @@ sudo qemu-system-x86_64 \
 # vhost boosting
 # when testing: firecracker: 108% cpu, qemu: 40-60% cpu
 # consumes 10-30% cpu core, 0.4% mem (CPU starts at 30% after boot, gradually decreases to 10%)
+
+# kill firecracker processes that may use tap0
+ps aux | grep firecracker | grep -v grep | awk '{print $2}' | xargs kill -9
+
 sudo ip tuntap add dev tap0 mode tap
 sudo ip link set tap0 up
 sudo ip link set tap0 master br0
