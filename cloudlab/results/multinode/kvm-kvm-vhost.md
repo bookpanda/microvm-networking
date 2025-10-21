@@ -21,50 +21,41 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
 ### Syscalls on server process
 ```
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_mprotect]: 2
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_mmap]: 2
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_clone3]: 4
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rseq]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_madvise]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_set_robust_list]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_exit]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_preadv]: 7
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_fdatasync]: 10
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_pwritev]: 16
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_readv]: 22
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_munmap]: 26
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 34
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_pwrite64]: 61
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_pread64]: 79
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ppoll]: 296
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_read]: 297
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_write]: 404
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 998
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_writev]: 13930
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 84007
+--- total syscall counts ---
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_read]: 90
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_write]: 90
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ppoll]: 103
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 498
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_writev]: 13715
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 80249
+
+--- cumulative syscall time (ns) ---
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_read]: 262074
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_write]: 488593
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_writev]: 56916086
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ppoll]: 63230753777
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_futex]: 66883668239
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ioctl]: 125809364363
 ```
 ### Syscalls on client process
 ```
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_madvise]: 3
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_exit]: 3
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_clone3]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rseq]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_set_robust_list]: 5
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_pwritev]: 6
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_fdatasync]: 8
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_pwrite64]: 10
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_preadv]: 10
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_mprotect]: 26
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_mmap]: 26
+--- total syscall counts ---
 @total[qemu-system-x86, tracepoint:syscalls:sys_enter_readv]: 47
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_pread64]: 77
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 80
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ppoll]: 266
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_read]: 271
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_write]: 512
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 1542
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_writev]: 14737
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 84795
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ppoll]: 314
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_read]: 320
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_write]: 554
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 1361
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_writev]: 14731
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 87073
+
+--- cumulative syscall time (ns) ---
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_readv]: 148476
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_read]: 815230
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_write]: 1427737
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_writev]: 61398785
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_futex]: 48047837283
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ppoll]: 52897934603
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ioctl]: 112709564855
 ```
 
 # Latency
@@ -96,28 +87,31 @@ sockperf: ---> <MIN> observation =   38.351
 ```
 ### Syscalls on server process
 ```
+--- total syscall counts ---
 @total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_exit]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_madvise]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 2052
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 1824
+
+--- cumulative syscall time (ns) ---
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_futex]: 6973
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ioctl]: 122972830112
 ```
 ### Syscalls on client process
 ```
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rseq]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_exit]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_madvise]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_clone3]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_set_robust_list]: 1
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_mmap]: 3
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_mprotect]: 3
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_rt_sigprocmask]: 12
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_preadv]: 13
+--- total syscall counts ---
 @total[qemu-system-x86, tracepoint:syscalls:sys_enter_readv]: 60
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ppoll]: 149
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_read]: 156
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_write]: 446
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 489
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ppoll]: 153
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_read]: 159
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_write]: 448
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_futex]: 486
 @total[qemu-system-x86, tracepoint:syscalls:sys_enter_writev]: 1517
-@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 10995
+@total[qemu-system-x86, tracepoint:syscalls:sys_enter_ioctl]: 10705
+
+--- cumulative syscall time (ns) ---
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_readv]: 170476
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_read]: 340692
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_write]: 944162
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_writev]: 6887013
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ppoll]: 2375325658
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_futex]: 12210367310
+@time[qemu-system-x86, tracepoint:syscalls:sys_exit_ioctl]: 100570917805
 ```
