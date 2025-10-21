@@ -19,6 +19,7 @@ sudo ip link set br0 up
 sudo ip route add 192.168.100.0/24 via 10.10.1.1
 
 # CAUTION: DON'T PUT BR0 INSIDE VM, IT WILL CAUSE PROBLEMS
+# RUN EVERYTIME YOU BOOT THE VM
 # vm 0
 sudo ip addr add 192.168.100.2/24 dev ens3
 sudo ip link set ens3 up
