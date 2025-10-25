@@ -44,5 +44,6 @@ git clone git@github.com:bookpanda/microvm-networking.git
 git clone git@github.com:bookpanda/firecracker-runner-node.git runner-node
 git clone git@github.com:bookpanda/firecracker-vsock.git vsock
 git clone git@github.com:bookpanda/userspace-stack.git
+git clone git@github.com:bookpanda/virtio.git
 
 cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
