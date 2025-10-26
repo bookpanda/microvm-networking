@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # run this on remote machine
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+echo 'export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' >> ~/.bashrc
+
 chmod 600 ~/.ssh/github
 chmod 600 ~/.ssh/github.pub
 
