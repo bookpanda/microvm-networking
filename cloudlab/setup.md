@@ -32,11 +32,9 @@ source ~/.bashrc
 go version
 
 # rust
-sudo apt install -y cargo
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 echo 'source $HOME/.cargo/env' >> ~/.bashrc
 source ~/.bashrc
-sudo apt install -y rustup
 rustup default stable
 ```
 
