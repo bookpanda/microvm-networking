@@ -39,6 +39,10 @@ curl -fL --progress-bar -o /tmp/vmlinux-5.10.223-no-acpi http://spec.ccfc.min.s3
 echo "Downloading rootfs..."
 curl -fL --progress-bar -o /tmp/debian-rootfs.ext4 https://cloudlab-microvm.s3.ap-southeast-1.amazonaws.com/debian-rootfs.ext4
 
+# cloud hypervisor
+sudo curl -fL --progress-bar -o /usr/bin/cloud-hypervisor https://github.com/cloud-hypervisor/cloud-hypervisor/releases/download/v48.0/cloud-hypervisor-static
+sudo chmod +x /usr/bin/cloud-hypervisor
+
 # code
 mkdir -p ~/code
 mkdir -p ~/mnt
@@ -48,5 +52,8 @@ git clone git@github.com:bookpanda/firecracker-runner-node.git runner-node
 git clone git@github.com:bookpanda/firecracker-vsock.git vsock
 git clone git@github.com:bookpanda/userspace-stack.git
 git clone git@github.com:bookpanda/virtio.git
+git clone git@github.com:bookpanda/cloud-hypervisor.git
+git clone git@github.com:fahren-stack/fahren.git
+git clone git@github.com:fahren-stack/firecracker-virtio-net.git
 
 cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
