@@ -45,3 +45,25 @@ sudo ovs-vsctl set Interface vhost-user2 options:n_rxq=2
 # show vhost
 sudo ovs-vsctl show
 ```
+
+## Running
+```bash
+# From one terminal. We need to give the cloud-hypervisor binary the NET_ADMIN capabilities for it to set TAP interfaces up on the host.
+sudo cloud-hypervisor \
+    --cpus boot=2 \
+    --memory size=512M,hugepages=on,shared=true \
+    --kernel /tmp/vmlinux.bin \
+    --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw" \
+    --disk path=/tmp/focal-server-cloudimg-amd64.raw   \
+    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server
+
+# From another terminal. We need to give the cloud-hypervisor binary the NET_ADMIN capabilities for it to set TAP interfaces up on the host.
+sudo cloud-hypervisor \
+        --cpus boot=2 \
+        --memory size=512M,hugepages=on,shared=true \
+        --kernel /tmp/vmlinux.bin \
+        --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw" \
+        --disk path=/tmp/focal-server-cloudimg-amd64.raw   \
+        --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user2,num_queues=4,vhost_mode=server
+
+```
