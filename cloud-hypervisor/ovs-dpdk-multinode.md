@@ -10,9 +10,8 @@ sudo rm -f /tmp/vhost-user*
 
 
 # host 0
-sudo ip link add name br0 type bridge
-sudo ip addr add 192.168.100.1/24 dev br0
-sudo ip link set br0 up
+sudo ip addr add 192.168.100.1/24 dev ovsbr0
+sudo ip link set ovsbr0 up
 sudo ip route add 192.168.101.0/24 via 10.10.1.2
 
 sudo cloud-hypervisor \
@@ -24,9 +23,8 @@ sudo cloud-hypervisor \
     --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server
 
 # host 1
-sudo ip link add name br0 type bridge
-sudo ip addr add 192.168.101.1/24 dev br0
-sudo ip link set br0 up
+sudo ip addr add 192.168.101.1/24 dev ovsbr0
+sudo ip link set ovsbr0 up
 sudo ip route add 192.168.100.0/24 via 10.10.1.1
 
 sudo cloud-hypervisor \
