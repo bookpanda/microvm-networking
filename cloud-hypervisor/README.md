@@ -42,6 +42,7 @@ sudo ip link delete br0 2>/dev/null
 # Follow lines 29-46 of README
 
 # tap will be removed after vm is stopped
+# to prevent "A start job is running for Wait for Network to be Configured", make sure the tap0 and its ip match the --net config BEFORE running the vm
 sudo cloud-hypervisor \
 	--kernel /tmp/vmlinux.bin \
 	--disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/ubuntu-cloudinit.img \
