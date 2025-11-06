@@ -29,5 +29,7 @@ echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
 # Apply netplan config
 sudo netplan apply --file ./netplan-node${NODE_ID}.yaml
 
+../init/clean-disk-state.sh
+../init/create-cloud-init.sh
 
 echo "✅ Node ${NODE_ID} setup complete"

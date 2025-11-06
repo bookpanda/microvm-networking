@@ -1,20 +1,22 @@
 #!/usr/bin/env bash
 set -ex
 
-rm -f /tmp/ubuntu-cloudinit.img
-mkdosfs -n CIDATA -C /tmp/ubuntu-cloudinit.img 8192
-mcopy -oi /tmp/ubuntu-cloudinit.img -s ./init/user-data ::
-mcopy -oi /tmp/ubuntu-cloudinit.img -s ./init/meta-data ::
-mcopy -oi /tmp/ubuntu-cloudinit.img -s ./init/network-config ::
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-rm -f /tmp/cloudinit-vm0.img
-mkdosfs -n CIDATA -C /tmp/cloudinit-vm0.img 8192
-mcopy -oi /tmp/cloudinit-vm0.img -s ./init/user-data ::
-mcopy -oi /tmp/cloudinit-vm0.img -s ./init/meta-data ::
-mcopy -oi /tmp/cloudinit-vm0.img -s ./init/network-config-vm0 ::
+# Function to create a cloud-init ISO
+create_iso() {
+    local output="$1"
+    local netconfig="$2"
 
-rm -f /tmp/cloudinit-vm1.img
-mkdosfs -n CIDATA -C /tmp/cloudinit-vm1.img 8192
-mcopy -oi /tmp/cloudinit-vm1.img -s ./init/user-data ::
-mcopy -oi /tmp/cloudinit-vm1.img -s ./init/meta-data ::
-mcopy -oi /tmp/cloudinit-vm1.img -s ./init/network-config-vm1 ::
+    rm -f "/tmp/${output}"
+    mkdosfs -n CIDATA -C "/tmp/${output}" 8192
+    mcopy -oi "/tmp/${output}" -s "${SCRIPT_DIR}/user-data" ::
+    mcopy -oi "/tmp/${output}" -s "${SCRIPT_DIR}/meta-data" ::
+    mcopy -oi "/tmp/${output}" -s "${SCRIPT_DIR}/${netconfig}" ::
+}
+
+# Create the ISOs
+create_iso "ubuntu-cloudinit.img" "network-config"
+create_iso "cloudinit-vm0.img" "network-config-vm0"
+create_iso "cloudinit-vm1.img" "network-config-vm1"
