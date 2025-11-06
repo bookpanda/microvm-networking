@@ -39,18 +39,17 @@ sudo ip addr add 192.168.249.2/24 dev tap0
 sudo ip link delete tap0 2>/dev/null
 sudo ip link delete br0 2>/dev/null
 
-# Follow lines 29-46 of README
-
 # tap will be removed after vm is stopped
 # to prevent "A start job is running for Wait for Network to be Configured", make sure the tap0 and its ip match the --net config BEFORE running the vm
 sudo cloud-hypervisor \
 	--kernel /tmp/vmlinux.bin \
 	--disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/ubuntu-cloudinit.img \
 	--cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service" \
-	--cpus boot=4 \
-	--memory size=1024M \
+	--cpus boot=2 \
+	--memory size=512M \
 	--net "tap=tap0,mac=12:34:56:78:90:ab,ip=192.168.249.2,mask=255.255.255.0"
 
+# login: cloud/cloud123
 ssh cloud@192.168.249.2
 sshpass -p "cloud123" ssh cloud@192.168.249.2
 
