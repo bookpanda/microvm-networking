@@ -3,6 +3,15 @@
 sudo apt-get -y install openvswitch-switch-dpdk
 sudo update-alternatives --set ovs-vswitchd /usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk
 
+#### Configure Hugepages (REQUIRED for DPDK) ####
+# Allocate 1024 hugepages × 2MB = 2GB
+sudo sysctl -w vm.nr_hugepages=1024
+grep Huge /proc/meminfo
+# Mount hugepage filesystem
+sudo mkdir -p /mnt/huge
+sudo mount -t hugetlbfs nodev /mnt/huge
+mount | grep huge
+
 #### setup OVS ####
 # load the ovs kernel module
 modprobe openvswitch
@@ -21,6 +30,5 @@ sudo ovs-vsctl get Open_vSwitch . other_config
 sudo service openvswitch-switch restart
 # double check the configurations
 sudo ovs-vsctl list Open_vSwitch
-
 
 ```
