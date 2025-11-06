@@ -19,4 +19,12 @@ runcmd:
     for f in /etc/sudoers.d/*; do
       [ -f "$f" ] && sed -i 's/\x00//g' "$f"
     done
+  - |
+    # Configure systemd-resolved with DNS servers
+    mkdir -p /etc/systemd/resolved.conf.d
+    cat > /etc/systemd/resolved.conf.d/dns.conf << EOF
+[Resolve]
+DNS=8.8.8.8 8.8.4.4
+EOF
+    systemctl restart systemd-resolved
 
