@@ -2,7 +2,7 @@
 ## Setup
 ```bash
 sudo apt update
-sudo apt install -y flex bison libelf-dev
+sudo apt install -y flex bison libelf-dev mtools
 # kernel
 git clone --depth 1 https://github.com/cloud-hypervisor/linux.git -b ch-6.12.8 linux-cloud-hypervisor
 pushd linux-cloud-hypervisor
@@ -38,7 +38,7 @@ sudo ip addr add 192.168.249.1/24 dev br0
 # tap will be removed after vm is stopped
 sudo cloud-hypervisor \
 	--kernel /tmp/vmlinux.bin \
-	--disk path=/tmp/focal-server-cloudimg-amd64.raw,readonly=on path=/tmp/ubuntu-cloudinit.img,readonly=on \
+	--disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/ubuntu-cloudinit.img,readonly=on \
 	--cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw" \
 	--cpus boot=4 \
 	--memory size=1024M \
