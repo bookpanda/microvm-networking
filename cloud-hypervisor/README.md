@@ -46,7 +46,7 @@ sudo ip link delete br0 2>/dev/null
 sudo iptables -t nat -D POSTROUTING -s 192.168.249.0/24 -j MASQUERADE 2>/dev/null
 sudo iptables -D FORWARD -i br0 -j ACCEPT 2>/dev/null
 
-# to prevent "A start job is running for Wait for Network to be Configured", make sure the tap0 match the --net config BEFORE running the vm
+# to prevent "A start job is running for Wait for Network to be Configured", make sure the tap0 match the --net config BEFORE running the vm and --cmdline has mask=systemd-networkd-wait-online.service
 # set MAC to match the network-config
 sudo cloud-hypervisor \
 	--kernel /tmp/vmlinux.bin \
