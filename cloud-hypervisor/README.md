@@ -33,13 +33,19 @@ sudo ip addr add 192.168.249.1/24 dev br0
 sudo ip tuntap add dev tap0 mode tap user $USER
 sudo ip link set tap0 master br0
 sudo ip link set tap0 up
-sudo ip addr add 192.168.249.2/24 dev tap0
+
+# Enable NAT for internet access (optional)
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -s 192.168.249.0/24 -j MASQUERADE
+sudo iptables -A FORWARD -i br0 -o $(ip route | grep default | awk '{print $5}') -j ACCEPT
+sudo iptables -A FORWARD -i $(ip route | grep default | awk '{print $5}') -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 # Clean up
 sudo ip link delete tap0 2>/dev/null
 sudo ip link delete br0 2>/dev/null
+sudo iptables -t nat -D POSTROUTING -s 192.168.249.0/24 -j MASQUERADE 2>/dev/null
+sudo iptables -D FORWARD -i br0 -j ACCEPT 2>/dev/null
 
-# tap will be removed after vm is stopped
 # to prevent "A start job is running for Wait for Network to be Configured", make sure the tap0 match the --net config BEFORE running the vm
 # set MAC to match the network-config
 sudo cloud-hypervisor \
