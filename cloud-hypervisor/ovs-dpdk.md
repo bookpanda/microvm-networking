@@ -1,4 +1,5 @@
 ## Setup
+- [ref](https://github.com/cloud-hypervisor/cloud-hypervisor/blob/main/docs/vhost-user-net-testing.md)
 ```bash
 sudo apt-get -y install openvswitch-switch-dpdk
 sudo update-alternatives --set ovs-vswitchd /usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk
