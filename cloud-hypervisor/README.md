@@ -44,7 +44,7 @@ sudo ip link delete br0 2>/dev/null
 sudo cloud-hypervisor \
 	--kernel /tmp/vmlinux.bin \
 	--disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/ubuntu-cloudinit.img \
-	--cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service" \
+	--cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
 	--cpus boot=2 \
 	--memory size=512M \
 	--net "tap=tap0,mac=12:34:56:78:90:ab,ip=192.168.249.2,mask=255.255.255.0"
