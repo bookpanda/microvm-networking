@@ -4,8 +4,8 @@ sudo apt-get -y install openvswitch-switch-dpdk
 sudo update-alternatives --set ovs-vswitchd /usr/lib/openvswitch-switch-dpdk/ovs-vswitchd-dpdk
 
 #### Configure Hugepages (REQUIRED for DPDK) ####
-# Allocate 1024 hugepages × 2MB = 2GB
-sudo sysctl -w vm.nr_hugepages=1024
+# Allocate 1536 hugepages × 2MB = 3GB (OVS needs ~1GB, VMs need 512MB each)
+sudo sysctl -w vm.nr_hugepages=1536
 grep Huge /proc/meminfo
 # Mount hugepage filesystem
 sudo mkdir -p /mnt/huge
@@ -48,6 +48,9 @@ sudo ovs-vsctl show
 
 ## Running
 ```bash
+# remove sockets before starting VMs
+sudo rm -f /tmp/vhost-user*
+
 # From one terminal. We need to give the cloud-hypervisor binary the NET_ADMIN capabilities for it to set TAP interfaces up on the host.
 sudo cloud-hypervisor \
     --cpus boot=2 \
