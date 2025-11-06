@@ -10,3 +10,12 @@ users:
 ssh_pwauth: true
 chpasswd:
   expire: false
+
+# Fix sudoers issues
+runcmd:
+  - rm -f /etc/sudoers.d/README
+  - |
+    # Remove null bytes from sudoers files
+    for f in /etc/sudoers.d/*; do
+      [ -f "$f" ] && sed -i 's/\x00//g' "$f"
+    done
