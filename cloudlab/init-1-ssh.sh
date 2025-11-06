@@ -11,4 +11,4 @@ fi
 
 scp -i ~/.ssh/cloudlab ~/.ssh/cloudlab_github ipankam@${HOST}.utah.cloudlab.us:~/.ssh/github
 scp -i ~/.ssh/cloudlab ~/.ssh/cloudlab_github.pub ipankam@${HOST}.utah.cloudlab.us:~/.ssh/github.pub
-scp -i ~/.ssh/cloudlab ~/Code/cloudlab/microvm-networking/cloudlab/init-2-code.sh ipankam@${HOST}.utah.cloudlab.us:~/init.sh
+scp -i ~/.ssh/cloudlab ~/Code/research/cloudlab/microvm-networking/cloudlab/init-2-code.sh ipankam@${HOST}.utah.cloudlab.us:~/init.sh
