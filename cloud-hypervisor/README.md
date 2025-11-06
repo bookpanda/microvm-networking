@@ -2,7 +2,7 @@
 ## Setup
 ```bash
 sudo apt update
-sudo apt install -y flex bison libelf-dev mtools
+sudo apt install -y flex bison libelf-dev mtools libguestfs-tools
 # kernel
 git clone --depth 1 https://github.com/cloud-hypervisor/linux.git -b ch-6.12.8 linux-cloud-hypervisor
 pushd linux-cloud-hypervisor
@@ -55,5 +55,9 @@ sshpass -p "cloud123" ssh cloud@192.168.249.2
 
 ps aux | grep cloud-hypervisor | grep -v grep | awk '{print $2}' | xargs kill -9
 
+# To force cloud-init aka update config of vm in /init folder to rerun (choose one):
+# 1. Change instance-id in init/meta-data and regenerate cloud-init.img (EASIEST)
+# 2. Clean cloud-init state from disk (AFTER killing VM):
+./init/clean-disk-state.sh
 
 ```
