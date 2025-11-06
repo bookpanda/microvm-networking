@@ -7,6 +7,6 @@ network:
           - to: 192.168.101.0/24
             via: 10.10.1.2
   bridges:
-    br0:
+    ovsbr0:
       interfaces: []   # empty because OVS manages ports
       addresses: [192.168.100.1/24]
