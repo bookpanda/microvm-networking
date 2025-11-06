@@ -13,7 +13,8 @@ create_iso() {
     mkdosfs -n CIDATA -C "/tmp/${output}" 8192
     mcopy -oi "/tmp/${output}" -s "${SCRIPT_DIR}/user-data" ::
     mcopy -oi "/tmp/${output}" -s "${SCRIPT_DIR}/meta-data" ::
-    mcopy -oi "/tmp/${output}" -s "${SCRIPT_DIR}/${netconfig}" ::
+    # Copy network config and rename it to "network-config" (cloud-init expects this name)
+    mcopy -oi "/tmp/${output}" "${SCRIPT_DIR}/${netconfig}" ::network-config
 }
 
 # Create the ISOs
