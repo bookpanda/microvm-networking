@@ -1,0 +1,12 @@
+network:
+  version: 2
+  ethernets:
+    enp65s0f0np0:
+      addresses: [10.10.1.1/24]
+      routes:
+          - to: 192.168.101.0/24
+            via: 10.10.1.2
+  bridges:
+    ovsbr0:
+      interfaces: []   # empty because OVS manages ports
+      addresses: [192.168.100.1/24]
