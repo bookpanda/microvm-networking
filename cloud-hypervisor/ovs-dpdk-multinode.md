@@ -51,3 +51,13 @@ ip addr show
 sudo iptables -t nat -L -v -n
 
 ```
+
+## Testing
+```bash
+# vm 0
+iperf3 -s
+
+
+# vm 1
+iperf3 -c 192.168.100.2 -t 30 -P 4
+```
