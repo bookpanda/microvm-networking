@@ -48,6 +48,9 @@ sudo ovs-vsctl show
 
 ## Running
 ```bash
+# Create second disk for second VM (each VM needs separate disk)
+sudo cp /tmp/focal-server-cloudimg-amd64.raw /tmp/focal-server-cloudimg-amd64-vm2.raw
+
 # remove sockets before starting VMs
 sudo rm -f /tmp/vhost-user*
 
@@ -60,13 +63,19 @@ sudo cloud-hypervisor \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw   \
     --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server
 
+sudo ip addr add 172.100.0.1/24 dev ens3
+sudo ip link set up dev ens3
+
 # From another terminal. We need to give the cloud-hypervisor binary the NET_ADMIN capabilities for it to set TAP interfaces up on the host.
+# Note: Each VM needs its own disk image (can't share)
 sudo cloud-hypervisor \
         --cpus boot=2 \
         --memory size=512M,hugepages=on,shared=true \
         --kernel /tmp/vmlinux.bin \
         --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw" \
-        --disk path=/tmp/focal-server-cloudimg-amd64.raw   \
+        --disk path=/tmp/focal-server-cloudimg-amd64-vm2.raw   \
         --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user2,num_queues=4,vhost_mode=server
 
+sudo ip addr add 172.100.0.2/24 dev ens3
+sudo ip link set up dev ens3
 ```
