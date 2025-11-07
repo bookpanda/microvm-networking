@@ -17,6 +17,31 @@ write_files:
       [Resolve]
       DNS=8.8.8.8 8.8.4.4
     permissions: '0644'
+  - path: /usr/local/bin/setup-multiqueue.sh
+    content: |
+      #!/bin/bash
+      # Enable multi-queue for virtio-net
+      IFACE=$(ip -o link show | grep -v "lo:" | grep -v "NO-CARRIER" | awk -F': ' '{print $2}' | head -1)
+      
+      # Enable all available queues
+      MAX_QUEUES=$(ethtool -l $IFACE 2>/dev/null | grep -A 4 "Pre-set maximums:" | grep "Combined:" | awk '{print $2}')
+      if [ "$MAX_QUEUES" -gt 1 ]; then
+        ethtool -L $IFACE combined $MAX_QUEUES
+        echo "Enabled $MAX_QUEUES queues on $IFACE"
+      fi
+      
+      # Set up XPS (Transmit Packet Steering)
+      for i in $(seq 0 $((MAX_QUEUES-1))); do
+        [ -d /sys/class/net/$IFACE/queues/tx-$i ] && printf '%x' $((1 << $i)) > /sys/class/net/$IFACE/queues/tx-$i/xps_cpus
+      done
+      
+      # Set up RPS (Receive Packet Steering) - use all CPUs
+      for i in $(seq 0 $((MAX_QUEUES-1))); do
+        [ -d /sys/class/net/$IFACE/queues/rx-$i ] && echo f > /sys/class/net/$IFACE/queues/rx-$i/rps_cpus
+      done
+      
+      echo "Multi-queue setup complete for $IFACE"
+    permissions: '0755'
 
 # Fix sudoers issues
 runcmd:
@@ -27,4 +52,5 @@ runcmd:
       [ -f "$f" ] && sed -i 's/\x00//g' "$f"
     done
   - systemctl restart systemd-resolved
+  - /usr/local/bin/setup-multiqueue.sh
 

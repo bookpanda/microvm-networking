@@ -22,6 +22,7 @@ sudo dpdk-devbind.py -b mlx5_core 0000:41:00.1
 sudo ovs-vsctl del-port ovsbr0 dpdk0
 
 sudo ovs-vsctl show
+sudo ovs-vsctl get Interface vhost-user1 statistics
 
 # Bus error = not enough hugepages allocated for VMs (OvS takes all)
 # hugepages=on = maps hugepages from the host into the VM’s physical address space, replacing normal 4 KB pages, so the guest OS sees them as normal RAM, but backed by 2 MB pages on the host
@@ -29,7 +30,7 @@ sudo ovs-vsctl show
 # host 0
 sudo cloud-hypervisor \
     --cpus boot=4,max=8 \
-    --memory size=1024M,hugepages=on,shared=true \
+    --memory size=2048M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
@@ -38,7 +39,7 @@ sudo cloud-hypervisor \
 # host 1
 sudo cloud-hypervisor \
     --cpus boot=4,max=8 \
-    --memory size=1024M,hugepages=on,shared=true \
+    --memory size=2048M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1.img \
