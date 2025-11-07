@@ -26,6 +26,15 @@ sudo mkdir -p /etc/qemu
 sudo bash -c 'echo "allow br0" > /etc/qemu/bridge.conf'
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
 
+# Setup NAT/masquerading for VM internet access
+VM_NETWORK="192.168.$((100 + NODE_ID)).0/24"
+EXT_IFACE=$(ip route | grep default | awk '{print $5}')
+# Remove any existing rule for this network
+sudo iptables -t nat -D POSTROUTING -s ${VM_NETWORK} -o ${EXT_IFACE} -j MASQUERADE 2>/dev/null || true
+# Add masquerading rule for VM network
+sudo iptables -t nat -A POSTROUTING -s ${VM_NETWORK} -o ${EXT_IFACE} -j MASQUERADE
+echo "✅ NAT configured for ${VM_NETWORK} via ${EXT_IFACE}"
+
 ./setup_dpdk.sh
 
 # Clean up old bridge if it exists
