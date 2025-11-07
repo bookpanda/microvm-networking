@@ -2,8 +2,8 @@
 set -e # exit on error
 
 ### config hugepages ###
-# 16GB
-sudo sysctl -w vm.nr_hugepages=8192
+# 8GB
+sudo sysctl -w vm.nr_hugepages=4096
 grep Huge /proc/meminfo
 echo "✅ Hugepages allocated"
 
@@ -22,12 +22,12 @@ echo "✅ OVS initialized"
 
 # tells OvS to enable DPDK
 sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-init=true
-# PMD threads on cores 0-7
-sudo ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=0xFF
-# DPDK library on cores 8-9
-sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-lcore-mask=0x300
-# allocate 8GB for OVS
-sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-socket-mem=8192
+# PMD threads on cores 2-5
+sudo ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=0x3C
+# DPDK library on cores 6-7
+sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-lcore-mask=0xC0
+# allocate 4GB for OVS
+sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-socket-mem=4096
 echo "✅ OVS DPDK configured"
 
 # the above commands only tell OVS-DPDK which cores to use

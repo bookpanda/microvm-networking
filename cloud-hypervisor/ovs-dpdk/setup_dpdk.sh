@@ -4,7 +4,7 @@ set -e # exit on error
 BRIDGE="ovsbr0"
 PORT="vhost-user1"
 VHOST_PATH="/tmp/vhost-user1"
-RX_QUEUES=8
+RX_QUEUES=2
 
 DPDK_PORT="dpdk0"
 DPDK_PCI="0000:41:00.0"
@@ -19,7 +19,7 @@ fi
 
 # add DPDK physical port if it doesn't exist
 if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$DPDK_PORT"; then
-    sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" type=dpdk options:dpdk-devargs="$DPDK_PCI",n_rxq=8
+    sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" type=dpdk options:dpdk-devargs="$DPDK_PCI"
     echo "✅ OVS DPDK port '$DPDK_PORT' added"
 else
     echo "ℹ️ OVS DPDK port '$DPDK_PORT' already exists"
@@ -27,7 +27,7 @@ fi
 
 # add vhost-user port if it doesn't exist
 if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$PORT"; then
-    sudo ovs-vsctl add-port "$BRIDGE" "$PORT" -- set Interface "$PORT" type=dpdkvhostuserclient options:vhost-server-path="$VHOST_PATH",n_rxq=8
+    sudo ovs-vsctl add-port "$BRIDGE" "$PORT" -- set Interface "$PORT" type=dpdkvhostuserclient options:vhost-server-path="$VHOST_PATH"
     echo "✅ OVS port '$PORT' added"
 else
     echo "ℹ️ OVS port '$PORT' already exists"
@@ -35,5 +35,8 @@ fi
 
 sudo ovs-vsctl set Interface "$PORT" options:n_rxq="$RX_QUEUES"
 echo "✅ OVS Rx queues for '$PORT' set to $RX_QUEUES"
+
+sudo ovs-vsctl set Interface "$DPDK_PORT" options:n_rxq="$RX_QUEUES"
+echo "✅ OVS Rx queues for '$DPDK_PORT' set to $RX_QUEUES"
 
 sudo ovs-vsctl show
