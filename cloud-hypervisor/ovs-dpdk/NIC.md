@@ -11,6 +11,15 @@ sudo ethtool -l enp65s0f1np1
 # each port (33, 34, 65, 66) supports 32 Rx queues
 # 1 PMD thread polls 1 Rx queue, and each PMD thread should have 1 dedicated CPU core.
 ```
+## DPDK ports
+### type=dpdkvhostuserclient (for vNICs)
+- Connects a VM’s vhost-user interface to OVS
+- options: vhost-server-path, n_rxq
+
+### type=dpdk (for physical NICs)
+- Exposes a physical NIC bound to DPDK (VFIO/uio) to OVS
+- options: dpdk-devargs
+
 ## NUMA
 - c6525-25g CPU: 16-core AMD 7302P at 3.00GHz
 - The 7302P is single NUMA node → all cores on same NUMA node.
