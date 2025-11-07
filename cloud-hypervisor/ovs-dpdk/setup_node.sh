@@ -26,6 +26,8 @@ sudo mkdir -p /etc/qemu
 sudo bash -c 'echo "allow br0" > /etc/qemu/bridge.conf'
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
 
+./setup_dpdk.sh
+
 # Apply netplan config
 sudo netplan apply --file ./netplan-node${NODE_ID}.yaml
 
