@@ -19,13 +19,16 @@ modprobe openvswitch
 sudo service openvswitch-switch start
 sudo ovs-vsctl init
 sudo ovs-vsctl show
+# tells OvS to enable DPDK
 sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-init=true
-# run on core 0-3 only
+# run on core 0-3 only (0xf = 0b1111 → cores 0,1,2,3)
 sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-lcore-mask=0xf
 # allocate 2G huge pages (to NUMA 0 only)
 sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-socket-mem=1024
+# queries the current OVS global config
 sudo ovs-vsctl get Open_vSwitch . other_config
 # run PMD (Pull Mode Driver) threads on core 0-3 only
+# PMD will dominate CPU, leaving less for DPDK maintenance (dpdk-lcore)
 sudo ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=0xf
 sudo ovs-vsctl get Open_vSwitch . other_config
 sudo service openvswitch-switch restart
