@@ -29,7 +29,7 @@ sudo ovs-vsctl list Interface dpdk0 | grep -E "n_rxq|options"
 # Bus error = not enough hugepages allocated for VMs (OvS takes all)
 # hugepages=on = maps hugepages from the host into the VM’s physical address space, replacing normal 4 KB pages, so the guest OS sees them as normal RAM, but backed by 2 MB pages on the host
 
-# host 0 - OPTIMIZED for performance
+# host 0
 sudo cloud-hypervisor \
     --cpus boot=8 \
     --memory size=4096M,hugepages=on,shared=true \
@@ -38,7 +38,7 @@ sudo cloud-hypervisor \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
     --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=16,vhost_mode=server
 
-# host 1 - OPTIMIZED for performance
+# host 1
 sudo cloud-hypervisor \
     --cpus boot=8 \
     --memory size=4096M,hugepages=on,shared=true \
