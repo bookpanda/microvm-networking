@@ -1,7 +1,7 @@
 #cloud-config
 users:
   - name: cloud
-    passwd: $6$7125787751a8d18a$sHwGySomUA1PawiNFWVCKYQN.Ec.Wzz0JtPPL1MvzFrkwmop2dq7.4CYf03A5oemPQ4pOFCCrtCelvFBEle/K.
+    passwd: $6$IwCereKq.VkDH2vr$Kq.L80VAg5jMynEKwz61pcAjImBSAsE7AwwTiGe4qq.lmFzkOakSk4.BmbZ4ypCVALXwpVDlFpTN73TQ0jzXW. 
     sudo: ALL=(ALL) NOPASSWD:ALL
     lock_passwd: false
     inactive: false
@@ -11,6 +11,13 @@ ssh_pwauth: true
 chpasswd:
   expire: false
 
+write_files:
+  - path: /etc/systemd/resolved.conf.d/dns.conf
+    content: |
+      [Resolve]
+      DNS=8.8.8.8 8.8.4.4
+    permissions: '0644'
+
 # Fix sudoers issues
 runcmd:
   - rm -f /etc/sudoers.d/README
@@ -19,12 +26,5 @@ runcmd:
     for f in /etc/sudoers.d/*; do
       [ -f "$f" ] && sed -i 's/\x00//g' "$f"
     done
-  - |
-    # Configure systemd-resolved with DNS servers
-    mkdir -p /etc/systemd/resolved.conf.d
-    cat > /etc/systemd/resolved.conf.d/dns.conf << EOF
-[Resolve]
-DNS=8.8.8.8 8.8.4.4
-EOF
-    systemctl restart systemd-resolved
+  - systemctl restart systemd-resolved
 
