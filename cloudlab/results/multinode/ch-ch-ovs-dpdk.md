@@ -22,6 +22,7 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 4vCPU(max=8), 2048MB, 4 queues, 2.36 Gbits/s
 ### After binding enp65s0f0np0 NIC to DPDK (mlx5_core)
 - 4vCPU(max=8), 2048MB, 4 queues, 3.03 Gbits/s
+- 4vCPU(max=8), 4096MB, 8 queues, 2.94 Gbits/s
 ### Syscalls on server process
 ```
 
