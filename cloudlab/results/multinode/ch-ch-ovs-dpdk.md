@@ -24,7 +24,9 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 4vCPU(max=8), 2048MB, 4 queues, 3.03 Gbits/s
 - 4vCPU(max=8), 4096MB, 8 queues, 2.94 Gbits/s
 ### After removing IP from physical NIC and disabling kernel routing through it
-- 4vCPU(max=8), 4096MB, 8 queues, 8.89  Gbits/s
+- 4vCPU(max=8), 4096MB, 8 queues, 8.89 Gbits/s
+- 8vCPU, 4096MB, 16 queues, 10.4 Gbits/s (-P 8)
+- 8vCPU, 4096MB, 16 queues, 11.1 Gbits/s (-P 16)
 
 ### Syscalls on server process
 ```

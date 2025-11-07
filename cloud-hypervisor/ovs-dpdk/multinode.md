@@ -31,21 +31,21 @@ sudo ovs-vsctl list Interface dpdk0 | grep -E "n_rxq|options"
 
 # host 0
 sudo cloud-hypervisor \
-    --cpus boot=4,max=8 \
+    --cpus boot=8 \
     --memory size=4096M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
-    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=8,vhost_mode=server
+    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=16,vhost_mode=server
 
 # host 1
 sudo cloud-hypervisor \
-    --cpus boot=4,max=8 \
+    --cpus boot=8 \
     --memory size=4096M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1.img \
-    --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user1,num_queues=8,vhost_mode=server
+    --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user1,num_queues=16,vhost_mode=server
 
 ip link show
 ip addr show
@@ -62,15 +62,21 @@ sudo iptables -t nat -L -v -n
 # vm 0 (10.10.1.10)
 iperf3 -s
 
-# vm 1 (10.10.1.20) - various parallel stream counts
-iperf3 -c 10.10.1.10 -t 60 -P 8 -w 4M
-iperf3 -c 10.10.1.10 -t 60 -P 16 -w 4M
-iperf3 -c 10.10.1.10 -t 60 -P 32 -w 4M
+# vm 1 (10.10.1.20) - test with increasing parallelism
+iperf3 -c 10.10.1.10 -t 30 -P 8    # Baseline
+iperf3 -c 10.10.1.10 -t 30 -P 16   # More parallelism  
+iperf3 -c 10.10.1.10 -t 30 -P 32   # Push harder
+iperf3 -c 10.10.1.10 -t 30 -P 64   # Maximum
 
 # UDP test for max throughput
 iperf3 -c 10.10.1.10 -u -b 20G -t 30
 
-# Verify DPDK fast path is being used:
-# On host: sudo ovs-vsctl get Interface dpdk0 statistics | grep -E "rx_packets|tx_packets"
-# Should show millions of packets (not just 138!)
+# Monitor during test (on host):
+# sudo ovs-appctl dpif-netdev/pmd-stats-show | grep "processing cycles"
+# Should see PMD usage increase from ~1% to 10-30%
+
+# Verify all 8 queues active in VM:
+nproc
+ethtool -l ens4  # Should show "Combined: 8"
+ethtool -S ens4 | grep -E "tx_queue_[0-7]_packets|rx_queue_[0-7]_packets"
 ```
