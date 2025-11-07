@@ -17,9 +17,11 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 ### After binding NIC to DPDK (vfio-pci, faulty mode)
 - 4vCPU(max=8), 4096MB, 2 queues, 1.97 Gbits/s
 - 4vCPU(max=8), 4096MB, 4 queues, 2.13 Gbits/s
-### After binding NIC to DPDK (mlx5_core)
+### After binding unused enp65s0f1np1 NIC to DPDK (mlx5_core)
 - 4vCPU(max=8), 1024MB, 4 queues, 2.15 Gbits/s
 - 4vCPU(max=8), 2048MB, 4 queues, 2.36 Gbits/s
+### After binding enp65s0f0np0 NIC to DPDK (mlx5_core)
+- 4vCPU(max=8), 2048MB, 4 queues, 3.03 Gbits/s
 ### Syscalls on server process
 ```
 
