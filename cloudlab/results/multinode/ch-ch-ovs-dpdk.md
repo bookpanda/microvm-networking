@@ -6,9 +6,11 @@ iperf3 -s
 # client
 iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
-```
-
-```
+- 2vCPU, 512MB, 4 queues, 2.28 Gbits/s
+- 2vCPU, 1024MB, 4 queues, 2.27 Gbit/s
+- 2vCPU(max=4), 1024MB, 4 queues, 2.38 Gbit/s
+- 4vCPU(max=8), 2048MB, 4 queues, 2.45 Gbit/s
+- 4vCPU(max=8), 2048MB, 4 queues, 2.45 Gbit/s (iperf3 -P 8)
 ### Syscalls on server process
 ```
 
