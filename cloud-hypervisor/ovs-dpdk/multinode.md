@@ -1,5 +1,8 @@
 # Multinode
 ```bash
+# Bus error = not enough hugepages allocated for VMs (OvS takes all)
+# hugepages=on = maps hugepages from the host into the VM’s physical address space, replacing normal 4 KB pages, so the guest OS sees them as normal RAM, but backed by 2 MB pages on the host
+
 # host 0
 sudo cloud-hypervisor \
     --cpus boot=2 \

@@ -26,8 +26,8 @@ sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-init=true
 sudo ovs-vsctl set Open_vSwitch . other_config:pmd-cpu-mask=0xFF
 # DPDK library on cores 8-9
 sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-lcore-mask=0x300
-# allocate 16G huge pages
-sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-socket-mem=16384
+# allocate 8GB for OVS
+sudo ovs-vsctl set Open_vSwitch . other_config:dpdk-socket-mem=8192
 echo "✅ OVS DPDK configured"
 
 # the above commands only tell OVS-DPDK which cores to use
