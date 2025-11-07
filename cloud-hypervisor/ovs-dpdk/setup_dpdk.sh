@@ -7,8 +7,16 @@ VHOST_PATH="/tmp/vhost-user1"
 RX_QUEUES=8
 
 DPDK_PORT="dpdk0"
-DPDK_PCI="0000:41:00.0"  # enp65s0f0np0 - the one with link!
-DPDK_MAC="0c:42:a1:dd:58:30"  # MAC of enp65s0f0np0
+DPDK_NIC="enp65s0f0np0"  # Physical NIC to use for DPDK (MUST match setup_node.sh)
+
+# Dynamically get MAC address of the physical NIC
+if [ ! -e "/sys/class/net/$DPDK_NIC" ]; then
+    echo "❌ Error: Interface $DPDK_NIC not found"
+    exit 1
+fi
+
+DPDK_MAC=$(cat /sys/class/net/$DPDK_NIC/address)
+echo "Using $DPDK_NIC with MAC: $DPDK_MAC"
 
 # create bridge if it doesn't exist
 if ! sudo ovs-vsctl br-exists "$BRIDGE"; then

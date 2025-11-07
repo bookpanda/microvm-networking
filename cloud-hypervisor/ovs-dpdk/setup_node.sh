@@ -35,9 +35,13 @@ sudo iptables -t nat -D POSTROUTING -s ${VM_NETWORK} -o ${EXT_IFACE} -j MASQUERA
 sudo iptables -t nat -A POSTROUTING -s ${VM_NETWORK} -o ${EXT_IFACE} -j MASQUERADE
 echo "✅ NAT configured for ${VM_NETWORK} via ${EXT_IFACE}"
 
+# Physical NIC that will be used for DPDK (should match setup_dpdk.sh)
+DPDK_NIC="enp65s0f0np0"
+
 # Remove IP from physical NIC before DPDK takes it over
-sudo ip addr flush dev enp65s0f0np0 2>/dev/null || true
-sudo ip link set enp65s0f0np0 up
+sudo ip addr flush dev $DPDK_NIC 2>/dev/null || true
+sudo ip link set $DPDK_NIC up
+echo "✅ Prepared $DPDK_NIC for DPDK"
 
 ./setup_dpdk.sh
 
