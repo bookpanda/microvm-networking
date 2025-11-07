@@ -2,8 +2,8 @@
 set -e # exit on error
 
 ### config hugepages ###
-# 8GB (1 page is 2MB)
-sudo sysctl -w vm.nr_hugepages=4096
+# 16GB (1 page is 2MB)
+sudo sysctl -w vm.nr_hugepages=8192
 grep Huge /proc/meminfo
 echo "✅ Hugepages allocated"
 
