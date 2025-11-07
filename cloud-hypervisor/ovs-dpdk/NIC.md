@@ -15,3 +15,8 @@ sudo ethtool -l enp65s0f1np1
 - c6525-25g CPU: 16-core AMD 7302P at 3.00GHz
 - The 7302P is single NUMA node → all cores on same NUMA node.
 - 2 NICs × 2 ports = 4 ports, each 25 Gb → 100 Gb total traffic potential
+
+## VM specs
+- 1 vCPU ≠ 1 physical core — can share cores unless pinned
+- VM memory ≥ 64–128 MB per queue (depends on workload)
+- vCPUs ≥ num_queues
