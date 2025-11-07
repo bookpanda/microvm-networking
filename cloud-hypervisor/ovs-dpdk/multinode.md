@@ -5,12 +5,12 @@
 
 # host 0
 sudo cloud-hypervisor \
-    --cpus boot=2 \
-    --memory size=512M,hugepages=on,shared=true \
+    --cpus boot=4,max=8 \
+    --memory size=4096M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
-    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server
+    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=8,vhost_mode=server
 
 # host 1
 sudo cloud-hypervisor \
