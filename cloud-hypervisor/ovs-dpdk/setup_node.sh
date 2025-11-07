@@ -58,14 +58,16 @@ sudo ip link delete br0 2>/dev/null || true
 sudo rm -f /etc/netplan/01-netcfg.yaml
 echo "✅ Removed netplan config (NIC managed by OVS now)"
 
-# DON'T put IPs on ovsbr0! Keep it pure L2 for DPDK fast path
-# The internal port causes kernel routing which bypasses DPDK entirely
+# Configure ovsbr0 as L2 switch with management IP
+# VMs are on 10.10.1.0/24, cross-host traffic uses DPDK via MAC learning
 sudo ip addr flush dev ovsbr0 2>/dev/null || true
 sudo ip link set ovsbr0 up
+sudo ip addr add 10.10.1.1/24 dev ovsbr0
 
-echo "✅ OVS bridge configured as pure L2 switch (no IPs - DPDK fast path enabled)"
-echo "   VMs should use IPs from 10.10.1.0/24 network directly"
-echo "   Example: Host 0 VM: 10.10.1.10/24, Host 1 VM: 10.10.1.20/24"
+echo "✅ OVS bridge configured:"
+echo "   - Management IP: 10.10.1.1/24 (host access to VMs)"
+echo "   - L2 switching: VM-to-VM traffic via DPDK fast path"
+echo "   - Host 0 VM: 10.10.1.10, Host 1 VM: 10.10.1.20"
 
 ../init/clean-disk-state.sh
 ../init/create-cloud-init.sh
