@@ -14,3 +14,4 @@ sudo ethtool -l enp65s0f1np1
 ## NUMA
 - c6525-25g CPU: 16-core AMD 7302P at 3.00GHz
 - The 7302P is single NUMA node → all cores on same NUMA node.
+- 2 NICs × 2 ports = 4 ports, each 25 Gb → 100 Gb total traffic potential

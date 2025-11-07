@@ -8,9 +8,11 @@ sudo update-alternatives --set ovs-vswitchd /usr/lib/openvswitch-switch-dpdk/ovs
 # Allocate 1536 hugepages × 2MB = 3GB (OVS needs ~1GB, VMs need 512MB each)
 sudo sysctl -w vm.nr_hugepages=1536
 grep Huge /proc/meminfo
+
 # Mount hugepage filesystem
 sudo mkdir -p /mnt/huge
 sudo mount -t hugetlbfs nodev /mnt/huge
+# verify it is mounted
 mount | grep huge
 
 #### setup OVS ####
