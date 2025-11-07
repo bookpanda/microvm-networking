@@ -4,7 +4,7 @@ set -e # exit on error
 BRIDGE="ovsbr0"
 PORT="vhost-user1"
 VHOST_PATH="/tmp/vhost-user1"
-RX_QUEUES=4
+RX_QUEUES=8
 
 DPDK_PORT="dpdk0"
 DPDK_PCI="0000:41:00.0"  # enp65s0f0np0 - the one with link!
