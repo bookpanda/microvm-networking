@@ -7,7 +7,7 @@ VHOST_PATH="/tmp/vhost-user1"
 RX_QUEUES=2
 
 DPDK_PORT="dpdk0"
-DPDK_PCI="0000:41:00.0"
+DPDK_PCI="0000:41:00.1"
 
 # create bridge if it doesn't exist
 if ! sudo ovs-vsctl br-exists "$BRIDGE"; then
