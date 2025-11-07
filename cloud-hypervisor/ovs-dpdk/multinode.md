@@ -1,5 +1,19 @@
 # Multinode
 ```bash
+# load VFIO kernel modules
+sudo modprobe vfio
+sudo modprobe vfio-pci
+lsmod | grep vfio
+sudo dmesg | grep -e DMAR -e IOMMU
+
+# bind NIC to DPDK
+ip a # prob eno34np1 is unused 
+# get info on NIC, see PCI address (0000:01:00.1)
+sudo ethtool -i enp65s0f1np1
+sudo dpdk-devbind.py -b vfio-pci 0000:41:00.1
+sudo dpdk-devbind.py --status
+
+
 # Bus error = not enough hugepages allocated for VMs (OvS takes all)
 # hugepages=on = maps hugepages from the host into the VM’s physical address space, replacing normal 4 KB pages, so the guest OS sees them as normal RAM, but backed by 2 MB pages on the host
 
