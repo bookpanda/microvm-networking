@@ -38,10 +38,15 @@ echo "✅ NAT configured for ${VM_NETWORK} via ${EXT_IFACE}"
 # Physical NIC that will be used for DPDK (should match setup_dpdk.sh)
 DPDK_NIC="enp65s0f0np0"
 
-# Remove IP from physical NIC before DPDK takes it over
+# Remove IP from physical NIC and disable kernel routing through it
 sudo ip addr flush dev $DPDK_NIC 2>/dev/null || true
 sudo ip link set $DPDK_NIC up
-echo "✅ Prepared $DPDK_NIC for DPDK"
+# Prevent kernel from using this interface for routing (set to no-arp, no-multicast)
+sudo ip link set $DPDK_NIC arp off
+sudo ip link set $DPDK_NIC multicast off
+# Remove from routing table
+sudo ip route flush dev $DPDK_NIC 2>/dev/null || true
+echo "✅ Prepared $DPDK_NIC for DPDK (kernel routing disabled)"
 
 ./setup_dpdk.sh
 
@@ -53,24 +58,14 @@ sudo ip link delete br0 2>/dev/null || true
 sudo rm -f /etc/netplan/01-netcfg.yaml
 echo "✅ Removed netplan config (NIC managed by OVS now)"
 
-BRIDGE_IP="192.168.$((100 + NODE_ID)).1"
-INTER_HOST_IP="10.10.1.$((NODE_ID + 1))"  # 10.10.1.1 for node0, 10.10.1.2 for node1
-OTHER_VM_NETWORK="192.168.$((100 + 1 - NODE_ID)).0/24"  # 192.168.101.0/24 for node0
-OTHER_HOST_IP="10.10.1.$((2 - NODE_ID))"  # 10.10.1.2 for node0, 10.10.1.1 for node1
-
-# Configure OVS bridge with BOTH IPs: VM network + inter-host network
+# DON'T put IPs on ovsbr0! Keep it pure L2 for DPDK fast path
+# The internal port causes kernel routing which bypasses DPDK entirely
 sudo ip addr flush dev ovsbr0 2>/dev/null || true
-sudo ip addr add ${BRIDGE_IP}/24 dev ovsbr0
-sudo ip addr add ${INTER_HOST_IP}/24 dev ovsbr0
 sudo ip link set ovsbr0 up
 
-# Add route to other VM network via other host
-sudo ip route add ${OTHER_VM_NETWORK} via ${OTHER_HOST_IP} dev ovsbr0 2>/dev/null || true
-
-echo "✅ OVS bridge configured:"
-echo "   - VM network: ${BRIDGE_IP}/24"
-echo "   - Inter-host: ${INTER_HOST_IP}/24"
-echo "   - Route to ${OTHER_VM_NETWORK} via ${OTHER_HOST_IP}"
+echo "✅ OVS bridge configured as pure L2 switch (no IPs - DPDK fast path enabled)"
+echo "   VMs should use IPs from 10.10.1.0/24 network directly"
+echo "   Example: Host 0 VM: 10.10.1.10/24, Host 1 VM: 10.10.1.20/24"
 
 ../init/clean-disk-state.sh
 ../init/create-cloud-init.sh

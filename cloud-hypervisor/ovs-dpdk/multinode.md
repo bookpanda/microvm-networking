@@ -55,14 +55,22 @@ sudo iptables -t nat -L -v -n
 
 ## Testing
 ```bash
-# vm 0
+# VM IPs (both on 10.10.1.0/24 for pure L2 switching):
+# - Host 0 VM: 10.10.1.10
+# - Host 1 VM: 10.10.1.20
+
+# vm 0 (10.10.1.10)
 iperf3 -s
 
-# vm 1 - various parallel stream counts
-iperf3 -c 192.168.100.2 -t 60 -P 8 -w 4M
-iperf3 -c 192.168.100.2 -t 60 -P 16 -w 4M
-iperf3 -c 192.168.100.2 -t 60 -P 32 -w 4M
+# vm 1 (10.10.1.20) - various parallel stream counts
+iperf3 -c 10.10.1.10 -t 60 -P 8 -w 4M
+iperf3 -c 10.10.1.10 -t 60 -P 16 -w 4M
+iperf3 -c 10.10.1.10 -t 60 -P 32 -w 4M
 
 # UDP test for max throughput
-iperf3 -c 192.168.100.2 -u -b 20G -t 30
+iperf3 -c 10.10.1.10 -u -b 20G -t 30
+
+# Verify DPDK fast path is being used:
+# On host: sudo ovs-vsctl get Interface dpdk0 statistics | grep -E "rx_packets|tx_packets"
+# Should show millions of packets (not just 138!)
 ```
