@@ -7,7 +7,8 @@ VHOST_PATH="/tmp/vhost-user1"
 RX_QUEUES=4
 
 DPDK_PORT="dpdk0"
-DPDK_PCI="0000:41:00.1"
+DPDK_PCI="0000:41:00.0"  # enp65s0f0np0 - the one with link!
+DPDK_MAC="0c:42:a1:dd:58:30"  # MAC of enp65s0f0np0
 
 # create bridge if it doesn't exist
 if ! sudo ovs-vsctl br-exists "$BRIDGE"; then
@@ -17,13 +18,16 @@ else
     echo "ℹ️ OVS bridge '$BRIDGE' already exists"
 fi
 
-# add DPDK physical port if it doesn't exist
-if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$DPDK_PORT"; then
-    sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" type=dpdk options:dpdk-devargs="$DPDK_PCI"
-    echo "✅ OVS DPDK port '$DPDK_PORT' added"
-else
-    echo "ℹ️ OVS DPDK port '$DPDK_PORT' already exists"
+# Remove and recreate DPDK physical port to ensure correct configuration
+if sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$DPDK_PORT"; then
+    echo "ℹ️ Removing existing '$DPDK_PORT' to recreate with correct MAC"
+    sudo ovs-vsctl del-port "$BRIDGE" "$DPDK_PORT"
 fi
+
+# Add DPDK physical port with correct MAC
+# Using class=eth,mac for Mellanox NICs (they work better this way than with PCI binding)
+sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" type=dpdk options:dpdk-devargs="class=eth,mac=$DPDK_MAC"
+echo "✅ OVS DPDK port '$DPDK_PORT' added (using MAC $DPDK_MAC)"
 
 # add vhost-user port if it doesn't exist
 if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$PORT"; then

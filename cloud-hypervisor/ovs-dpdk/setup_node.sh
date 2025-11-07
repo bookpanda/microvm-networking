@@ -35,26 +35,38 @@ sudo iptables -t nat -D POSTROUTING -s ${VM_NETWORK} -o ${EXT_IFACE} -j MASQUERA
 sudo iptables -t nat -A POSTROUTING -s ${VM_NETWORK} -o ${EXT_IFACE} -j MASQUERADE
 echo "✅ NAT configured for ${VM_NETWORK} via ${EXT_IFACE}"
 
+# Remove IP from physical NIC before DPDK takes it over
+sudo ip addr flush dev enp65s0f0np0 2>/dev/null || true
+sudo ip link set enp65s0f0np0 up
+
 ./setup_dpdk.sh
 
 # Clean up old bridge if it exists
 sudo ip link set br0 down 2>/dev/null || true
 sudo ip link delete br0 2>/dev/null || true
 
-# Apply netplan config for physical NIC routing
+# Clear netplan config since enp65s0f0np0 is now managed by OVS
 sudo rm -f /etc/netplan/01-netcfg.yaml
-sudo cp ./netplan-node${NODE_ID}.yaml /etc/netplan/01-netcfg.yaml
-sudo netplan apply
-echo "✅ netplan applied"
+echo "✅ Removed netplan config (NIC managed by OVS now)"
 
 BRIDGE_IP="192.168.$((100 + NODE_ID)).1"
+INTER_HOST_IP="10.10.1.$((NODE_ID + 1))"  # 10.10.1.1 for node0, 10.10.1.2 for node1
+OTHER_VM_NETWORK="192.168.$((100 + 1 - NODE_ID)).0/24"  # 192.168.101.0/24 for node0
+OTHER_HOST_IP="10.10.1.$((2 - NODE_ID))"  # 10.10.1.2 for node0, 10.10.1.1 for node1
 
-# configure OVS bridge IP (netplan can't manage OVS bridges)
+# Configure OVS bridge with BOTH IPs: VM network + inter-host network
 sudo ip addr flush dev ovsbr0 2>/dev/null || true
 sudo ip addr add ${BRIDGE_IP}/24 dev ovsbr0
+sudo ip addr add ${INTER_HOST_IP}/24 dev ovsbr0
 sudo ip link set ovsbr0 up
 
-echo "✅ OVS bridge configured with IP ${BRIDGE_IP}"
+# Add route to other VM network via other host
+sudo ip route add ${OTHER_VM_NETWORK} via ${OTHER_HOST_IP} dev ovsbr0 2>/dev/null || true
+
+echo "✅ OVS bridge configured:"
+echo "   - VM network: ${BRIDGE_IP}/24"
+echo "   - Inter-host: ${INTER_HOST_IP}/24"
+echo "   - Route to ${OTHER_VM_NETWORK} via ${OTHER_HOST_IP}"
 
 ../init/clean-disk-state.sh
 ../init/create-cloud-init.sh
