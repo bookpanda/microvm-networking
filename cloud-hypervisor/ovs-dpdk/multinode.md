@@ -21,6 +21,7 @@ sudo dpdk-devbind.py -b mlx5_core 0000:41:00.1
 # remove from OVS
 sudo ovs-vsctl del-port ovsbr0 dpdk0
 
+sudo ovs-vsctl show
 
 # Bus error = not enough hugepages allocated for VMs (OvS takes all)
 # hugepages=on = maps hugepages from the host into the VM’s physical address space, replacing normal 4 KB pages, so the guest OS sees them as normal RAM, but backed by 2 MB pages on the host
