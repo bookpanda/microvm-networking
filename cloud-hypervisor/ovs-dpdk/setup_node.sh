@@ -28,8 +28,21 @@ echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
 
 ./setup_dpdk.sh
 
-# Apply netplan config
+# Clean up old bridge if it exists
+sudo ip link set br0 down 2>/dev/null || true
+sudo ip link delete br0 2>/dev/null || true
+
+# Apply netplan config for physical NIC routing
 sudo netplan apply --file ./netplan-node${NODE_ID}.yaml
+
+BRIDGE_IP="192.168.$((100 + NODE_ID)).1"
+
+# configure OVS bridge IP (netplan can't manage OVS bridges)
+sudo ip addr flush dev ovsbr0 2>/dev/null || true
+sudo ip addr add ${BRIDGE_IP}/24 dev ovsbr0
+sudo ip link set ovsbr0 up
+
+echo "✅ OVS bridge configured with IP ${BRIDGE_IP}"
 
 ../init/clean-disk-state.sh
 ../init/create-cloud-init.sh
