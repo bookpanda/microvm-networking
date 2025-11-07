@@ -19,7 +19,7 @@ fi
 
 # add DPDK physical port if it doesn't exist
 if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$DPDK_PORT"; then
-    sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" type=dpdk options:dpdk-devargs="$DPDK_PCI"
+    sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" type=dpdk options:dpdk-devargs="$DPDK_PCI",n_rxq=8
     echo "✅ OVS DPDK port '$DPDK_PORT' added"
 else
     echo "ℹ️ OVS DPDK port '$DPDK_PORT' already exists"
@@ -27,7 +27,7 @@ fi
 
 # add vhost-user port if it doesn't exist
 if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$PORT"; then
-    sudo ovs-vsctl add-port "$BRIDGE" "$PORT" -- set Interface "$PORT" type=dpdkvhostuserclient options:vhost-server-path="$VHOST_PATH"
+    sudo ovs-vsctl add-port "$BRIDGE" "$PORT" -- set Interface "$PORT" type=dpdkvhostuserclient options:vhost-server-path="$VHOST_PATH",n_rxq=8
     echo "✅ OVS port '$PORT' added"
 else
     echo "ℹ️ OVS port '$PORT' already exists"
