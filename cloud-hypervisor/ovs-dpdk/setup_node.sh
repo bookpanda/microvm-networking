@@ -33,7 +33,10 @@ sudo ip link set br0 down 2>/dev/null || true
 sudo ip link delete br0 2>/dev/null || true
 
 # Apply netplan config for physical NIC routing
-sudo netplan apply --file ./netplan-node${NODE_ID}.yaml
+sudo rm -f /etc/netplan/01-netcfg.yaml
+sudo cp ./netplan-node${NODE_ID}.yaml /etc/netplan/01-netcfg.yaml
+sudo netplan apply
+echo "✅ netplan applied"
 
 BRIDGE_IP="192.168.$((100 + NODE_ID)).1"
 
