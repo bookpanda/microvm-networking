@@ -12,6 +12,7 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 4vCPU(max=8), 2048MB, 4 queues, 2.45 Gbit/s
 - 4vCPU(max=8), 2048MB, 4 queues, 2.45 Gbit/s (iperf3 -P 8)
 - 4vCPU(max=8), 4096MB, 8 queues, 2.58 Gbit/s
+- 4vCPU(max=8), 4096MB, 8 queues, 2.76 Gbit/s (pin VM cores 13-16)
 ### Syscalls on server process
 ```
 
