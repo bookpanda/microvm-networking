@@ -27,6 +27,8 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 4vCPU(max=8), 4096MB, 8 queues, 8.89 Gbits/s
 - 8vCPU, 4096MB, 16 queues, 10.4 Gbits/s (-P 8)
 - 8vCPU, 4096MB, 16 queues, 11.1 Gbits/s (-P 16)
+### 1 queue (RX/TX) should map to 1vCPU (if not, only 1 TX, 7 RX)
+- 8vCPU, 4096MB, 8 queues, 9.20 Gbits/s (-P 8)
 
 ### Syscalls on server process
 ```
