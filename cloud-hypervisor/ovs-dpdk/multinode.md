@@ -31,8 +31,8 @@ sudo ovs-vsctl list Interface dpdk0 | grep -E "n_rxq|options"
 
 # host 0 (16 queues = 8 RX + 8 TX)
 sudo cloud-hypervisor \
-    --cpus boot=2 \
-    --memory size=512M,hugepages=on,shared=true \
+    --cpus boot=4 \
+    --memory size=1024M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0-dpdk.img \
@@ -40,8 +40,8 @@ sudo cloud-hypervisor \
 
 # host 1
 sudo cloud-hypervisor \
-    --cpus boot=2 \
-    --memory size=512M,hugepages=on,shared=true \
+    --cpus boot=4 \
+    --memory size=1024M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1-dpdk.img \
@@ -65,6 +65,7 @@ sudo ovs-appctl dpif-netdev/pmd-rxq-rebalance
 iperf3 -s
 
 # vm 1 (10.10.1.20) - test with increasing parallelism
+iperf3 -c 10.10.1.10 -t 30 -P 4
 iperf3 -c 10.10.1.10 -t 300 -P 8
 iperf3 -c 10.10.1.10 -t 30 -P 8
 iperf3 -c 10.10.1.10 -t 30 -P 16

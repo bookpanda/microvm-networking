@@ -6,8 +6,8 @@ iperf3 -s
 # client
 iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
-- 2vCPU(84%), 512MB(87Mi), 12.1 Gbits/s
-- 4vCPU(91%), 1024MB(135Mi), 13.3 Gbits/s
+- 2vCPU(84%), 512MB(87Mi), 12.1 Gbits/s (-P 4)
+- 4vCPU(91%), 1024MB(135Mi), 13.3 Gbits/s (-P 4)
 
 ### Syscalls on server process
 ```
