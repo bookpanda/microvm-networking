@@ -45,10 +45,10 @@ else
     echo "ℹ️ OVS port '$PORT' already exists"
 fi
 
-sudo ovs-vsctl set Interface "$PORT" options:n_rxq="$RX_QUEUES"
-echo "✅ OVS Rx queues for '$PORT' set to $RX_QUEUES"
+sudo ovs-vsctl set Interface "$PORT" options:n_rxq="$RX_QUEUES" options:n_txq="$RX_QUEUES"
+echo "✅ OVS RX/TX queues for '$PORT' set to $RX_QUEUES"
 
-sudo ovs-vsctl set Interface "$DPDK_PORT" options:n_rxq="$RX_QUEUES"
-echo "✅ OVS Rx queues for '$DPDK_PORT' set to $RX_QUEUES"
+sudo ovs-vsctl set Interface "$DPDK_PORT" options:n_rxq="$RX_QUEUES" options:n_txq="$RX_QUEUES"
+echo "✅ OVS RX/TX queues for '$DPDK_PORT' set to $RX_QUEUES"
 
 sudo ovs-vsctl show
