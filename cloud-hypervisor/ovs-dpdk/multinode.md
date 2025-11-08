@@ -65,6 +65,7 @@ sudo ovs-appctl dpif-netdev/pmd-rxq-rebalance
 iperf3 -s
 
 # vm 1 (10.10.1.20) - test with increasing parallelism
+# 4 parallel clients = 4 sockets
 iperf3 -c 10.10.1.10 -t 60 -P 4
 iperf3 -c 10.10.1.10 -t 300 -P 8
 iperf3 -c 10.10.1.10 -t 30 -P 8
