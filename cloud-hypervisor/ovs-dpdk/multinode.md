@@ -109,6 +109,12 @@ for i in {0..3}; do
     cat /sys/class/net/ens4/queues/tx-$i/xps_cpus
 done
 
+# clear vCPU allocation for each queue
+for i in {0..3}; do
+    sudo bash -c "echo 0 > /sys/class/net/ens4/queues/rx-$i/rps_cpus"
+    sudo bash -c "echo 0 > /sys/class/net/ens4/queues/tx-$i/xps_cpus"
+done
+
 # spread vCPUs across queues
 for i in /sys/class/net/ens4/queues/tx-*; do
     sudo bash -c "echo ff > $i/xps_cpus"   # 8 vCPUs
