@@ -94,5 +94,5 @@ runcmd:
       [ -f "$f" ] && sed -i 's/\x00//g' "$f"
     done
   - systemctl restart systemd-resolved
-  - /usr/local/bin/setup-multiqueue.sh
+  # - /usr/local/bin/setup-multiqueue.sh
 

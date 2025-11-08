@@ -44,6 +44,13 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 4vCPU(75%), 1024MB(128Mi), 4 queues (4096 size), 9.06 Gbits/s (-t 60 -P 4)
 <!-- max out TCP memory cap -->
 - 4vCPU(76%), 1024MB(118Mi), 4 queues (2048 size), 9.41 Gbits/s (-t 60 -P 4)
+<!-- new user data -->
+- 4vCPU(%), 1024MB(Mi), 4 queues (2048 size), 8.30 Gbits/s (-t 60 -P 4)
+<!-- disabled setup-multiqueue.sh in user data, also got spike to 11.4 (by chance?) -->
+- 4vCPU(%), 1024MB(Mi), 4 queues (2048 size), 9.69 Gbits/s (-t 60 -P 4)
+- 4vCPU(76%), 1024MB(119Mi), 4 queues (2048 size), 10.2 Gbits/s (-t 60 -P 4)
+- 4vCPU(76%), 1024MB(119Mi), 4 queues (2048 size), 8.69 Gbits/s (-t 60 -P 4)
+- 4vCPU(76%), 1024MB(119Mi), 4 queues (2048 size), 8.25 Gbits/s (-t 60 -P 4)
 
 ### Syscalls on server process
 ```
