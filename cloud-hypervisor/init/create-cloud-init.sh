@@ -21,3 +21,5 @@ create_iso() {
 create_iso "ubuntu-cloudinit.img" "network-config"
 create_iso "cloudinit-vm0.img" "network-config-vm0"
 create_iso "cloudinit-vm1.img" "network-config-vm1"
+create_iso "cloudinit-vm0-dpdk.img" "network-config-vm0-dpdk"
+create_iso "cloudinit-vm1-dpdk.img" "network-config-vm1-dpdk"

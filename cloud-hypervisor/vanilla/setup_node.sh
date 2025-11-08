@@ -31,7 +31,8 @@ sudo ip link set ovsbr0 down || true
 sudo ovs-vsctl del-br ovsbr0 || true
 
 # Apply netplan config
-sudo netplan apply --file ./netplan-node${NODE_ID}.yaml
+sudo cp -f ./netplan-node${NODE_ID}.yaml /etc/netplan/01-netcfg.yaml
+sudo netplan apply
 echo "✅netplan applied"
 
 # create tap0, br0
