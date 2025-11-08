@@ -34,22 +34,35 @@ write_files:
       ethtool -K $IFACE tso on gso on gro on 2>/dev/null || true
       echo "Enabled network offloads (TSO/GSO/GRO)"
       
-      # Set up XPS (Transmit Packet Steering) - allow all CPUs for better load balancing
-      # DISABLED: Pinning causes single-CPU bottleneck
-      # Instead, disable XPS to let kernel do round-robin queue selection
+      # Set up XPS (Transmit Packet Steering) - 1:1 queue-to-CPU mapping
+      # Each TX queue should be handled by a dedicated CPU for cache locality
+      NUM_CPUS=$(nproc)
       for i in $(seq 0 $((MAX_QUEUES-1))); do
         if [ -d /sys/class/net/$IFACE/queues/tx-$i ]; then
-          echo 0 > /sys/class/net/$IFACE/queues/tx-$i/xps_cpus
-          echo "TX queue $i -> XPS disabled (round-robin)"
+          CPU_MASK=$(printf '%x' $((1 << i)))
+          echo $CPU_MASK > /sys/class/net/$IFACE/queues/tx-$i/xps_cpus
+          echo "TX queue $i -> CPU $i (mask: $CPU_MASK)"
         fi
       done
       
-      # Set up RPS (Receive Packet Steering) - use all CPUs
-      RPS_MASK=$(printf '%x' $((2**MAX_QUEUES - 1)))
+      # Disable RPS - redundant with multi-queue virtio-net RSS
+      # RPS adds overhead when hardware queues already distribute traffic
       for i in $(seq 0 $((MAX_QUEUES-1))); do
         if [ -d /sys/class/net/$IFACE/queues/rx-$i ]; then
-          echo $RPS_MASK > /sys/class/net/$IFACE/queues/rx-$i/rps_cpus
-          echo "RX queue $i -> all CPUs (mask: $RPS_MASK)"
+          echo 0 > /sys/class/net/$IFACE/queues/rx-$i/rps_cpus
+          echo "RX queue $i -> RPS disabled (using native multi-queue)"
+        fi
+      done
+      
+      # Pin virtio-net IRQs to specific CPUs (1:1 mapping)
+      # This ensures each queue's interrupts are handled by the same CPU as XPS
+      for irq in $(grep $IFACE /proc/interrupts | awk -F: '{print $1}' | tr -d ' '); do
+        # Try to extract queue number from IRQ name
+        queue_num=$(grep "^ *$irq:" /proc/interrupts | grep -oP 'input\.\K[0-9]+|output\.\K[0-9]+' | head -1)
+        if [ -n "$queue_num" ] && [ "$queue_num" -lt "$NUM_CPUS" ]; then
+          CPU_MASK=$(printf '%x' $((1 << queue_num)))
+          echo $CPU_MASK > /proc/irq/$irq/smp_affinity 2>/dev/null || true
+          echo "IRQ $irq (queue $queue_num) -> CPU $queue_num"
         fi
       done
       
