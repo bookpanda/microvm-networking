@@ -31,21 +31,21 @@ sudo ovs-vsctl list Interface dpdk0 | grep -E "n_rxq|options"
 
 # host 0 (16 queues = 8 RX + 8 TX)
 sudo cloud-hypervisor \
-    --cpus boot=8 \
-    --memory size=4096M,hugepages=on,shared=true \
+    --cpus boot=2 \
+    --memory size=512M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0-dpdk.img \
-    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=8,vhost_mode=server,queue_size=4096
+    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=2,vhost_mode=server,queue_size=1024
 
 # host 1
 sudo cloud-hypervisor \
-    --cpus boot=8 \
-    --memory size=4096M,hugepages=on,shared=true \
+    --cpus boot=2 \
+    --memory size=512M,hugepages=on,shared=true \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1-dpdk.img \
-    --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user1,num_queues=8,vhost_mode=server,queue_size=4096
+    --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user1,num_queues=2,vhost_mode=server,queue_size=1024
 
 ip link show
 ip addr show
