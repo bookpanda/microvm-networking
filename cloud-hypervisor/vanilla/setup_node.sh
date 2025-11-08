@@ -32,10 +32,11 @@ sudo ovs-vsctl del-br ovsbr0 || true
 
 # Apply netplan config
 sudo netplan apply --file ./netplan-node${NODE_ID}.yaml
+echo "✅netplan applied"
 
 # create tap0, br0
-sudo ip link delete tap0 2>/dev/null
-sudo ip link delete br0 2>/dev/null
+sudo ip link delete tap0 2>/dev/null || true
+sudo ip link delete br0 2>/dev/null || true
 
 sudo ip link add name br0 type bridge || true
 sudo ip link set br0 up || true
