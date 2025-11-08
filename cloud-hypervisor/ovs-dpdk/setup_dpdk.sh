@@ -38,12 +38,12 @@ sudo ovs-vsctl add-port "$BRIDGE" "$DPDK_PORT" -- set Interface "$DPDK_PORT" typ
 echo "✅ OVS DPDK port '$DPDK_PORT' added (using MAC $DPDK_MAC)"
 
 # add vhost-user port if it doesn't exist
-if ! sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$PORT"; then
-    sudo ovs-vsctl add-port "$BRIDGE" "$PORT" -- set Interface "$PORT" type=dpdkvhostuserclient options:vhost-server-path="$VHOST_PATH"
-    echo "✅ OVS port '$PORT' added"
-else
-    echo "ℹ️ OVS port '$PORT' already exists"
+if sudo ovs-vsctl list-ports "$BRIDGE" | grep -qw "$PORT"; then
+    echo "ℹ️ Removing existing '$PORT' to recreate with correct MAC"
+    sudo ovs-vsctl del-port "$BRIDGE" "$PORT"
 fi
+sudo ovs-vsctl add-port "$BRIDGE" "$PORT" -- set Interface "$PORT" type=dpdkvhostuserclient options:vhost-server-path="$VHOST_PATH"
+echo "✅ OVS port '$PORT' added"
 
 sudo ovs-vsctl set Interface "$PORT" options:n_rxq="$RX_QUEUES" options:n_txq="$RX_QUEUES"
 echo "✅ OVS RX/TX queues for '$PORT' set to $RX_QUEUES"
