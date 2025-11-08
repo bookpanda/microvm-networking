@@ -93,6 +93,8 @@ scp ./diagnose_vm_bottleneck.sh cloud@10.10.1.10:/home/cloud/diagnose_vm_bottlen
 ##### VM #####
 nproc # no. of vCPUs
 ethtool -l ens4  # Should show "Combined: 8"
+# vCPU usage
+mpstat -P ALL 1
 ```
 ### On Host During Test:
 ```bash
