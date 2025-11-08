@@ -63,10 +63,11 @@ sudo iptables -t nat -L -v -n
 iperf3 -s
 
 # vm 1 (10.10.1.20) - test with increasing parallelism
-iperf3 -c 10.10.1.10 -t 30 -P 8    # Baseline
-iperf3 -c 10.10.1.10 -t 30 -P 16   # More parallelism  
-iperf3 -c 10.10.1.10 -t 30 -P 32   # Push harder
-iperf3 -c 10.10.1.10 -t 30 -P 64   # Maximum
+iperf3 -c 10.10.1.10 -t 300 -P 8
+iperf3 -c 10.10.1.10 -t 30 -P 8
+iperf3 -c 10.10.1.10 -t 30 -P 16
+iperf3 -c 10.10.1.10 -t 30 -P 32
+iperf3 -c 10.10.1.10 -t 30 -P 64 
 
 # UDP test for max throughput
 iperf3 -c 10.10.1.10 -u -b 20G -t 30
