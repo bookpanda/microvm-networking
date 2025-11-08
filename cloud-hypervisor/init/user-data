@@ -34,11 +34,13 @@ write_files:
       ethtool -K $IFACE tso on gso on gro on 2>/dev/null || true
       echo "Enabled network offloads (TSO/GSO/GRO)"
       
-      # Set up XPS (Transmit Packet Steering) - pin each TX queue to a specific CPU
+      # Set up XPS (Transmit Packet Steering) - allow all CPUs for better load balancing
+      # DISABLED: Pinning causes single-CPU bottleneck
+      # Instead, disable XPS to let kernel do round-robin queue selection
       for i in $(seq 0 $((MAX_QUEUES-1))); do
         if [ -d /sys/class/net/$IFACE/queues/tx-$i ]; then
-          printf '%x' $((1 << $i)) > /sys/class/net/$IFACE/queues/tx-$i/xps_cpus
-          echo "TX queue $i -> CPU $i"
+          echo 0 > /sys/class/net/$IFACE/queues/tx-$i/xps_cpus
+          echo "TX queue $i -> XPS disabled (round-robin)"
         fi
       done
       
