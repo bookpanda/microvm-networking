@@ -102,6 +102,34 @@ ethtool -l ens4  # Should show "Combined: 8"
 mpstat -P ALL 1
 # memory usage
 free -h
+
+# check vCPU allocation for each queue
+for i in {0..3}; do
+    cat /sys/class/net/ens4/queues/rx-$i/rps_cpus
+    cat /sys/class/net/ens4/queues/tx-$i/xps_cpus
+done
+
+# spread vCPUs across queues
+for i in /sys/class/net/ens4/queues/tx-*; do
+    sudo bash -c "echo ff > $i/xps_cpus"   # 8 vCPUs
+done
+for i in /sys/class/net/ens4/queues/rx-*; do
+    sudo bash -c "echo ff > $i/rps_cpus"   # 8 vCPUs
+done
+
+# pin 1 vCPU to each queue
+rx_cpus=(1 2 4 8)  # CPU0, CPU1, CPU2, CPU3
+i=0
+for q in /sys/class/net/ens4/queues/rx-*; do
+    sudo bash -c "echo ${rx_cpus[i]} > $q/rps_cpus"
+    i=$((i+1))
+done
+tx_cpus=(10 20 40 80)  # CPU4, CPU5, CPU6, CPU7
+i=0
+for q in /sys/class/net/ens4/queues/tx-*; do
+    sudo bash -c "echo ${tx_cpus[i]} > $q/xps_cpus"
+    i=$((i+1))
+done
 ```
 ### On Host During Test:
 ```bash
