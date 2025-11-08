@@ -57,8 +57,8 @@ sudo cloud-hypervisor \
 	--net "tap=tap0,mac=12:34:56:78:90:ab" 
 
 # login: cloud/cloud123
-ssh cloud@192.168.249.2
-sshpass -p "cloud123" ssh cloud@192.168.249.2
+ssh cloud@10.10.1.10
+sshpass -p "cloud123" ssh cloud@10.10.1.10
 
 ps aux | grep cloud-hypervisor | grep -v grep | awk '{print $2}' | xargs kill -9
 

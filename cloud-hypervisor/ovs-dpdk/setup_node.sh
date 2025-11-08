@@ -20,6 +20,7 @@ fi
 
 echo "Setting up node ${NODE_ID}"
 
+ps aux | grep cloud-hypervisor | grep -v grep | awk '{print $2}' | xargs kill -9 || true
 sudo rm -f /tmp/vhost-user*
 
 sudo mkdir -p /etc/qemu
