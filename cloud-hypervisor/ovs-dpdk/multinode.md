@@ -88,6 +88,8 @@ sudo ovs-appctl dpif-netdev/pmd-rxq-show | grep -E "pmd thread|dpdk0|vhost-user1
 
 sudo ovs-appctl fdb/show ovsbr0
 
+scp ./diagnose_vm_bottleneck.sh cloud@10.10.1.10:/home/cloud/diagnose_vm_bottleneck.sh
+
 ##### VM #####
 nproc # no. of vCPUs
 ethtool -l ens4  # Should show "Combined: 8"

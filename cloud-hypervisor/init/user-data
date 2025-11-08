@@ -30,6 +30,10 @@ write_files:
         echo "Enabled $MAX_QUEUES queues on $IFACE"
       fi
       
+      # Enable TSO/GSO/GRO offloads (CRITICAL for performance!)
+      ethtool -K $IFACE tso on gso on gro on 2>/dev/null || true
+      echo "Enabled network offloads (TSO/GSO/GRO)"
+      
       # Set up XPS (Transmit Packet Steering) - pin each TX queue to a specific CPU
       for i in $(seq 0 $((MAX_QUEUES-1))); do
         if [ -d /sys/class/net/$IFACE/queues/tx-$i ]; then

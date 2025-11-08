@@ -43,19 +43,13 @@ fi
 echo ""
 echo "4. Queue Statistics:"
 if command -v ethtool &> /dev/null; then
-    echo "   TX queue packet counts:"
-    ethtool -S $IFACE 2>/dev/null | grep "tx_queue_[0-7]_packets" | head -8
+    # Try different stat formats (virtio_net uses different names)
+    echo "   All interface statistics:"
+    ethtool -S $IFACE 2>/dev/null | head -20
+    echo "   ..."
     echo ""
-    echo "   RX queue packet counts:"
-    ethtool -S $IFACE 2>/dev/null | grep "rx_queue_[0-7]_packets" | head -8
-    
-    # Count how many TX queues have packets
-    ACTIVE_TX=$(ethtool -S $IFACE 2>/dev/null | grep "tx_queue_[0-7]_packets" | awk '{print $2}' | awk '$1 > 0' | wc -l)
-    echo ""
-    echo "   Active TX queues: $ACTIVE_TX / 8"
-    if [ $ACTIVE_TX -lt 4 ]; then
-        echo "   ⚠️  Only $ACTIVE_TX TX queues active! This is the bottleneck!"
-    fi
+    echo "   Note: virtio_net may not expose per-queue stats via ethtool"
+    echo "   Use 'cat /proc/interrupts | grep virtio' to see queue activity"
 fi
 
 echo ""
@@ -74,9 +68,23 @@ echo "   mpstat -P ALL 1 5"
 echo "   → Look for: Are all CPUs being used? Or just 1-2 at 100%?"
 
 echo ""
-echo "7. Network Offloads:"
+echo "7. Network Offloads (CRITICAL FOR PERFORMANCE):"
 if command -v ethtool &> /dev/null; then
-    ethtool -k $IFACE 2>/dev/null | grep -E "tcp-segmentation-offload|generic-segmentation-offload|generic-receive-offload"
+    TSO=$(ethtool -k $IFACE 2>/dev/null | grep "tcp-segmentation-offload:" | awk '{print $2}')
+    GSO=$(ethtool -k $IFACE 2>/dev/null | grep "generic-segmentation-offload:" | awk '{print $2}')
+    GRO=$(ethtool -k $IFACE 2>/dev/null | grep "generic-receive-offload:" | awk '{print $2}')
+    
+    echo "   TSO (tcp-segmentation-offload): $TSO"
+    echo "   GSO (generic-segmentation-offload): $GSO"
+    echo "   GRO (generic-receive-offload): $GRO"
+    
+    if [ "$TSO" = "off" ]; then
+        echo ""
+        echo "   ❌ CRITICAL: TSO is OFF! This severely limits throughput!"
+        echo "   → Run: sudo ethtool -K $IFACE tso on"
+    else
+        echo "   ✅ TSO is enabled"
+    fi
 fi
 
 echo ""
@@ -86,22 +94,29 @@ echo "   TCP rmem: $(sysctl -n net.ipv4.tcp_rmem)"
 echo "   TCP wmem: $(sysctl -n net.ipv4.tcp_wmem)"
 
 echo ""
-echo "=== Quick Fixes ==="
+echo "=== Quick Fixes (IN ORDER OF IMPORTANCE) ==="
 echo ""
-echo "# If vCPUs < 8: Relaunch VM with --cpus boot=8"
+echo "# 1. CRITICAL: Enable TSO (tcp-segmentation-offload)"
+echo "sudo ethtool -K $IFACE tso on"
+echo "# Without TSO, CPU must segment every packet - huge overhead!"
 echo ""
-echo "# If queues < 8: Enable all queues"
-echo "sudo ethtool -L $IFACE combined 8"
+echo "# 2. Enable other offloads:"
+echo "sudo ethtool -K $IFACE gso on gro on"
 echo ""
-echo "# Setup XPS for proper queue distribution:"
-echo "for i in {0..7}; do printf '%x' \$((1 << \$i)) | sudo tee /sys/class/net/$IFACE/queues/tx-\$i/xps_cpus; done"
+echo "# 3. Verify queues are enabled:"
+echo "ethtool -l $IFACE  # Should show Combined: 8"
 echo ""
-echo "# Enable offloads:"
-echo "sudo ethtool -K $IFACE tso on gso on gro on"
+echo "# 4. Check XPS is configured (should already be done by cloud-init):"
+echo "cat /sys/class/net/$IFACE/queues/tx-*/xps_cpus"
 echo ""
-echo "# During test, monitor CPU:"
+echo "# 5. During test, monitor to confirm parallel usage:"
+echo "# Watch CPU usage:"
 echo "mpstat -P ALL 1"
-echo "# Look for single core at 100% (bottleneck) vs all cores moderate (good)"
+echo "# Watch interrupts across queues:"
+echo "watch -n 1 'cat /proc/interrupts | grep virtio'"
+echo ""
+echo "# 6. Try BBR congestion control (optional):"
+echo "sudo sysctl -w net.ipv4.tcp_congestion_control=bbr"
 
 echo ""
 echo "=== Diagnosis Complete ==="
