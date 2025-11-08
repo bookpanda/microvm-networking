@@ -95,6 +95,8 @@ nproc # no. of vCPUs
 ethtool -l ens4  # Should show "Combined: 8"
 # vCPU usage
 mpstat -P ALL 1
+# memory usage
+free -h
 ```
 ### On Host During Test:
 ```bash
