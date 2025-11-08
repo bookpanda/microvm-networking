@@ -42,6 +42,8 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 <!-- 2048 size had a 10s period of high througput up to 14 Gbits/s -->
 - 4vCPU(78%), 1024MB(127Mi), 4 queues (2048 size), 10.7 Gbits/s (-t 60 -P 4)
 - 4vCPU(75%), 1024MB(128Mi), 4 queues (4096 size), 9.06 Gbits/s (-t 60 -P 4)
+<!-- max out TCP memory cap -->
+- 4vCPU(76%), 1024MB(118Mi), 4 queues (2048 size), 9.41 Gbits/s (-t 60 -P 4)
 
 ### Syscalls on server process
 ```
