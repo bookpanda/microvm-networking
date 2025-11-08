@@ -29,7 +29,7 @@ sudo ovs-vsctl list Interface dpdk0 | grep -E "n_rxq|options"
 # Bus error = not enough hugepages allocated for VMs (OvS takes all)
 # hugepages=on = maps hugepages from the host into the VM’s physical address space, replacing normal 4 KB pages, so the guest OS sees them as normal RAM, but backed by 2 MB pages on the host
 
-# host 0
+# host 0 (16 queues = 8 RX + 8 TX)
 sudo cloud-hypervisor \
     --cpus boot=8 \
     --memory size=4096M,hugepages=on,shared=true \
@@ -106,8 +106,12 @@ watch -n 1 'sudo ovs-appctl dpif-netdev/pmd-stats-show | grep -E "pmd thread|usa
 # Watch queue distribution
 watch -n 1 'sudo ovs-appctl dpif-netdev/pmd-rxq-show'
 
-# Watch packet stats
-watch -n 1 'sudo ovs-vsctl get Interface dpdk0 statistics | grep -o "tx_packets=[^,]*"; sudo ovs-vsctl get Interface vhost-user1 statistics | grep -o "rx_q[0-7]_good_packets=[^,]*"'
+# dpdk0 packets
+watch -n 1 'sudo ovs-vsctl get Interface dpdk0 statistics | tr "," "\n" | grep -E "tx_q[0-7]_packets|rx_q[0-7]_packets"'
+
+# vhost-user1 packets
+watch -n 1 'sudo ovs-vsctl get Interface vhost-user1 statistics | tr "," "\n" | grep -E "tx_q[0-7]_good_packets|rx_q[0-7]_good_packets"'
+
 ```
 
 ### In VM During Test:
