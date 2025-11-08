@@ -25,6 +25,9 @@ sudo rm -f /tmp/vhost-user*
 sudo mkdir -p /etc/qemu
 sudo bash -c 'echo "allow br0" > /etc/qemu/bridge.conf'
 echo 1 | sudo tee /proc/sys/net/ipv4/ip_forward
+sudo iptables -t nat -A POSTROUTING -s 192.168.10${NODE_ID}.0/24 -j MASQUERADE
+sudo iptables -A FORWARD -i br0 -o $(ip route | grep default | awk '{print $5}') -j ACCEPT
+sudo iptables -A FORWARD -i $(ip route | grep default | awk '{print $5}') -o br0 -m state --state RELATED,ESTABLISHED -j ACCEPT
 
 # Clean up OvS bridge
 sudo ip link set ovsbr0 down || true

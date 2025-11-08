@@ -2,8 +2,8 @@
 ```bash
 # host 0
 sudo cloud-hypervisor \
-    --cpus boot=2 \
-    --memory size=512M \
+    --cpus boot=4 \
+    --memory size=1024M \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
@@ -12,8 +12,8 @@ sudo cloud-hypervisor \
 
 # host 1
 sudo cloud-hypervisor \
-    --cpus boot=2 \
-    --memory size=512M \
+    --cpus boot=4 \
+    --memory size=1024M \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1.img \
@@ -46,8 +46,8 @@ mpstat -P ALL 1
 free -h
 
 # vm 1
-iperf3 -c 192.168.100.2 -t 300 -P 4
+iperf3 -c 192.168.100.2 -t 30 -P 4
 # more P doesn't help
-iperf3 -c 192.168.100.2 -t 300 -P 8
+iperf3 -c 192.168.100.2 -t 30 -P 8
 iperf3 -c 192.168.100.2 -t 300 -P 16
 ```
