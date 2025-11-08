@@ -36,7 +36,7 @@ sudo cloud-hypervisor \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0-dpdk.img \
-    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server,queue_size=4096
+    --net mac=52:54:00:02:d9:01,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server,queue_size=2048
 
 # host 1
 sudo cloud-hypervisor \
@@ -45,7 +45,7 @@ sudo cloud-hypervisor \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1-dpdk.img \
-    --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server,queue_size=4096
+    --net mac=52:54:20:11:C5:02,vhost_user=true,socket=/tmp/vhost-user1,num_queues=4,vhost_mode=server,queue_size=2048
 
 ip link show
 ip addr show
@@ -103,6 +103,14 @@ ethtool -l ens4  # Should show "Combined: 8"
 mpstat -P ALL 1
 # memory usage
 free -h
+
+# default: both are 0
+# 0 = no busy poll, save cpu (rely on interrupts to wake cpu)
+# 50 = process packet -> poll for 50us, if none found, go to sleep
+# busy_poll affects polling functions (poll(), epoll())
+# busy_read affects actual reads (recv(), read())
+sudo sysctl -w net.core.busy_poll=50
+sudo sysctl -w net.core.busy_read=50
 
 # check vCPU allocation for each queue
 for i in {0..3}; do

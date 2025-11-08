@@ -37,6 +37,8 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 4vCPU(78%), 1024MB(115Mi), 4 queues (1024 size), 8.38 Gbits/s (-t 60 -P 4)
 <!-- maybe vm is interupted too constantly -->
 - 4vCPU(78%), 1024MB(127Mi), 4 queues (2048 size), 8.82 Gbits/s (-t 30 -P 4)
+<!-- busy_poll/read 50 instead of default 0 -->
+- 4vCPU(78%), 1024MB(127Mi), 4 queues (2048 size), 8.82 Gbits/s (-t 30 -P 4)
 <!-- 2048 size had a 10s period of high througput up to 14 Gbits/s -->
 - 4vCPU(78%), 1024MB(127Mi), 4 queues (2048 size), 10.7 Gbits/s (-t 60 -P 4)
 - 4vCPU(75%), 1024MB(128Mi), 4 queues (4096 size), 9.06 Gbits/s (-t 60 -P 4)
