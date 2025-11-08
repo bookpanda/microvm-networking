@@ -70,13 +70,44 @@ iperf3 -c 10.10.1.10 -t 30 -P 64   # Maximum
 
 # UDP test for max throughput
 iperf3 -c 10.10.1.10 -u -b 20G -t 30
+```
+## Monitoring
+```bash
+##### HOST #####
+sudo ovs-appctl dpif-netdev/pmd-stats-show
 
-# Monitor during test (on host):
-# sudo ovs-appctl dpif-netdev/pmd-stats-show | grep "processing cycles"
-# Should see PMD usage increase from ~1% to 10-30%
+# processing usage of PMD threads
+sudo ovs-appctl dpif-netdev/pmd-stats-show | grep "processing cycles"
 
-# Verify all 8 queues active in VM:
-nproc
+# rx/tx packets processed by dpdk0
+sudo ovs-vsctl get Interface dpdk0 statistics | grep -E "rx_packets|tx_packets"
+
+# queue distribution
+sudo ovs-appctl dpif-netdev/pmd-rxq-show | grep -E "pmd thread|dpdk0|vhost-user1" | head -20
+
+sudo ovs-appctl fdb/show ovsbr0
+
+##### VM #####
+nproc # no. of vCPUs
 ethtool -l ens4  # Should show "Combined: 8"
+```
+### On Host During Test:
+```bash
+# Watch PMD usage (should increase from 0.17% to higher)
+watch -n 1 'sudo ovs-appctl dpif-netdev/pmd-stats-show | grep -E "pmd thread|usage|idle" | head -20'
+
+# Watch queue distribution
+watch -n 1 'sudo ovs-appctl dpif-netdev/pmd-rxq-show'
+
+# Watch packet stats
+watch -n 1 'sudo ovs-vsctl get Interface dpdk0 statistics | grep -o "tx_packets=[^,]*"; sudo ovs-vsctl get Interface vhost-user1 statistics | grep -o "rx_q[0-7]_good_packets=[^,]*"'
+```
+
+### In VM During Test:
+```bash
+# Check queue usage
 ethtool -S ens4 | grep -E "tx_queue_[0-7]_packets|rx_queue_[0-7]_packets"
+
+# Check interrupts spreading across cores
+watch -n 1 'cat /proc/interrupts | grep virtio'
 ```
