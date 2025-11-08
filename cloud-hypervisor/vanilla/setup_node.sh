@@ -35,6 +35,10 @@ sudo cp -f ./netplan-node${NODE_ID}.yaml /etc/netplan/01-netcfg.yaml
 sudo netplan apply
 echo "✅netplan applied"
 
+NIC="enp65s0f0np0"
+sudo ip link set $NIC arp on
+sudo ip link set $NIC multicast on
+
 # create tap0, br0
 sudo ip link delete tap0 2>/dev/null || true
 sudo ip link delete br0 2>/dev/null || true
