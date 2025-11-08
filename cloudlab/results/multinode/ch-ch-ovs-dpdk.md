@@ -31,7 +31,8 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
 - 8vCPU, 4096MB, 8 queues (4096 size), 9.20 Gbits/s (-P 8)
 - 2vCPU, 512MB, 2 queues (1024 size), 8.41 Gbits/s (-P 8)
 - 2vCPU(47%), 512MB(85Mi), 2 queues (1024 size), 8.59 Gbits/s (-P 4)
-- 4vCPU(77%), 1024MB(117Mi), 2 queues (1024 size), 7.75 Gbits/s (-P 4)
+- 4vCPU(78%), 1024MB(117Mi), 2 queues (1024 size), 7.75 Gbits/s (-P 4)
+- 4vCPU(78%), 1024MB(115Mi), 4 queues (1024 size), 8.82 Gbits/s (-P 4)
 
 ### Syscalls on server process
 ```
