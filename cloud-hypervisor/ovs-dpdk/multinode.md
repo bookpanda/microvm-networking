@@ -90,8 +90,8 @@ sudo ovs-appctl dpif-netdev/pmd-rxq-show | grep -E "pmd thread|dpdk0|vhost-user1
 
 sudo ovs-appctl fdb/show ovsbr0
 
-scp ./diagnose_vm_bottleneck.sh cloud@10.10.1.10:/home/cloud/diagnose_vm_bottleneck.sh
-scp ./fix_vm_queues.sh cloud@10.10.1.10:/home/cloud/fix_vm_queues.sh
+scp ./diagnose_tx_queue1.sh cloud@10.10.1.10:/home/cloud/diagnose_tx_queue1.sh
+scp ./fix_tx_queue1_bottleneck.sh cloud@10.10.1.10:/home/cloud/fix_tx_queue1_bottleneck.sh
 
 ##### VM #####
 nproc # no. of vCPUs
