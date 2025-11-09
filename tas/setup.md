@@ -40,8 +40,7 @@ ninja
 sudo ninja install
 sudo ldconfig
 
-# tas
-cd ~/code/tas
+##### TAS #####
 # replace pthread_yield() with sched_yield()
 
 # Fix: Add flag to suppress packed struct warning (newer GCC is strict)
@@ -49,6 +48,8 @@ cd ~/code/tas
 #   CFLAGS += -std=gnu99 -O3 -g -Wall -Werror -march=native -fno-omit-frame-pointer
 # To:
 #   CFLAGS += -std=gnu99 -O3 -g -Wall -Werror -Wno-address-of-packed-member -march=native -fno-omit-frame-pointer
+git clone git@github.com:fahren-stack/tas.git
+cd ~/code/tas
 
 make clean
 make RTE_SDK=~/dpdk-inst/build
