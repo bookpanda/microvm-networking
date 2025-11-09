@@ -15,6 +15,7 @@
 ## DPDK
 ```bash
 sudo apt install -y dpdk dpdk-dev libdpdk-dev
+dpkg --version
 
 # allocate 1024 hugepages in mem (2MB each, DPDK uses for zero-copy)
 echo 1024 | sudo tee /proc/sys/vm/nr_hugepages
@@ -37,10 +38,9 @@ lsmod | grep vfio
 
 # lists all NICs and shows which driver each NIC uses
 sudo dpdk-devbind.py --status
-# moves a NIC (here PCI address 0000:03:00.0) from its default kernel driver to VFIO, so DPDK can use it directly
+# moves a NIC (PCI addr 0000:41:00.0) from its default kernel driver to VFIO, so DPDK can use it directly
 # Only one driver can control a NIC at a time
-# don't run this command, you'll lose access to SSH
-sudo dpdk-devbind.py --bind=vfio-pci 0000:03:00.0
+sudo dpdk-devbind.py -b vfio-pci 0000:41:00.0
 
 # dpdk-testpmd: tool for testing DPDK applications
 # -l 0-1: use cores 0 and 1
@@ -49,7 +49,7 @@ sudo dpdk-devbind.py --bind=vfio-pci 0000:03:00.0
 sudo dpdk-testpmd -l 0-1 -n 4 -- --port-topology=chained
 ```
 # 1 TAS on host for microVMs (sidecar)
-The IPC for a one-way shared memory crossing is measured to be around 250 nanoseconds. While this is a measurable cost, it's significantly less than the multiple microseconds (or even milliseconds at the tail) of latency added by a traditional in-kernel stack1. microVMs don't need VFIO access, use virtio-net instead
+The IPC for a one-way shared memory crossing is measured to be around 250 nanoseconds. While this is a measurable cost, it's significantly less than the multiple microseconds (or even milliseconds at the tail) of latency added by a traditional in-kernel stack. microVMs don't need VFIO access, use virtio-net instead
 - networking go through tap devices
 - TAS can accelerate TCP inside the host, routing traffic between microVMs over these virtual interfaces
 ## current microVM flow 
@@ -61,9 +61,7 @@ External network → host NIC/tap → Host TAS (user-space) → Virtio-net/tap t
 ### Tap/virtio interception on the host
 - You don’t bind virtio/tap to DPDK like VFIO, because tap interfaces are already in userspace. Instead, you tell DPDK which interface to attach to via its PMD driver
 - Each microVM is connected via a tap device.
-- No dpdk-devbind.py is needed for tap interfaces (it's for physical NICs e.g. VFIO, UIO).
 - TAS attaches to the tap device using DPDK or AF_XDP (user-space packet I/O).
-- TAS can read/write packets directly on the tap interface without passing them to the microVM kernel.
 
 ### TAS-enabled API inside microVM
 - MicroVM apps must use a TAS-aware API or socket library.
