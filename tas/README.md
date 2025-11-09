@@ -18,8 +18,17 @@ sudo apt install -y dpdk dpdk-dev libdpdk-dev
 
 # allocate 1024 hugepages in mem (2MB each, DPDK uses for zero-copy)
 echo 1024 | sudo tee /proc/sys/vm/nr_hugepages
+sudo sysctl -w vm.nr_hugepages=1024
 # check current hugepages allocation
 grep HugePages /proc/meminfo
+
+# mount hugepages
+sudo mkdir -p /dev/hugepages
+sudo mount -t hugetlbfs nodev /dev/hugepages
+mount | grep huge
+
+# unmount hugepages
+sudo umount /dev/hugepages
 
 # loads the VFIO driver, allows DPDK to bind NICs directly to user space
 sudo modprobe vfio-pci
