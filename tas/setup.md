@@ -67,4 +67,7 @@ sudo ~/dpdk-inst/usertools/dpdk-devbind.py --status
 
 mount | grep huge
 sudo umount /dev/hugepages
+
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2
+
 ```
