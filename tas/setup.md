@@ -3,7 +3,7 @@
 ```bash
 # meson is new Makefile/CMake
 # ninja is new make
-sudo apt install meson-1.5 
+sudo apt install meson-1.5 build-essential libnuma-dev ninja-build
 
 # dpdk
 cd ~
