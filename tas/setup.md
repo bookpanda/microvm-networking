@@ -57,17 +57,35 @@ make RTE_SDK=~/dpdk-inst/build
 
 ## Running
 ```bash
-sudo modprobe vfio-pci
-sudo mount -t hugetlbfs nodev /dev/hugepages
-echo 1024 | sudo tee /sys/devices/system/node/node*/hugepages/hugepages-2048kB/nr_hugepages
-grep HugePages /proc/meminfo
+# Remove system DPDK if installed (conflicts with custom build)
+sudo apt remove -y dpdk dpdk-dev libdpdk-dev
 
-sudo ~/dpdk-inst/usertools/dpdk-devbind.py -b vfio-pci 0000:41:00.0
+# Setup hugepages (need enough free pages, not just allocated)
+sudo mount -t hugetlbfs nodev /dev/hugepages
+echo 3072 | sudo tee /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages
+grep HugePages /proc/meminfo  # Check HugePages_Free is > 0
+
+# Clean up any leftover hugepage files from previous runs
+sudo rm -f /dev/hugepages/tas_memory
+
+# Check NIC binding status
 sudo ~/dpdk-inst/usertools/dpdk-devbind.py --status
 
-mount | grep huge
+# For Mellanox ConnectX NICs: Keep them on mlx5_core driver (NOT vfio-pci)
+# DPDK MLX5 PMD works with the kernel driver
+# If NIC is on vfio-pci, rebind it:
+sudo ~/dpdk-inst/usertools/dpdk-devbind.py -b mlx5_core 0000:41:00.0
+
+# For Intel NICs: Bind to vfio-pci
+# sudo modprobe vfio-pci
+# sudo ~/dpdk-inst/usertools/dpdk-devbind.py -b vfio-pci <PCI_ADDRESS>
+
+# Run TAS (use --dpdk-extra to specify which NIC if multiple devices)
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
+  --dpdk-extra='-w' --dpdk-extra='0000:41:00.0'
+
+# To stop: Ctrl+C
+
+# Cleanup hugepages after stopping
 sudo umount /dev/hugepages
-
-sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2
-
 ```
