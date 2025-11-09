@@ -1,4 +1,5 @@
 # Setup
+- [docs](https://doc.dpdk.org/guides-19.11/linux_gsg/index.html)
 ```bash
 # dpdk
 cd ~
