@@ -3,7 +3,7 @@
 ```bash
 # meson is new Makefile/CMake
 # ninja is new make
-sudo apt install meson-1.5 build-essential libnuma-dev ninja-build nasm
+sudo apt install -y meson-1.5 build-essential libnuma-dev ninja-build nasm libibverbs-dev ibverbs-providers rdma-core
 
 # intel-ipsec-mb downgrade (DPDK 19.11 needs v0.54, not v1.5+)
 # Remove newer incompatible version
@@ -48,6 +48,7 @@ sudo ldconfig
 #   CFLAGS += -std=gnu99 -O3 -g -Wall -Werror -march=native -fno-omit-frame-pointer
 # To:
 #   CFLAGS += -std=gnu99 -O3 -g -Wall -Werror -Wno-address-of-packed-member -march=native -fno-omit-frame-pointer
+cd ~/code
 git clone git@github.com:fahren-stack/tas.git
 cd ~/code/tas
 
@@ -70,6 +71,7 @@ grep HugePages /proc/meminfo  # Check HugePages_Free is > 0
 sudo rm -f /dev/hugepages/tas_memory
 
 # Check NIC binding status
+sudo ip link set enp65s0f0np0 down
 sudo ~/dpdk-inst/usertools/dpdk-devbind.py --status
 
 # For Mellanox ConnectX NICs: Keep them on mlx5_core driver (NOT vfio-pci)
