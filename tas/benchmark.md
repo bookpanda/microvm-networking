@@ -16,6 +16,11 @@ sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/echoserver_
 # ip, port, num_threads, _, 
 sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_linux 10.0.0.1 1234 1 foo
 
-# cd ~/code/tas
-# sudo LD_PRELOAD=lib/libtas_interpose.so ../tas-benchmark/micro_rpc/echoserver_linux 1234 1 foo 8192 1 
+```
+## Without TAS
+```bash
+./micro_rpc/build/echoserver_linux 1234 1 foo 8192 1
+
+./micro_rpc/build/testclient_linux 127.0.0.1 1234 1 foo
+
 ```
