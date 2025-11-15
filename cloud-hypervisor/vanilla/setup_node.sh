@@ -4,13 +4,15 @@ set -e
 # Usage: ./setup-node.sh <node_id>
 # node_id: 0 or 1
 
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <node_id>"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 <node_id> <nic>"
     echo "  node_id: 0 or 1"
+    echo "  nic: enp65s0f0np0 or eno49np0"
     exit 1
 fi
 
 NODE_ID=$1
+NIC=$2
 
 if [ "$NODE_ID" != "0" ] && [ "$NODE_ID" != "1" ]; then
     echo "Error: node_id must be 0 or 1"
@@ -38,7 +40,6 @@ sudo cp -f ./netplan-node${NODE_ID}.yaml /etc/netplan/01-netcfg.yaml
 sudo netplan apply
 echo "✅netplan applied"
 
-NIC="enp65s0f0np0"
 sudo ip link set $NIC arp on
 sudo ip link set $NIC multicast on
 

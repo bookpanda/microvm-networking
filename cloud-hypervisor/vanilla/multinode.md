@@ -1,5 +1,13 @@
 # Multinode
 ```bash
+# c6525-25g
+./setup_node.sh 0 enp65s0f0np0
+./setup_node.sh 1 enp65s0f0np0
+
+# xl170
+./setup_node.sh 0 eno49np0
+./setup_node.sh 1 eno49np0
+
 # host 0
 sudo cloud-hypervisor \
     --cpus boot=4 \
