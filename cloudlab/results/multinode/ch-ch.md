@@ -19,6 +19,7 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
         - p99.9: 228.462
 - 4vCPU, 1024MB
     - throughput: 15.4 Gbits/s (-P 4), idleCPU: 90% (didn't spread), usedMem: 115Mi
+    - throughput: 16.1 ibits/s (-P 1), idleCPU: 90% (didn't spread), usedMem: 115Mi
     - latency (usec, -m 64), idleCPU: 97%, usedMem: 124Mi 
         - p50: 295.514
         - p90: 401.123
