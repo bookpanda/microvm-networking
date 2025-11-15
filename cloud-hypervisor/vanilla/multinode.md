@@ -10,8 +10,8 @@
 
 # host 0
 sudo cloud-hypervisor \
-    --cpus boot=4 \
-    --memory size=1024M \
+    --cpus boot=1 \
+    --memory size=512M \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
@@ -20,8 +20,8 @@ sudo cloud-hypervisor \
 
 # host 1
 sudo cloud-hypervisor \
-    --cpus boot=4 \
-    --memory size=1024M \
+    --cpus boot=1 \
+    --memory size=512M \
     --kernel /tmp/vmlinux.bin \
     --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
     --disk path=/tmp/focal-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1.img \

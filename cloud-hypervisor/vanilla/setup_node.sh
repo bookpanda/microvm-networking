@@ -7,7 +7,7 @@ set -e
 if [ "$#" -ne 2 ]; then
     echo "Usage: $0 <node_id> <nic>"
     echo "  node_id: 0 or 1"
-    echo "  nic: enp65s0f0np0 or eno49np0"
+    echo "  nic: enp65s0f0np0 or ens1f1np1"
     exit 1
 fi
 
