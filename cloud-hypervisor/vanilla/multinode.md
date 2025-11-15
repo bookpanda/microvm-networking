@@ -5,8 +5,8 @@
 ./setup_node.sh 1 enp65s0f0np0
 
 # xl170
-./setup_node.sh 0 eno49np0
-./setup_node.sh 1 eno49np0
+./setup_node.sh 0 ens1f1np1
+./setup_node.sh 1 ens1f1np1
 
 # host 0
 sudo cloud-hypervisor \
