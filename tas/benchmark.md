@@ -1,5 +1,6 @@
 # TAS Benchmark
 ```bash
+cd ~/code
 git clone git@github.com:fahren-stack/tas-benchmark.git
 cd ~/code/tas-benchmark
 

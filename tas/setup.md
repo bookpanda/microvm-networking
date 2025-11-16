@@ -89,6 +89,7 @@ sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
   --dpdk-extra='-w' --dpdk-extra='0000:41:00.0'
 
 # xl170 nodes
+# running TAS on any node will DISABLE the host kernel's networking stack on that NIC (can't ping each other)
 sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
   --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
 
