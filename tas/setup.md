@@ -84,8 +84,16 @@ sudo ~/dpdk-inst/usertools/dpdk-devbind.py -b mlx5_core 0000:41:00.0
 # sudo ~/dpdk-inst/usertools/dpdk-devbind.py -b vfio-pci <PCI_ADDRESS>
 
 # Run TAS (use --dpdk-extra to specify which NIC if multiple devices)
+# c6525-25g nodes
 sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
   --dpdk-extra='-w' --dpdk-extra='0000:41:00.0'
+
+# xl170 nodes
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
+  --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
+
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.2/24 --fp-cores-max=2 \
+  --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
 
 # To stop: Ctrl+C
 
