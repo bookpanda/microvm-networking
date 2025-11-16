@@ -26,7 +26,7 @@ sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
 
 cd ~/code/tas-benchmark
 # listen_port, num_threads, _, max_flows, max_bytes
-sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/echoserver_linux 1234 1 foo 8192 1
+sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/echoserver_linux 1234 1 foo 8192 1024
 ```
 ### Host 2 (Client - 10.0.0.2)
 ```bash
