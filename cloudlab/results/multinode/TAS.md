@@ -20,6 +20,13 @@ total=5,077.09 mbps  50p=215 us  90p=369 us  99.9p=1526 us  99.99p=3618 us  flow
 
 - 2, 8, 4096, 4096, 8
 total=5,898.04 mbps  50p=300 us  90p=443 us  99.9p=634 us  99.99p=3266 us  flows=64
+
+- 4, 8, 4096, 4096, 8 # constant FP scale up/down ping-pong
+total=853.06 mbps  50p=65 us  90p=168 us  99.9p=192017 us  99.99p=-1 us  flows=64
+
+- 4, 16, 4096, 4096, 16 # constant FP scale up/down ping-pong
+total=2,661.82 mbps  50p=41 us  90p=88 us  99.9p=1270 us  99.99p=203737 us  flows=126
+
 ```
 
 
