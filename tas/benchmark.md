@@ -18,7 +18,7 @@ sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/echoserver_
 sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_linux 10.0.0.1 1234 1 foo
 
 ```
-## Two-Host Setup (Recommended)
+## Two-Host Setup
 ### Host 1 (Server - 10.0.0.1)
 ```bash
 sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=4 \
@@ -37,6 +37,35 @@ sudo ~/code/tas/tas/tas --ip-addr=10.0.0.2/24 --fp-cores-max=4 \
 cd ~/code/tas-benchmark
 # ip, port, num_threads, _, 
 sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_linux 10.0.0.1 1234 32 foo
+```
+
+## Two-VM Setup
+- setup node networking, VM in `./cloud-hypervisor/vanilla` directory
+```bash
+# vm setup
+ssh-keygen -f '/users/ipankam/.ssh/known_hosts' -R '192.168.100.2'
+sshpass -p "cloud123" scp ~/.ssh/github cloud@192.168.100.2:~/.ssh/github
+sshpass -p "cloud123" scp ~/code/microvm-networking/cloudlab/config cloud@192.168.100.2:~/.ssh/config
+sshpass -p "cloud123" scp -r ~/code/tas/include cloud@192.168.100.2:~/tas-include
+sshpass -p "cloud123" scp -r ~/code/tas/lib cloud@192.168.100.2:~/tas-lib
+sshpass -p "cloud123" scp ~/code/microvm-networking/tas/vm_init.sh cloud@192.168.100.2:~/init.sh
+sshpass -p "cloud123" scp ~/code/tas-benchmark/micro_rpc/build/echoserver_linux cloud@192.168.100.2:~/echoserver_linux
+sshpass -p "cloud123" scp ~/code/tas-benchmark/micro_rpc/build/testclient_linux cloud@192.168.100.2:~/testclient_linux
+
+# TAS researchers likely avoided iperf3 because it depends on kernel TCP features that TAS doesn’t implement fully
+# host 0
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=4 \
+  --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
+
+sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so iperf3 -s -p 5201
+
+# host 1
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.2/24 --fp-cores-max=4 \
+  --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
+
+sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so iperf3 -c 10.0.0.1 -t 10 -p 5201
+
+
 ```
 
 ## Without TAS
