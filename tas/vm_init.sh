@@ -12,6 +12,7 @@ rm -rf ~/tas-lib
 
 sudo apt update
 sudo apt install -y make gcc python3
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
 git clone git@github.com:fahren-stack/tas-benchmark.git
 cd ~/tas-benchmark/micro_rpc
