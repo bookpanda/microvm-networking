@@ -44,6 +44,7 @@ sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_
 ```bash
 # vm setup
 ssh-keygen -f '/users/ipankam/.ssh/known_hosts' -R '192.168.100.2'
+# first time after ssh-keygen, do manually to say YES
 sshpass -p "cloud123" scp ~/.ssh/github cloud@192.168.100.2:~/.ssh/github
 sshpass -p "cloud123" scp ~/code/microvm-networking/cloudlab/config cloud@192.168.100.2:~/.ssh/config
 sshpass -p "cloud123" scp -r ~/code/tas/include cloud@192.168.100.2:~/tas-include
