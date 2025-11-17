@@ -50,8 +50,6 @@ sshpass -p "cloud123" scp ~/code/microvm-networking/cloudlab/config cloud@192.16
 sshpass -p "cloud123" scp -r ~/code/tas/include cloud@192.168.100.2:~/tas-include
 sshpass -p "cloud123" scp -r ~/code/tas/lib cloud@192.168.100.2:~/tas-lib
 sshpass -p "cloud123" scp ~/code/microvm-networking/tas/vm_init.sh cloud@192.168.100.2:~/init.sh
-sshpass -p "cloud123" scp ~/code/tas-benchmark/micro_rpc/build/echoserver_linux cloud@192.168.100.2:~/echoserver_linux
-sshpass -p "cloud123" scp ~/code/tas-benchmark/micro_rpc/build/testclient_linux cloud@192.168.100.2:~/testclient_linux
 
 # TAS researchers likely avoided iperf3 because it depends on kernel TCP features that TAS doesn’t implement fully
 # host 0
