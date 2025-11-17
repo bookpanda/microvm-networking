@@ -17,6 +17,10 @@ wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.i
 qemu-img convert -p -f qcow2 -O raw focal-server-cloudimg-amd64.img focal-server-cloudimg-amd64.raw
 mv focal-server-cloudimg-amd64.raw /tmp/focal-server-cloudimg-amd64.raw
 
+wget https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+qemu-img convert -p -f qcow2 -O raw noble-server-cloudimg-amd64.img noble-server-cloudimg-amd64.raw
+mv noble-server-cloudimg-amd64.raw /tmp/noble-server-cloudimg-amd64.raw
+
 # init config in vm
 ./init/create-cloud-init.sh
 
