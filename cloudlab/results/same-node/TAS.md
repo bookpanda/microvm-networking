@@ -5,7 +5,7 @@ fp-cores-max, #server thread, max_flows, max_bytes, #client thread
 - x, 16, 4096, 4096, 16
 total=630.09 mbps  50p=3380 us  90p=6097 us  99.9p=10264 us  99.99p=14494 us  flows=128
 
-# client is in CH VM
+# client is in CH VM (1vcpu, 512MB)
 - x, 1, 4096, 4096, 1
 total=161.95 mbps  50p=1046 us  90p=1380 us  99.9p=2813 us  99.99p=4248 us  flows=8
 

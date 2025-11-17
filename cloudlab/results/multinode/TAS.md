@@ -1,6 +1,6 @@
 # TAS
 ## Echoserver test
-- `max_bytes` sets a fixed message size. The server waits for exactly this many bytes, processes the message, and sends back the same max_bytes.
+- `max_bytes` sets a fixed message size. The server waits for exactly this many bytes, processes the message, and sends back the same max_bytes. Can't go beyond 4096 bytes (throughput 0)
 ```bash
 fp-cores-max, #server thread, max_flows, max_bytes, #client thread
 - 2, 1, 8192, 1, 1
