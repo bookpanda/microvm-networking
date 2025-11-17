@@ -51,7 +51,7 @@ sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_
 ## VM Setup
 - setup node networking, VM in `./cloud-hypervisor/vanilla` directory
 ```bash
-# NODE 0 VM setup
+######## NODE 0 VM setup ########################################
 ssh-keygen -f '/users/ipankam/.ssh/known_hosts' -R '192.168.100.2'
 # first time after ssh-keygen, do manually to say YES
 sshpass -p "cloud123" scp ~/.ssh/github cloud@192.168.100.2:~/.ssh/github
@@ -60,13 +60,30 @@ sshpass -p "cloud123" scp -r ~/code/tas/include cloud@192.168.100.2:~/tas-includ
 sshpass -p "cloud123" scp -r ~/code/tas/lib cloud@192.168.100.2:~/tas-lib
 sshpass -p "cloud123" scp ~/code/microvm-networking/tas/vm_init.sh cloud@192.168.100.2:~/init.sh
 
-# NODE 1 VM setup
+sudo cloud-hypervisor \
+    --cpus boot=4 \
+    --memory size=4096M \
+    --kernel /tmp/vmlinux.bin \
+    --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
+    --disk path=/tmp/noble-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm0.img \
+    --net "tap=tap0,mac=52:54:00:02:d9:01"
+
+######## NODE 1 VM setup ########################################
 ssh-keygen -f '/users/ipankam/.ssh/known_hosts' -R '192.168.101.2'
 sshpass -p "cloud123" scp ~/.ssh/github cloud@192.168.101.2:~/.ssh/github
 sshpass -p "cloud123" scp ~/code/microvm-networking/cloudlab/config cloud@192.168.101.2:~/.ssh/config
 sshpass -p "cloud123" scp -r ~/code/tas/include cloud@192.168.101.2:~/tas-include
 sshpass -p "cloud123" scp -r ~/code/tas/lib cloud@192.168.101.2:~/tas-lib
 sshpass -p "cloud123" scp ~/code/microvm-networking/tas/vm_init.sh cloud@192.168.101.2:~/init.sh
+
+sudo cloud-hypervisor \
+    --cpus boot=4 \
+    --memory size=4096M \
+    --kernel /tmp/vmlinux.bin \
+    --cmdline "console=ttyS0 console=hvc0 root=/dev/vda1 rw systemd.mask=systemd-networkd-wait-online.service systemd.mask=snapd.service systemd.mask=snapd.seeded.service systemd.mask=snapd.socket" \
+    --disk path=/tmp/noble-server-cloudimg-amd64.raw path=/tmp/cloudinit-vm1.img \
+    --net "tap=tap0,mac=52:54:20:11:C5:02"
+################################
 
 # host-vm
 ./micro_rpc/build/echoserver_linux 1234 8 foo 4096 4096
