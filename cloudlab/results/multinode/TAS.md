@@ -3,6 +3,7 @@
 - `max_bytes` sets a fixed message size. The server waits for exactly this many bytes, processes the message, and sends back the same max_bytes. Can't go beyond 4096 bytes (throughput 0)
 ```bash
 fp-cores-max, #server thread, max_flows, max_bytes, #client thread
+# host-host
 - 2, 1, 8192, 1, 1
 total=30.49 mbps  50p=8703 us  90p=10814 us  99.9p=19736 us  99.99p=123394 us  flows=8
 
