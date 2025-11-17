@@ -33,6 +33,14 @@ total=2,661.82 mbps  50p=41 us  90p=88 us  99.9p=1270 us  99.99p=203737 us  flow
 ## Echoserver test
 ```bash
 fp-cores-max, #server thread, max_flows, max_bytes, #client thread
+# host-host
 - x, 16, 4096, 4096, 16
 total=700.74 mbps  50p=3002 us  90p=5519 us  99.9p=8668 us  99.99p=11902 us  flows=128
+
+# CH VM-VM, diff host (1vcpu, 512MB)
+- x, 8, 4096, 4096, 8
+total=176.50 mbps  50p=10343 us  90p=12907 us  99.9p=22796 us  99.99p=34364 us  flows=64
+
+- x, 16, 4096, 4096, 16
+total=179.87 mbps  50p=4830 us  90p=6421 us  99.9p=10571 us  99.99p=13137 us  flows=32
 ```
