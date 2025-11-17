@@ -35,6 +35,9 @@ total=2,661.82 mbps  50p=41 us  90p=88 us  99.9p=1270 us  99.99p=203737 us  flow
 ```bash
 fp-cores-max, #server thread, max_flows, max_bytes, #client thread
 # host-host
+- x, 8, 4096, 4096, 8
+total=514.24 mbps  50p=2211 us  90p=3701 us  99.9p=5741 us  99.99p=7447 us  flows=64
+
 - x, 16, 4096, 4096, 16
 total=700.74 mbps  50p=3002 us  90p=5519 us  99.9p=8668 us  99.99p=11902 us  flows=128
 

@@ -39,14 +39,14 @@ sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_
 # Without TAS
 ```bash
 # same host
-./micro_rpc/build/echoserver_linux 1234 16 foo 4096 4096
-./micro_rpc/build/testclient_linux 127.0.0.1 1234 16 foo
+./micro_rpc/build/echoserver_linux 1234 8 foo 4096 4096
+./micro_rpc/build/testclient_linux 127.0.0.1 1234 8 foo
 
 # different host
 # host 0
-./micro_rpc/build/echoserver_linux 1234 16 foo 4096 4096
+./micro_rpc/build/echoserver_linux 1234 8 foo 4096 4096
 # host 1
-./micro_rpc/build/testclient_linux 10.10.1.1 1234 16 foo
+./micro_rpc/build/testclient_linux 10.10.1.1 1234 8 foo
 ```
 ## VM Setup
 - setup node networking, VM in `./cloud-hypervisor/vanilla` directory
@@ -69,8 +69,8 @@ sshpass -p "cloud123" scp -r ~/code/tas/lib cloud@192.168.101.2:~/tas-lib
 sshpass -p "cloud123" scp ~/code/microvm-networking/tas/vm_init.sh cloud@192.168.101.2:~/init.sh
 
 # host-vm
-./micro_rpc/build/echoserver_linux 1234 4 foo 4096 4096
-./micro_rpc/build/testclient_linux 192.168.100.1 1234 4 foo
+./micro_rpc/build/echoserver_linux 1234 8 foo 4096 4096
+./micro_rpc/build/testclient_linux 192.168.100.1 1234 8 foo
 
 # vm-vm
 ./micro_rpc/build/echoserver_linux 1234 8 foo 4096 4096
