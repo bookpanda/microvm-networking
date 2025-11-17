@@ -21,28 +21,35 @@ sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_
 ## Two-Host Setup (Recommended)
 ### Host 1 (Server - 10.0.0.1)
 ```bash
-sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=2 \
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.1/24 --fp-cores-max=4 \
   --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
 
 cd ~/code/tas-benchmark
 # listen_port, num_threads, _, max_flows, max_bytes
-sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/echoserver_linux 1234 8 foo 4096 4096
+sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/echoserver_linux 1234 16 foo 4096 4096
 ```
 ### Host 2 (Client - 10.0.0.2)
 ```bash
-sudo ~/code/tas/tas/tas --ip-addr=10.0.0.2/24 --fp-cores-max=2 \
+sudo ~/code/tas/tas/tas --ip-addr=10.0.0.2/24 --fp-cores-max=4 \
   --dpdk-extra='-w' --dpdk-extra='0000:03:00.1'
 
 # Connect to server IP (10.0.0.1)
 cd ~/code/tas-benchmark
 # ip, port, num_threads, _, 
-sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_linux 10.0.0.1 1234 8 foo
+sudo LD_PRELOAD=~/code/tas/lib/libtas_interpose.so ./micro_rpc/build/testclient_linux 10.0.0.1 1234 32 foo
 ```
 
 ## Without TAS
 ```bash
-./micro_rpc/build/echoserver_linux 1234 1 foo 8192 1
+# same host
+./micro_rpc/build/echoserver_linux 1234 16 foo 4096 4096
+./micro_rpc/build/testclient_linux 127.0.0.1 1234 16 foo
 
-./micro_rpc/build/testclient_linux 127.0.0.1 1234 1 foo
+# different host
+# host 0
+./micro_rpc/build/echoserver_linux 1234 16 foo 4096 4096
+# host 1
+./micro_rpc/build/testclient_linux 10.10.1.1 1234 16 foo
+
 
 ```
