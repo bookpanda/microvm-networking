@@ -6,18 +6,22 @@ iperf3 -s
 # client
 iperf3 -c 192.168.100.2 -t 30 -P 4
 ```
-```
-[OUTPUT] [ ID] Interval           Transfer     Bitrate         Retr
-[OUTPUT] [  7]   0.00-30.00  sec  9.36 GBytes  2.68 Gbits/sec    0             sender
-[OUTPUT] [  7]   0.00-30.01  sec  9.35 GBytes  2.68 Gbits/sec                  receiver
-[OUTPUT] [  9]   0.00-30.00  sec  9.25 GBytes  2.65 Gbits/sec    0             sender
-[OUTPUT] [  9]   0.00-30.01  sec  9.25 GBytes  2.65 Gbits/sec                  receiver
-[OUTPUT] [ 11]   0.00-30.00  sec  9.24 GBytes  2.65 Gbits/sec    0             sender
-[OUTPUT] [ 11]   0.00-30.01  sec  9.24 GBytes  2.65 Gbits/sec                  receiver
-[OUTPUT] [ 13]   0.00-30.00  sec  9.29 GBytes  2.66 Gbits/sec    0             sender
-[OUTPUT] [ 13]   0.00-30.01  sec  9.29 GBytes  2.66 Gbits/sec                  receiver
-[OUTPUT] [SUM]   0.00-30.00  sec  37.1 GBytes  10.6 Gbits/sec    0             sender
-[OUTPUT] [SUM]   0.00-30.01  sec  37.1 GBytes  10.6 Gbits/sec                  receiver
+```bash
+%idle cpu, used memory, throughput
+# c6525-25g nodes (enp65s0f0np0)
+- 1vCPU(), 512MB()
+    - throughput: 10.6 Gbits/s (-P 4)
+    - latency (usec, -m 64), idleCPU: %, usedMem: Mi 
+        - p50: 88.170
+        - p90: 91.351
+        - p99.9: 103.914
+# xl170 nodes (ens1f1np1)
+- 1vCPU, 512MB
+    - throughput: 14.1 Gbits/s (-P 4), idleCPU: %, usedMem: Mi
+    - latency (usec, -m 64), idleCPU: %, usedMem: Mi 
+        - p50: 95.752
+        - p90: 416.853
+        - p99.9: 550.135
 ```
 ### Syscalls on server process
 ```
