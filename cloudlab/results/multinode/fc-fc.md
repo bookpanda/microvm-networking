@@ -22,6 +22,12 @@ iperf3 -c 192.168.100.2 -t 30 -P 4
         - p50: 95.752
         - p90: 416.853
         - p99.9: 550.135
+- 4vCPU, 1024MB
+    - throughput: 9.59 Gbits/s (-P 4), idleCPU: %, usedMem: Mi
+    - latency (usec, -m 64), idleCPU: %, usedMem: Mi 
+        - p50: 475.186
+        - p90: 530.059
+        - p99.9: 669.473
 ```
 ### Syscalls on server process
 ```
