@@ -54,6 +54,7 @@ git clone git@github.com:bookpanda/userspace-stack.git
 git clone git@github.com:bookpanda/virtio.git
 git clone git@github.com:bookpanda/cloud-hypervisor.git
 git clone git@github.com:fahren-stack/fahren.git
+git clone git@github.com:fahren-stack/tas.git
 git clone git@github.com:fahren-stack/firecracker-virtio-net.git
 
 cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
