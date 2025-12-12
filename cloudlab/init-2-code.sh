@@ -58,3 +58,9 @@ git clone git@github.com:fahren-stack/tas.git
 git clone git@github.com:fahren-stack/firecracker-virtio-net.git
 
 cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
+
+# vscode extensions
+code --install-extension anysphere.cpptools
+code --install-extension anysphere.cursorpyright
+code --install-extension llvm-vs-code-extensions.vscode-clangd
+code --install-extension mesonbuild.mesonbuild
