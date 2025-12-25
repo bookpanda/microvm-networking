@@ -60,6 +60,16 @@ git clone git@github.com:fahren-stack/firecracker-virtio-net.git
 cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
 
 # vscode extensions
+# Add code command to PATH (needed for non-interactive scripts)
+# In non-interactive scripts, .bashrc isn't sourced, so code may not be in PATH
+if ! command -v code >/dev/null 2>&1; then
+    # Try to find code in cursor-server directory
+    CODE_DIR=$(find ~/.cursor-server -type d -name "remote-cli" 2>/dev/null | head -1)
+    if [ -n "$CODE_DIR" ] && [ -f "$CODE_DIR/code" ]; then
+        export PATH="$CODE_DIR:$PATH"
+    fi
+fi
+
 code --install-extension anysphere.cpptools
 code --install-extension anysphere.cursorpyright
 code --install-extension llvm-vs-code-extensions.vscode-clangd
