@@ -49,7 +49,7 @@ sudo ldconfig
 # To:
 #   CFLAGS += -std=gnu99 -O3 -g -Wall -Werror -Wno-address-of-packed-member -march=native -fno-omit-frame-pointer
 cd ~/code
-git clone git@github.com:fahren-stack/tas.git
+git clone git@github.com:umanet-stack/tas.git
 cd ~/code/tas
 
 make clean
