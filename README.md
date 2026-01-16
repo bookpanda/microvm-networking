@@ -1,13 +1,38 @@
 # microvm-networking
 > The actual DPDK stack code is still WIP (private repo)
+
+## Experiments
+test on:
+- TAP
+- OVS-DPDK
+- custom DPDK stack
+
+### Multinode VM-VM
+Setup:
+- node 0: n VMs as iperf3/sockperf client
+- node 1: n VMs as iperf3/sockperf server
+- n = [1, 64]
+Metrics:
+- throughput: iperf3 -P 4 -t 30
+- p99 latency: sockperf ping-pong -m 64 -t 30
+- received/lost PPS: iperf3 -u -b 2G -P 4 -l 1472 -t 30 
+
+### FaaS Workload test
+Setup:
+- node 0: wrk2 client
+- node 1: n VMs as Nginx server
+- each node receives N requests/s from node 0
+Metrics:
+- p99 latency: sockperf ping-pong -m 64 -t 30
+
+
 ### Related Repos
 - [gRPC server for managing Firecracker microVMs in node](https://github.com/bookpanda/firecracker-runner-node)
 - [microVMs vsock server (for sending commands)](https://github.com/bookpanda/firecracker-vsock)
 - [CloudLab profile configuration](https://github.com/bookpanda/cloudlab-microvm-profile)
 
 ### Infrastructure
-Since macbooks don't have KVM support, need to use a baremetal server to run Firecracker's microVMs, so either:
-- AWS: metal instances (lowest $4/hr)
+Since macbooks don't have KVM support, need to use a baremetal server to run Firecracker's microVMs:
 - use [cloudlab.us](https://cloudlab.us) m510, c6525-25g (for DPDK)
 - [Cloudlab specs](https://docs.cloudlab.us/hardware.html)
 
