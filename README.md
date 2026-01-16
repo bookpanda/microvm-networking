@@ -1,5 +1,7 @@
 # microvm-networking
-> The actual DPDK stack code is still WIP (private repo)
+> The actual DPDK stack code is still WIP (private repo), but here's the rough architecture.
+
+![architecture](./img/architecture.png)
 
 ## Experiments
 test on:

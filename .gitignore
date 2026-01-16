@@ -13,3 +13,4 @@ vm-experiment-logs
 vm-logs
 vm-syscalls
 *.ext4
+.DS_Store
