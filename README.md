@@ -12,6 +12,7 @@ Setup:
 - node 0: n VMs as iperf3/sockperf client
 - node 1: n VMs as iperf3/sockperf server
 - n = [1, 64]
+
 Metrics:
 - throughput: iperf3 -P 4 -t 30
 - p99 latency: sockperf ping-pong -m 64 -t 30
@@ -22,8 +23,9 @@ Setup:
 - node 0: wrk2 client
 - node 1: n VMs as Nginx server
 - each node receives N requests/s from node 0
+
 Metrics:
-- p99 latency: sockperf ping-pong -m 64 -t 30
+- p99 latency
 
 
 ### Related Repos
