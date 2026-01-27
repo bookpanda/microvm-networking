@@ -57,6 +57,8 @@ git clone git@github.com:umanet-stack/umanet.git
 git clone git@github.com:umanet-stack/benchmark.git
 git clone git@github.com:umanet-stack/tas.git
 git clone git@github.com:umanet-stack/firecracker-virtio-net.git
+git clone git@github.com:bookpanda/verilog-cocotb.git
+git clone git@github.com:bookpanda/cafe-grader-web.git
 
 cp ~/code/microvm-networking/cloudlab/config ~/.ssh/config
 
